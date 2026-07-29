@@ -14,9 +14,11 @@
 
 import gc
 import math
+import multiprocessing
 import os
 import time
 from dataclasses import asdict
+from datetime import datetime, timezone
 from typing import Any, Generator, List, Optional, Tuple
 
 import pytest
@@ -52,6 +54,17 @@ else:
         torch_backend_device.matmul.allow_tf32 = False
     except Exception:
         pass
+
+
+def generate_prof_dir() -> str:
+    """Generate a unique profiling directory path under /dev/shm for do_bench_npu."""
+    process = multiprocessing.current_process()
+    pid = process.pid
+    process_name = process.name
+    timestamp = datetime.now(tz=timezone.utc).strftime("%Y%m%d_%H%M%S")
+    base_path = "/dev/shm"
+    torch_path = os.path.join(base_path, f"prof_{timestamp}_{process_name}-{pid}")
+    return torch_path
 
 
 def get_iter_count(fn):
@@ -312,6 +325,8 @@ class Benchmark:
                     fn,
                     warmup=Config.warm_up,
                     active=Config.repetition,
+                    clear_l2_cache=False,
+                    prof_dir=generate_prof_dir(),
                 )
             else:
                 do_bench = triton.testing.do_bench
