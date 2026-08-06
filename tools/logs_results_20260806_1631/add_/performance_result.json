@@ -1,7 +1,0 @@
-{
-  "add_": {
-    "result": "failed",
-    "test_case": "benchmark/test_add.py::test_add_inplace",
-    "reason": "Failed: No CUDA GPUs are available"
-  }
-}

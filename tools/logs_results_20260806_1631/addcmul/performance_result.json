@@ -1,7 +1,0 @@
-{
-  "addcmul": {
-    "result": "failed",
-    "test_case": "benchmark/test_addcmul.py::test_addcmul",
-    "reason": "Failed: No CUDA GPUs are available"
-  }
-}

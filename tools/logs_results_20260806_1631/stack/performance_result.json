@@ -1,7 +1,0 @@
-{
-  "stack": {
-    "result": "failed",
-    "test_case": "benchmark/test_stack.py::test_stack",
-    "reason": "Failed: No CUDA GPUs are available"
-  }
-}

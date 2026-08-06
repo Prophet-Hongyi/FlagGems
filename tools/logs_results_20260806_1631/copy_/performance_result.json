@@ -1,7 +1,0 @@
-{
-  "copy_": {
-    "result": "failed",
-    "test_case": "benchmark/test_copy.py::test_copy_inplace",
-    "reason": "Failed: No CUDA GPUs are available"
-  }
-}

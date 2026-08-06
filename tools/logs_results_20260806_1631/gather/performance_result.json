@@ -1,7 +1,0 @@
-{
-  "gather": {
-    "result": "failed",
-    "test_case": "benchmark/test_gather.py::test_gather",
-    "reason": "Failed: No CUDA GPUs are available"
-  }
-}

@@ -1,7 +1,0 @@
-{
-  "isfinite": {
-    "result": "failed",
-    "test_case": "benchmark/test_isfinite.py::test_isfinite",
-    "reason": "Failed: No CUDA GPUs are available"
-  }
-}

@@ -1,7 +1,0 @@
-{
-  "logical_or": {
-    "result": "failed",
-    "test_case": "benchmark/test_logical_or.py::test_logical_or",
-    "reason": "Failed: No CUDA GPUs are available"
-  }
-}

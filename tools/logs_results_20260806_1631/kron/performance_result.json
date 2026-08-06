@@ -1,7 +1,0 @@
-{
-  "kron": {
-    "result": "failed",
-    "test_case": "benchmark/test_kron.py::test_kron",
-    "reason": "Failed: No CUDA GPUs are available"
-  }
-}

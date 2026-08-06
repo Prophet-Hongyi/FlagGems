@@ -1,7 +1,0 @@
-{
-  "div_tensor_mode_": {
-    "result": "failed",
-    "test_case": "benchmark/test_div.py::test_div_tensor_mode_inplace[floor]",
-    "reason": "Failed: No CUDA GPUs are available"
-  }
-}

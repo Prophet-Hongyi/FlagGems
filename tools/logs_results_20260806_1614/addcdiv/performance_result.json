@@ -1,7 +1,0 @@
-{
-  "addcdiv": {
-    "result": "failed",
-    "test_case": "benchmark/test_addcdiv.py::test_addcdiv",
-    "reason": "Failed: No CUDA GPUs are available"
-  }
-}

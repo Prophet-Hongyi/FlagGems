@@ -1,7 +1,0 @@
-{
-  "scaled_dot_product_attention": {
-    "result": "failed",
-    "test_case": "benchmark/test_scaled_dot_product_attention.py::test_scaled_dot_product_attention[False-0.0]",
-    "reason": "Failed: No CUDA GPUs are available"
-  }
-}

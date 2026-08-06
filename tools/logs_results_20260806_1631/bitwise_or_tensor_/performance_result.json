@@ -1,7 +1,0 @@
-{
-  "bitwise_or_tensor_": {
-    "result": "failed",
-    "test_case": "benchmark/test_bitwise_or.py::test_bitwise_or_inplace",
-    "reason": "Failed: No CUDA GPUs are available"
-  }
-}

@@ -1,7 +1,0 @@
-{
-  "isinf": {
-    "result": "failed",
-    "test_case": "benchmark/test_isinf.py::test_isinf",
-    "reason": "Failed: No CUDA GPUs are available"
-  }
-}

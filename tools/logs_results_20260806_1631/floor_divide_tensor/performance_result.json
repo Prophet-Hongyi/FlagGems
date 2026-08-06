@@ -1,7 +1,0 @@
-{
-  "floor_divide_tensor": {
-    "result": "failed",
-    "test_case": "benchmark/test_floor_divide.py::test_floor_divide_tensor",
-    "reason": "Failed: No CUDA GPUs are available"
-  }
-}

@@ -1,7 +1,0 @@
-{
-  "count_nonzero": {
-    "result": "failed",
-    "test_case": "benchmark/test_count_nonzero.py::test_count_nonzero",
-    "reason": "Failed: No CUDA GPUs are available"
-  }
-}

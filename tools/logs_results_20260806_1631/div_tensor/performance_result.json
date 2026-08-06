@@ -1,7 +1,0 @@
-{
-  "div_tensor": {
-    "result": "failed",
-    "test_case": "benchmark/test_true_divide.py::test_true_divide",
-    "reason": "Failed: No CUDA GPUs are available"
-  }
-}

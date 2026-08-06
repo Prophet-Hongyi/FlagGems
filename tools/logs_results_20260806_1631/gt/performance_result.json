@@ -1,7 +1,0 @@
-{
-  "gt": {
-    "result": "failed",
-    "test_case": "benchmark/test_gt.py::test_gt",
-    "reason": "Failed: No CUDA GPUs are available"
-  }
-}

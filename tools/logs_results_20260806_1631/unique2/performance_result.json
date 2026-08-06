@@ -1,7 +1,0 @@
-{
-  "unique2": {
-    "result": "failed",
-    "test_case": "benchmark/test_unique.py::test_unique2",
-    "reason": "Failed: No CUDA GPUs are available"
-  }
-}

@@ -1,7 +1,0 @@
-{
-  "quantile": {
-    "result": "failed",
-    "test_case": "benchmark/test_quantile.py::test_quantile",
-    "reason": "Failed: No CUDA GPUs are available"
-  }
-}

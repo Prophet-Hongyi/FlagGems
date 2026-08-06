@@ -1,7 +1,0 @@
-{
-  "isnan": {
-    "result": "failed",
-    "test_case": "benchmark/test_isnan.py::test_isnan",
-    "reason": "Failed: No CUDA GPUs are available"
-  }
-}

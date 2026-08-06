@@ -1,7 +1,0 @@
-{
-  "allclose": {
-    "result": "failed",
-    "test_case": "benchmark/test_allclose.py::test_allclose",
-    "reason": "Failed: No CUDA GPUs are available"
-  }
-}

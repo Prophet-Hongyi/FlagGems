@@ -155,7 +155,15 @@ def nonzero(inp, *, as_tuple=False):
     # DENSE fast path: every element is non-zero -> coordinates are exactly the
     # row-major decomposition of the flat index, so we can use affine contiguous
     # stores and skip compaction entirely.
-    if inp_ndim >= 1 and num_nonzeros == n_elements and n_out < 2**31:
+    # Very small grids are not safe for the dense coordinate kernel on P800:
+    # the int64 div/mod sequence can raise a device-side 719 error for a single
+    # short program.  The host fallback is negligible for these inputs, while
+    # the dense kernel remains useful for the model-sized benchmark shapes.
+    if (
+        inp_ndim >= 1
+        and num_nonzeros == n_elements
+        and 1024 <= n_out < 2**31
+    ):
         out = torch.empty(num_nonzeros, inp_ndim, dtype=torch.int64, device=inp.device)
         if n_out > 0:
             strides_t = _row_major_strides(inp.shape, inp.device)

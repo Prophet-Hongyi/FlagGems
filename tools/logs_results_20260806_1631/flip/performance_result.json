@@ -1,7 +1,0 @@
-{
-  "flip": {
-    "result": "failed",
-    "test_case": "benchmark/test_flip.py::test_flip",
-    "reason": "Failed: No CUDA GPUs are available"
-  }
-}

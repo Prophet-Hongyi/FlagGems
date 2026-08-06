@@ -1,7 +1,0 @@
-{
-  "logical_xor": {
-    "result": "failed",
-    "test_case": "benchmark/test_logical_xor.py::test_logical_xor",
-    "reason": "Failed: No CUDA GPUs are available"
-  }
-}

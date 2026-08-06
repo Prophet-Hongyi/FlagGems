@@ -1,7 +1,0 @@
-{
-  "index_add_": {
-    "result": "failed",
-    "test_case": "benchmark/test_index_add.py::test_index_add_",
-    "reason": "Failed: No CUDA GPUs are available"
-  }
-}

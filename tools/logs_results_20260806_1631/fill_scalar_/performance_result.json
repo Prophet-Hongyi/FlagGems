@@ -1,7 +1,0 @@
-{
-  "fill_scalar_": {
-    "result": "failed",
-    "test_case": "benchmark/test_fill.py::test_fill_scalar_inplace",
-    "reason": "Failed: No CUDA GPUs are available"
-  }
-}

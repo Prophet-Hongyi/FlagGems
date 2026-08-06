@@ -1,7 +1,0 @@
-{
-  "resolve_neg": {
-    "result": "failed",
-    "test_case": "benchmark/test_resolve_neg.py::test_resolve_neg",
-    "reason": "Failed: No CUDA GPUs are available"
-  }
-}

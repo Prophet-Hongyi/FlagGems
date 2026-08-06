@@ -1,7 +1,0 @@
-{
-  "eq": {
-    "result": "failed",
-    "test_case": "benchmark/test_eq.py::test_eq",
-    "reason": "Failed: No CUDA GPUs are available"
-  }
-}

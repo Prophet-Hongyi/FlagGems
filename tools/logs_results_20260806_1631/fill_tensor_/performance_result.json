@@ -1,7 +1,0 @@
-{
-  "fill_tensor_": {
-    "result": "failed",
-    "test_case": "benchmark/test_fill.py::test_fill_tensor_inplace",
-    "reason": "Failed: No CUDA GPUs are available"
-  }
-}

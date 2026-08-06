@@ -1,7 +1,0 @@
-{
-  "logical_not": {
-    "result": "failed",
-    "test_case": "benchmark/test_logical_not.py::test_logical_not",
-    "reason": "Failed: No CUDA GPUs are available"
-  }
-}

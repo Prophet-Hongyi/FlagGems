@@ -1,7 +1,0 @@
-{
-  "isclose": {
-    "result": "failed",
-    "test_case": "benchmark/test_isclose.py::test_isclose",
-    "reason": "Failed: No CUDA GPUs are available"
-  }
-}

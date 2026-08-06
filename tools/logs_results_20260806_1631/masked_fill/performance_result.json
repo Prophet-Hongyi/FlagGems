@@ -1,7 +1,0 @@
-{
-  "masked_fill": {
-    "result": "failed",
-    "test_case": "benchmark/test_masked_fill.py::test_masked_fill",
-    "reason": "Failed: No CUDA GPUs are available"
-  }
-}

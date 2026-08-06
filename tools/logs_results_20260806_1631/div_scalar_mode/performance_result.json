@@ -1,7 +1,0 @@
-{
-  "div_scalar_mode": {
-    "result": "failed",
-    "test_case": "benchmark/test_div.py::test_div_scalar_mode[floor]",
-    "reason": "Failed: No CUDA GPUs are available"
-  }
-}

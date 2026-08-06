@@ -1,7 +1,0 @@
-{
-  "cat": {
-    "result": "failed",
-    "test_case": "benchmark/test_cat.py::test_cat",
-    "reason": "Failed: No CUDA GPUs are available"
-  }
-}

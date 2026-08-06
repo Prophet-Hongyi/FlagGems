@@ -1,7 +1,0 @@
-{
-  "vector_norm": {
-    "result": "failed",
-    "test_case": "benchmark/test_vector_norm.py::test_vector_norm",
-    "reason": "Failed: No CUDA GPUs are available"
-  }
-}

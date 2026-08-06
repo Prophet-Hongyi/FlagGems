@@ -1,7 +1,0 @@
-{
-  "glu": {
-    "result": "failed",
-    "test_case": "benchmark/test_glu.py::test_glu",
-    "reason": "Failed: No CUDA GPUs are available"
-  }
-}

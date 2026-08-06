@@ -1,7 +1,0 @@
-{
-  "clamp": {
-    "result": "failed",
-    "test_case": "benchmark/test_clamp.py::test_clamp",
-    "reason": "Failed: No CUDA GPUs are available"
-  }
-}
