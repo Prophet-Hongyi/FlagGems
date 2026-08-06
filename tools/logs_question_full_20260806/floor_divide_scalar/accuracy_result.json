@@ -1,0 +1,99 @@
+{
+  "tests/test_floor_divide.py::test_floor_divide_mixed[dtype10-dtype20]": {
+    "params": {
+      "dtype1": "torch.float32",
+      "dtype2": "torch.int32"
+    },
+    "result": "passed",
+    "opname": [
+      "floor_divide_scalar"
+    ],
+    "reason": null
+  },
+  "tests/test_floor_divide.py::test_floor_divide_mixed[dtype11-dtype21]": {
+    "params": {
+      "dtype1": "torch.float32",
+      "dtype2": "torch.float32"
+    },
+    "result": "passed",
+    "opname": [
+      "floor_divide_scalar"
+    ],
+    "reason": null
+  },
+  "tests/test_floor_divide.py::test_floor_divide_mixed[dtype12-dtype22]": {
+    "params": {
+      "dtype1": "torch.int32",
+      "dtype2": "torch.int32"
+    },
+    "result": "passed",
+    "opname": [
+      "floor_divide_scalar"
+    ],
+    "reason": null
+  },
+  "tests/test_floor_divide.py::test_floor_divide_scalar_tensor[x_dtype0-y_dtype0]": {
+    "params": {
+      "x_dtype": "torch.int32",
+      "y_dtype": "torch.int32"
+    },
+    "result": "passed",
+    "opname": [
+      "floor_divide_scalar"
+    ],
+    "reason": null
+  },
+  "tests/test_floor_divide.py::test_floor_divide_scalar_tensor[x_dtype1-y_dtype1]": {
+    "params": {
+      "x_dtype": "torch.int32",
+      "y_dtype": "torch.float32"
+    },
+    "result": "passed",
+    "opname": [
+      "floor_divide_scalar"
+    ],
+    "reason": null
+  },
+  "tests/test_floor_divide.py::test_floor_divide_scalar_tensor[x_dtype2-y_dtype2]": {
+    "params": {
+      "x_dtype": "torch.float32",
+      "y_dtype": "torch.int32"
+    },
+    "result": "passed",
+    "opname": [
+      "floor_divide_scalar"
+    ],
+    "reason": null
+  },
+  "tests/test_floor_divide.py::test_floor_divide_scalar_tensor[x_dtype3-y_dtype3]": {
+    "params": {
+      "x_dtype": "torch.float32",
+      "y_dtype": "torch.float32"
+    },
+    "result": "passed",
+    "opname": [
+      "floor_divide_scalar"
+    ],
+    "reason": null
+  },
+  "tests/test_floor_divide.py::test_floor_divide_scalar_scalar[dtype0]": {
+    "params": {
+      "dtype": "torch.float32"
+    },
+    "result": "passed",
+    "opname": [
+      "floor_divide_scalar"
+    ],
+    "reason": null
+  },
+  "tests/test_floor_divide.py::test_floor_divide_scalar_scalar[dtype1]": {
+    "params": {
+      "dtype": "torch.int64"
+    },
+    "result": "passed",
+    "opname": [
+      "floor_divide_scalar"
+    ],
+    "reason": null
+  }
+}

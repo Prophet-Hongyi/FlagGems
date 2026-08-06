@@ -1,0 +1,207 @@
+{
+  "reciprocal": {
+    "details": [
+      {
+        "op_name": "reciprocal",
+        "dtype": "torch.float16",
+        "mode": "kernel",
+        "level": "core",
+        "result": [
+          {
+            "legacy_shape": null,
+            "shape_detail": [
+              [
+                64,
+                64
+              ]
+            ],
+            "latency_base": 0.006202999968081713,
+            "latency": 0.008719000034034252,
+            "gbps_base": null,
+            "gbps": null,
+            "speedup": 0.7114347911306986,
+            "accuracy": null,
+            "tflops": 0.0004697786425061859,
+            "utilization": null,
+            "compared_speedup": null,
+            "error_msg": null
+          },
+          {
+            "legacy_shape": null,
+            "shape_detail": [
+              [
+                4096,
+                4096
+              ]
+            ],
+            "latency_base": 0.14127099514007568,
+            "latency": 0.18255700170993805,
+            "gbps_base": null,
+            "gbps": null,
+            "speedup": 0.773845943003265,
+            "accuracy": null,
+            "tflops": 0.09190124642086889,
+            "utilization": null,
+            "compared_speedup": null,
+            "error_msg": null
+          },
+          {
+            "legacy_shape": null,
+            "shape_detail": [
+              [
+                64,
+                512,
+                512
+              ]
+            ],
+            "latency_base": 0.1410219967365265,
+            "latency": 0.18243500590324402,
+            "gbps_base": null,
+            "gbps": null,
+            "speedup": 0.772998559340737,
+            "accuracy": null,
+            "tflops": 0.09196270154916399,
+            "utilization": null,
+            "compared_speedup": null,
+            "error_msg": null
+          }
+        ]
+      },
+      {
+        "op_name": "reciprocal",
+        "dtype": "torch.float32",
+        "mode": "kernel",
+        "level": "core",
+        "result": [
+          {
+            "legacy_shape": null,
+            "shape_detail": [
+              [
+                64,
+                64
+              ]
+            ],
+            "latency_base": 0.0065830000676214695,
+            "latency": 0.006351000163704157,
+            "gbps_base": null,
+            "gbps": null,
+            "speedup": 1.0365296642949542,
+            "accuracy": null,
+            "tflops": 0.000644937788446072,
+            "utilization": null,
+            "compared_speedup": null,
+            "error_msg": null
+          },
+          {
+            "legacy_shape": null,
+            "shape_detail": [
+              [
+                4096,
+                4096
+              ]
+            ],
+            "latency_base": 0.12793299555778503,
+            "latency": 0.15622399747371674,
+            "gbps_base": null,
+            "gbps": null,
+            "speedup": 0.8189074510099423,
+            "accuracy": null,
+            "tflops": 0.10739205417415218,
+            "utilization": null,
+            "compared_speedup": null,
+            "error_msg": null
+          },
+          {
+            "legacy_shape": null,
+            "shape_detail": [
+              [
+                64,
+                512,
+                512
+              ]
+            ],
+            "latency_base": 0.12836000323295593,
+            "latency": 0.15643900632858276,
+            "gbps_base": null,
+            "gbps": null,
+            "speedup": 0.8205114967513281,
+            "accuracy": null,
+            "tflops": 0.10724445516331983,
+            "utilization": null,
+            "compared_speedup": null,
+            "error_msg": null
+          }
+        ]
+      },
+      {
+        "op_name": "reciprocal",
+        "dtype": "torch.bfloat16",
+        "mode": "kernel",
+        "level": "core",
+        "result": [
+          {
+            "legacy_shape": null,
+            "shape_detail": [
+              [
+                64,
+                64
+              ]
+            ],
+            "latency_base": 0.0068350001238286495,
+            "latency": 0.00834100041538477,
+            "gbps_base": null,
+            "gbps": null,
+            "speedup": 0.8194460836162603,
+            "accuracy": null,
+            "tflops": 0.0004910681927847683,
+            "utilization": null,
+            "compared_speedup": null,
+            "error_msg": null
+          },
+          {
+            "legacy_shape": null,
+            "shape_detail": [
+              [
+                4096,
+                4096
+              ]
+            ],
+            "latency_base": 0.17363199591636658,
+            "latency": 0.17618200182914734,
+            "gbps_base": null,
+            "gbps": null,
+            "speedup": 0.9855262973158085,
+            "accuracy": null,
+            "tflops": 0.09522661694053018,
+            "utilization": null,
+            "compared_speedup": null,
+            "error_msg": null
+          },
+          {
+            "legacy_shape": null,
+            "shape_detail": [
+              [
+                64,
+                512,
+                512
+              ]
+            ],
+            "latency_base": 0.17350299656391144,
+            "latency": 0.17648200690746307,
+            "gbps_base": null,
+            "gbps": null,
+            "speedup": 0.9831200336184206,
+            "accuracy": null,
+            "tflops": 0.09506473942579878,
+            "utilization": null,
+            "compared_speedup": null,
+            "error_msg": null
+          }
+        ]
+      }
+    ],
+    "result": "passed",
+    "test_case": "benchmark/test_reciprocal.py::test_reciprocal",
+    "reason": null
+  }
+}

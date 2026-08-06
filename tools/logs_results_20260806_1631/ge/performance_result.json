@@ -1,0 +1,7 @@
+{
+  "ge": {
+    "result": "failed",
+    "test_case": "benchmark/test_ge.py::test_ge",
+    "reason": "Failed: No CUDA GPUs are available"
+  }
+}

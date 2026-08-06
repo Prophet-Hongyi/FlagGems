@@ -1,0 +1,7 @@
+{
+  "weight_norm": {
+    "result": "failed",
+    "test_case": "benchmark/test_weight_norm.py::test_weight_norm_dim_last",
+    "reason": "Failed: No CUDA GPUs are available"
+  }
+}

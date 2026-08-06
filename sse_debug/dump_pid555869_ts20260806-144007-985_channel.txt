@@ -1,0 +1,16 @@
+Channel State Dump:
+valueLastIssuedByCpu: a8b54
+valueLastIssuedToGpu: a8b54
+valueFinishedByGpu: a8b45
+cpuPut: 54
+cpuPutMonotonic: a8b54
+gpuPut: 54
+gpuGet: 1
+gpuGetMonotonica: a8b01
+vstream_id: 0
+hwq_id: 0
+done_ptr: 45
+enq_ptr: 54
+enq_ptr_monotonic: a8b54
+error: 0
+marker->trackingSemaphoreValue: a8b54

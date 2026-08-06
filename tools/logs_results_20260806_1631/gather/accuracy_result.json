@@ -1,0 +1,434 @@
+{
+  "tests/test_gather.py::test_gather[dtype0-0-inp_shape0]": {
+    "params": {
+      "dtype": "torch.float16",
+      "dim": 0,
+      "inp_shape": [
+        512,
+        128,
+        32
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "gather"
+    ],
+    "reason": "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.56119.140631583093952.c9a4046e369640868cb2030c2870edb3.tmp'"
+  },
+  "tests/test_gather.py::test_gather[dtype0-0-inp_shape1]": {
+    "params": {
+      "dtype": "torch.float16",
+      "dim": 0,
+      "inp_shape": [
+        1024,
+        64,
+        16
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "gather"
+    ],
+    "reason": "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.56119.140631583093952.1958f4de79f74ffa818ce8c7dd2fe05a.tmp'"
+  },
+  "tests/test_gather.py::test_gather[dtype0-0-inp_shape2]": {
+    "params": {
+      "dtype": "torch.float16",
+      "dim": 0,
+      "inp_shape": [
+        128,
+        32,
+        256
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "gather"
+    ],
+    "reason": "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.56119.140631583093952.9dd92ef459e04e84827a16c02f64d655.tmp'"
+  },
+  "tests/test_gather.py::test_gather[dtype0-1-inp_shape0]": {
+    "params": {
+      "dtype": "torch.float16",
+      "dim": 1,
+      "inp_shape": [
+        512,
+        128,
+        32
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "gather"
+    ],
+    "reason": "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.56119.140631583093952.fbc86f30fbe54c39ba254e5b9f953dd3.tmp'"
+  },
+  "tests/test_gather.py::test_gather[dtype0-1-inp_shape1]": {
+    "params": {
+      "dtype": "torch.float16",
+      "dim": 1,
+      "inp_shape": [
+        1024,
+        64,
+        16
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "gather"
+    ],
+    "reason": "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.56119.140631583093952.ae7a7f842b8548f897150d0d53aad9b7.tmp'"
+  },
+  "tests/test_gather.py::test_gather[dtype0-1-inp_shape2]": {
+    "params": {
+      "dtype": "torch.float16",
+      "dim": 1,
+      "inp_shape": [
+        128,
+        32,
+        256
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "gather"
+    ],
+    "reason": "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.56119.140631583093952.2cb2f6102bfe4605931dc55b6fe647a0.tmp'"
+  },
+  "tests/test_gather.py::test_gather[dtype0-2-inp_shape0]": {
+    "params": {
+      "dtype": "torch.float16",
+      "dim": 2,
+      "inp_shape": [
+        512,
+        128,
+        32
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "gather"
+    ],
+    "reason": "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.56119.140631583093952.2a8a0af40e2e4bbbbab138183358f303.tmp'"
+  },
+  "tests/test_gather.py::test_gather[dtype0-2-inp_shape1]": {
+    "params": {
+      "dtype": "torch.float16",
+      "dim": 2,
+      "inp_shape": [
+        1024,
+        64,
+        16
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "gather"
+    ],
+    "reason": "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.56119.140631583093952.29a2bf95cb8946fa912221043c33ab0f.tmp'"
+  },
+  "tests/test_gather.py::test_gather[dtype0-2-inp_shape2]": {
+    "params": {
+      "dtype": "torch.float16",
+      "dim": 2,
+      "inp_shape": [
+        128,
+        32,
+        256
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "gather"
+    ],
+    "reason": "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.56119.140631583093952.5412fe57814b4616929efb8c2272db6d.tmp'"
+  },
+  "tests/test_gather.py::test_gather[dtype1-0-inp_shape0]": {
+    "params": {
+      "dtype": "torch.float32",
+      "dim": 0,
+      "inp_shape": [
+        512,
+        128,
+        32
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "gather"
+    ],
+    "reason": "RuntimeError: mismatch in length of strides and shape"
+  },
+  "tests/test_gather.py::test_gather[dtype1-0-inp_shape1]": {
+    "params": {
+      "dtype": "torch.float32",
+      "dim": 0,
+      "inp_shape": [
+        1024,
+        64,
+        16
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "gather"
+    ],
+    "reason": "RuntimeError: mismatch in length of strides and shape"
+  },
+  "tests/test_gather.py::test_gather[dtype1-0-inp_shape2]": {
+    "params": {
+      "dtype": "torch.float32",
+      "dim": 0,
+      "inp_shape": [
+        128,
+        32,
+        256
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "gather"
+    ],
+    "reason": "RuntimeError: mismatch in length of strides and shape"
+  },
+  "tests/test_gather.py::test_gather[dtype1-1-inp_shape0]": {
+    "params": {
+      "dtype": "torch.float32",
+      "dim": 1,
+      "inp_shape": [
+        512,
+        128,
+        32
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "gather"
+    ],
+    "reason": "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.56119.140631583093952.01dfee4e107b48a0bb5945209b3b08e3.tmp'"
+  },
+  "tests/test_gather.py::test_gather[dtype1-1-inp_shape1]": {
+    "params": {
+      "dtype": "torch.float32",
+      "dim": 1,
+      "inp_shape": [
+        1024,
+        64,
+        16
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "gather"
+    ],
+    "reason": "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.56119.140631583093952.57aa78b657534d0caf5ef6cea77c77c6.tmp'"
+  },
+  "tests/test_gather.py::test_gather[dtype1-1-inp_shape2]": {
+    "params": {
+      "dtype": "torch.float32",
+      "dim": 1,
+      "inp_shape": [
+        128,
+        32,
+        256
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "gather"
+    ],
+    "reason": "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.56119.140631583093952.e4b8f6c904d1466d9455525743553633.tmp'"
+  },
+  "tests/test_gather.py::test_gather[dtype1-2-inp_shape0]": {
+    "params": {
+      "dtype": "torch.float32",
+      "dim": 2,
+      "inp_shape": [
+        512,
+        128,
+        32
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "gather"
+    ],
+    "reason": "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.56119.140631583093952.91f5abe99a274e41b0448b22d247d54c.tmp'"
+  },
+  "tests/test_gather.py::test_gather[dtype1-2-inp_shape1]": {
+    "params": {
+      "dtype": "torch.float32",
+      "dim": 2,
+      "inp_shape": [
+        1024,
+        64,
+        16
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "gather"
+    ],
+    "reason": "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.56119.140631583093952.3a943e5fcd1e4079a47af2c836232651.tmp'"
+  },
+  "tests/test_gather.py::test_gather[dtype1-2-inp_shape2]": {
+    "params": {
+      "dtype": "torch.float32",
+      "dim": 2,
+      "inp_shape": [
+        128,
+        32,
+        256
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "gather"
+    ],
+    "reason": "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.56119.140631583093952.ec8a2bab931a45e5a7e7464a4ddd6757.tmp'"
+  },
+  "tests/test_gather.py::test_gather[dtype2-0-inp_shape0]": {
+    "params": {
+      "dtype": "torch.bfloat16",
+      "dim": 0,
+      "inp_shape": [
+        512,
+        128,
+        32
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "gather"
+    ],
+    "reason": "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.56119.140631583093952.b1623140975c4f8c934e32bcc301069e.tmp'"
+  },
+  "tests/test_gather.py::test_gather[dtype2-0-inp_shape1]": {
+    "params": {
+      "dtype": "torch.bfloat16",
+      "dim": 0,
+      "inp_shape": [
+        1024,
+        64,
+        16
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "gather"
+    ],
+    "reason": "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.56119.140631583093952.d7ecca9d6e134382a02d8a6662a17276.tmp'"
+  },
+  "tests/test_gather.py::test_gather[dtype2-0-inp_shape2]": {
+    "params": {
+      "dtype": "torch.bfloat16",
+      "dim": 0,
+      "inp_shape": [
+        128,
+        32,
+        256
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "gather"
+    ],
+    "reason": "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.56119.140631583093952.f94522aec8344c238444e492a003289d.tmp'"
+  },
+  "tests/test_gather.py::test_gather[dtype2-1-inp_shape0]": {
+    "params": {
+      "dtype": "torch.bfloat16",
+      "dim": 1,
+      "inp_shape": [
+        512,
+        128,
+        32
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "gather"
+    ],
+    "reason": "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.56119.140631583093952.0ea889dc52404f9687a03dddc69b5d78.tmp'"
+  },
+  "tests/test_gather.py::test_gather[dtype2-1-inp_shape1]": {
+    "params": {
+      "dtype": "torch.bfloat16",
+      "dim": 1,
+      "inp_shape": [
+        1024,
+        64,
+        16
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "gather"
+    ],
+    "reason": "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.56119.140631583093952.b7bc25e6b3ec4caa93dfa3c1576461d3.tmp'"
+  },
+  "tests/test_gather.py::test_gather[dtype2-1-inp_shape2]": {
+    "params": {
+      "dtype": "torch.bfloat16",
+      "dim": 1,
+      "inp_shape": [
+        128,
+        32,
+        256
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "gather"
+    ],
+    "reason": "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.56119.140631583093952.3621e37a696e4c74b83eaf41bd88ff0c.tmp'"
+  },
+  "tests/test_gather.py::test_gather[dtype2-2-inp_shape0]": {
+    "params": {
+      "dtype": "torch.bfloat16",
+      "dim": 2,
+      "inp_shape": [
+        512,
+        128,
+        32
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "gather"
+    ],
+    "reason": "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.56119.140631583093952.3a3780440ad84328a623f0776fba8fca.tmp'"
+  },
+  "tests/test_gather.py::test_gather[dtype2-2-inp_shape1]": {
+    "params": {
+      "dtype": "torch.bfloat16",
+      "dim": 2,
+      "inp_shape": [
+        1024,
+        64,
+        16
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "gather"
+    ],
+    "reason": "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.56119.140631583093952.6a4bb5fbf98c4c5dbde4a0dbc98bc59f.tmp'"
+  },
+  "tests/test_gather.py::test_gather[dtype2-2-inp_shape2]": {
+    "params": {
+      "dtype": "torch.bfloat16",
+      "dim": 2,
+      "inp_shape": [
+        128,
+        32,
+        256
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "gather"
+    ],
+    "reason": "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.56119.140631583093952.042ca75521104caca592040e5ad2df58.tmp'"
+  }
+}

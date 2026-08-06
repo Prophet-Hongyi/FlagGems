@@ -1,0 +1,16 @@
+Channel State Dump:
+valueLastIssuedByCpu: 20443
+valueLastIssuedToGpu: 20443
+valueFinishedByGpu: 2043c
+cpuPut: 43
+cpuPutMonotonic: 20443
+gpuPut: 43
+gpuGet: 7b
+gpuGetMonotonica: 2037b
+vstream_id: 0
+hwq_id: 0
+done_ptr: 3c
+enq_ptr: 43
+enq_ptr_monotonic: 20443
+error: 0
+marker->trackingSemaphoreValue: 20443

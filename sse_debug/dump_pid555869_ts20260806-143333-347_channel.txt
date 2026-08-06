@@ -1,0 +1,16 @@
+Channel State Dump:
+valueLastIssuedByCpu: a8917
+valueLastIssuedToGpu: a8917
+valueFinishedByGpu: a890e
+cpuPut: 17
+cpuPutMonotonic: a8917
+gpuPut: 17
+gpuGet: 7
+gpuGetMonotonica: a8907
+vstream_id: 0
+hwq_id: 0
+done_ptr: e
+enq_ptr: 17
+enq_ptr_monotonic: a8917
+error: 0
+marker->trackingSemaphoreValue: a8917

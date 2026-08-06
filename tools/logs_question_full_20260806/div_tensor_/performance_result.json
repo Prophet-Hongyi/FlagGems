@@ -1,0 +1,246 @@
+{
+  "div_tensor_": {
+    "details": [
+      {
+        "op_name": "div_tensor_",
+        "dtype": "torch.float16",
+        "mode": "kernel",
+        "level": "core",
+        "result": [
+          {
+            "legacy_shape": null,
+            "shape_detail": [
+              [
+                64,
+                64
+              ],
+              [
+                64,
+                64
+              ]
+            ],
+            "latency_base": 0.006194000132381916,
+            "latency": 0.007643999997526407,
+            "gbps_base": null,
+            "gbps": null,
+            "speedup": 0.8103087564607915,
+            "accuracy": null,
+            "tflops": 0.0010716902148941553,
+            "utilization": null,
+            "compared_speedup": null,
+            "error_msg": null
+          },
+          {
+            "legacy_shape": null,
+            "shape_detail": [
+              [
+                4096,
+                4096
+              ],
+              [
+                4096,
+                4096
+              ]
+            ],
+            "latency_base": 0.22166499495506287,
+            "latency": 0.2397570013999939,
+            "gbps_base": null,
+            "gbps": null,
+            "speedup": 0.9245402372431761,
+            "accuracy": null,
+            "tflops": 0.1399518337486217,
+            "utilization": null,
+            "compared_speedup": null,
+            "error_msg": null
+          },
+          {
+            "legacy_shape": null,
+            "shape_detail": [
+              [
+                64,
+                512,
+                512
+              ],
+              [
+                64,
+                512,
+                512
+              ]
+            ],
+            "latency_base": 0.2214840054512024,
+            "latency": 0.23962000012397766,
+            "gbps_base": null,
+            "gbps": null,
+            "speedup": 0.9243135186403812,
+            "accuracy": null,
+            "tflops": 0.1400318503573958,
+            "utilization": null,
+            "compared_speedup": null,
+            "error_msg": null
+          }
+        ]
+      },
+      {
+        "op_name": "div_tensor_",
+        "dtype": "torch.float32",
+        "mode": "kernel",
+        "level": "core",
+        "result": [
+          {
+            "legacy_shape": null,
+            "shape_detail": [
+              [
+                64,
+                64
+              ],
+              [
+                64,
+                64
+              ]
+            ],
+            "latency_base": 0.006643000058829784,
+            "latency": 0.006697999779134989,
+            "gbps_base": null,
+            "gbps": null,
+            "speedup": 0.9917886350972219,
+            "accuracy": null,
+            "tflops": 0.0012230516975409566,
+            "utilization": null,
+            "compared_speedup": null,
+            "error_msg": null
+          },
+          {
+            "legacy_shape": null,
+            "shape_detail": [
+              [
+                4096,
+                4096
+              ],
+              [
+                4096,
+                4096
+              ]
+            ],
+            "latency_base": 0.13819299638271332,
+            "latency": 0.21040800213813782,
+            "gbps_base": null,
+            "gbps": null,
+            "speedup": 0.6567858397894314,
+            "accuracy": null,
+            "tflops": 0.1594731743043248,
+            "utilization": null,
+            "compared_speedup": null,
+            "error_msg": null
+          },
+          {
+            "legacy_shape": null,
+            "shape_detail": [
+              [
+                64,
+                512,
+                512
+              ],
+              [
+                64,
+                512,
+                512
+              ]
+            ],
+            "latency_base": 0.13830900192260742,
+            "latency": 0.21452400088310242,
+            "gbps_base": null,
+            "gbps": null,
+            "speedup": 0.6447250720350597,
+            "accuracy": null,
+            "tflops": 0.15641341696906144,
+            "utilization": null,
+            "compared_speedup": null,
+            "error_msg": null
+          }
+        ]
+      },
+      {
+        "op_name": "div_tensor_",
+        "dtype": "torch.bfloat16",
+        "mode": "kernel",
+        "level": "core",
+        "result": [
+          {
+            "legacy_shape": null,
+            "shape_detail": [
+              [
+                64,
+                64
+              ],
+              [
+                64,
+                64
+              ]
+            ],
+            "latency_base": 0.006771000102162361,
+            "latency": 0.007472999859601259,
+            "gbps_base": null,
+            "gbps": null,
+            "speedup": 0.9060618532546908,
+            "accuracy": null,
+            "tflops": 0.0010962130541826483,
+            "utilization": null,
+            "compared_speedup": null,
+            "error_msg": null
+          },
+          {
+            "legacy_shape": null,
+            "shape_detail": [
+              [
+                4096,
+                4096
+              ],
+              [
+                4096,
+                4096
+              ]
+            ],
+            "latency_base": 0.20404699444770813,
+            "latency": 0.23635900020599365,
+            "gbps_base": null,
+            "gbps": null,
+            "speedup": 0.8632926788058645,
+            "accuracy": null,
+            "tflops": 0.14196384301319753,
+            "utilization": null,
+            "compared_speedup": null,
+            "error_msg": null
+          },
+          {
+            "legacy_shape": null,
+            "shape_detail": [
+              [
+                64,
+                512,
+                512
+              ],
+              [
+                64,
+                512,
+                512
+              ]
+            ],
+            "latency_base": 0.20398500561714172,
+            "latency": 0.2366420030593872,
+            "gbps_base": null,
+            "gbps": null,
+            "speedup": 0.861998305372483,
+            "accuracy": null,
+            "tflops": 0.14179406684441917,
+            "utilization": null,
+            "compared_speedup": null,
+            "error_msg": null
+          }
+        ]
+      }
+    ],
+    "result": "passed",
+    "test_case": "benchmark/test_div.py::test_div_inplace",
+    "reason": null
+  }
+}

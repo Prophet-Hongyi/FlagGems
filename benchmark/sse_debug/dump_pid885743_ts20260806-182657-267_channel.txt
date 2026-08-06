@@ -1,0 +1,16 @@
+Channel State Dump:
+valueLastIssuedByCpu: 992a
+valueLastIssuedToGpu: 992a
+valueFinishedByGpu: 9925
+cpuPut: 2a
+cpuPutMonotonic: 992a
+gpuPut: 2a
+gpuGet: ab
+gpuGetMonotonica: 98ab
+vstream_id: 0
+hwq_id: 0
+done_ptr: 25
+enq_ptr: 2a
+enq_ptr_monotonic: 992a
+error: 0
+marker->trackingSemaphoreValue: 992a

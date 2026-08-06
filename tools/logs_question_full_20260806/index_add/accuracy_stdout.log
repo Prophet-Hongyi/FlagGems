@@ -1,0 +1,24 @@
+============================= test session starts ==============================
+platform linux -- Python 3.10.15, pytest-9.0.2, pluggy-1.6.0 -- /root/miniconda/envs/python310_torch25_cuda/bin/python3.1
+cachedir: .pytest_cache
+metadata: {'Python': '3.10.15', 'Platform': 'Linux-5.15.0-105-generic-x86_64-with-glibc2.31', 'Packages': {'pytest': '9.0.2', 'pluggy': '1.6.0'}, 'Plugins': {'html': '4.1.1', 'metadata': '3.1.1', 'timeout': '2.3.1', 'anyio': '4.9.0', 'typeguard': '4.4.4'}}
+rootdir: /workspace/FlagGems
+configfile: pytest.ini
+plugins: html-4.1.1, metadata-3.1.1, timeout-2.3.1, anyio-4.9.0, typeguard-4.4.4
+collecting ... vLLM not installed, the native pytorch implementation of FlashMLA for comparison
+collected 51091 items / 51079 deselected / 12 selected
+
+test_index_add.py::test_index_add[dtype0-0-shape0] PASSED
+test_index_add.py::test_index_add[dtype0-0-shape1] PASSED
+test_index_add.py::test_index_add[dtype0-0-shape2] PASSED
+test_index_add.py::test_index_add[dtype0-1-shape0] PASSED
+test_index_add.py::test_index_add[dtype0-1-shape1] PASSED
+test_index_add.py::test_index_add[dtype0-1-shape2] PASSED
+test_index_add.py::test_index_add[dtype1-0-shape0] PASSED
+test_index_add.py::test_index_add[dtype1-0-shape1] PASSED
+test_index_add.py::test_index_add[dtype1-0-shape2] PASSED
+test_index_add.py::test_index_add[dtype1-1-shape0] PASSED
+test_index_add.py::test_index_add[dtype1-1-shape1] PASSED
+test_index_add.py::test_index_add[dtype1-1-shape2] PASSED
+
+==================== 12 passed, 51079 deselected in 27.18s =====================

@@ -1,0 +1,7 @@
+{
+  "batch_norm": {
+    "result": "failed",
+    "test_case": "benchmark/test_batch_norm.py::test_batch_norm",
+    "reason": "Failed: No CUDA GPUs are available"
+  }
+}

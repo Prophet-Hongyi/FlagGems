@@ -1,0 +1,7 @@
+{
+  "rwkv_mm_sparsity": {
+    "result": "failed",
+    "test_case": "benchmark/test_rwkv_mm_sparsity.py::test_rwkv_mm_sparsity",
+    "reason": "Failed: No CUDA GPUs are available"
+  }
+}

@@ -1,0 +1,207 @@
+{
+  "celu": {
+    "details": [
+      {
+        "op_name": "celu",
+        "dtype": "torch.float16",
+        "mode": "kernel",
+        "level": "core",
+        "result": [
+          {
+            "legacy_shape": null,
+            "shape_detail": [
+              [
+                64,
+                64
+              ]
+            ],
+            "latency_base": 0.005882000084966421,
+            "latency": 0.00865899957716465,
+            "gbps_base": null,
+            "gbps": null,
+            "speedup": 0.6792932639098771,
+            "accuracy": null,
+            "tflops": 0.00047303386072473013,
+            "utilization": null,
+            "compared_speedup": null,
+            "error_msg": null
+          },
+          {
+            "legacy_shape": null,
+            "shape_detail": [
+              [
+                4096,
+                4096
+              ]
+            ],
+            "latency_base": 0.17052699625492096,
+            "latency": 0.2278449982404709,
+            "gbps_base": null,
+            "gbps": null,
+            "speedup": 0.7484342319200017,
+            "accuracy": null,
+            "tflops": 0.07363433970270036,
+            "utilization": null,
+            "compared_speedup": null,
+            "error_msg": null
+          },
+          {
+            "legacy_shape": null,
+            "shape_detail": [
+              [
+                64,
+                512,
+                512
+              ]
+            ],
+            "latency_base": 0.17050999402999878,
+            "latency": 0.22761499881744385,
+            "gbps_base": null,
+            "gbps": null,
+            "speedup": 0.7491158092211422,
+            "accuracy": null,
+            "tflops": 0.07370874541293293,
+            "utilization": null,
+            "compared_speedup": null,
+            "error_msg": null
+          }
+        ]
+      },
+      {
+        "op_name": "celu",
+        "dtype": "torch.float32",
+        "mode": "kernel",
+        "level": "core",
+        "result": [
+          {
+            "legacy_shape": null,
+            "shape_detail": [
+              [
+                64,
+                64
+              ]
+            ],
+            "latency_base": 0.006287999916821718,
+            "latency": 0.006277000065892935,
+            "gbps_base": null,
+            "gbps": null,
+            "speedup": 1.0017524057373446,
+            "accuracy": null,
+            "tflops": 0.000652541015931521,
+            "utilization": null,
+            "compared_speedup": null,
+            "error_msg": null
+          },
+          {
+            "legacy_shape": null,
+            "shape_detail": [
+              [
+                4096,
+                4096
+              ]
+            ],
+            "latency_base": 0.16642099618911743,
+            "latency": 0.23671600222587585,
+            "gbps_base": null,
+            "gbps": null,
+            "speedup": 0.7030407518893357,
+            "accuracy": null,
+            "tflops": 0.07087487048717171,
+            "utilization": null,
+            "compared_speedup": null,
+            "error_msg": null
+          },
+          {
+            "legacy_shape": null,
+            "shape_detail": [
+              [
+                64,
+                512,
+                512
+              ]
+            ],
+            "latency_base": 0.16666199266910553,
+            "latency": 0.23680999875068665,
+            "gbps_base": null,
+            "gbps": null,
+            "speedup": 0.7037793739637114,
+            "accuracy": null,
+            "tflops": 0.07084673826489496,
+            "utilization": null,
+            "compared_speedup": null,
+            "error_msg": null
+          }
+        ]
+      },
+      {
+        "op_name": "celu",
+        "dtype": "torch.bfloat16",
+        "mode": "kernel",
+        "level": "core",
+        "result": [
+          {
+            "legacy_shape": null,
+            "shape_detail": [
+              [
+                64,
+                64
+              ]
+            ],
+            "latency_base": 0.010390999726951122,
+            "latency": 0.008342999964952469,
+            "gbps_base": null,
+            "gbps": null,
+            "speedup": 1.2454752212156244,
+            "accuracy": null,
+            "tflops": 0.0004909504994853893,
+            "utilization": null,
+            "compared_speedup": null,
+            "error_msg": null
+          },
+          {
+            "legacy_shape": null,
+            "shape_detail": [
+              [
+                4096,
+                4096
+              ]
+            ],
+            "latency_base": 0.293720006942749,
+            "latency": 0.3851580023765564,
+            "gbps_base": null,
+            "gbps": null,
+            "speedup": 0.7625961427009079,
+            "accuracy": null,
+            "tflops": 0.04355930785931708,
+            "utilization": null,
+            "compared_speedup": null,
+            "error_msg": null
+          },
+          {
+            "legacy_shape": null,
+            "shape_detail": [
+              [
+                64,
+                512,
+                512
+              ]
+            ],
+            "latency_base": 0.29358500242233276,
+            "latency": 0.38496801257133484,
+            "gbps_base": null,
+            "gbps": null,
+            "speedup": 0.7626218096962829,
+            "accuracy": null,
+            "tflops": 0.043580805293248016,
+            "utilization": null,
+            "compared_speedup": null,
+            "error_msg": null
+          }
+        ]
+      }
+    ],
+    "result": "passed",
+    "test_case": "benchmark/test_celu.py::test_celu",
+    "reason": null
+  }
+}

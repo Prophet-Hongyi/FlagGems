@@ -1,0 +1,899 @@
+{
+  "addcdiv": {
+    "customized": false,
+    "accuracy": {
+      "total": 18,
+      "skipped": 0,
+      "failed": 0,
+      "passed": 18,
+      "details": {},
+      "status": "Passed",
+      "exit_code": 1,
+      "duration": 47.74254059791565,
+      "data_file": "addcdiv/accuracy_result.json"
+    },
+    "performance": {
+      "duration": 135.88550233840942,
+      "exit_code": 1,
+      "data_file": "addcdiv/performance_result.json",
+      "data": {},
+      "status": "Failed",
+      "reason": "Failed: No CUDA GPUs are available",
+      "test_case": "benchmark/test_addcdiv.py::test_addcdiv"
+    }
+  },
+  "atan": {
+    "customized": false,
+    "accuracy": {
+      "total": 18,
+      "skipped": 0,
+      "failed": 0,
+      "passed": 18,
+      "details": {},
+      "status": "Passed",
+      "exit_code": 1,
+      "duration": 46.2908992767334,
+      "data_file": "atan/accuracy_result.json"
+    },
+    "performance": {
+      "duration": 73.23886013031006,
+      "exit_code": 1,
+      "data_file": "atan/performance_result.json",
+      "data": {},
+      "status": "Failed",
+      "reason": "Failed: No CUDA GPUs are available",
+      "test_case": "benchmark/test_atan.py::test_atan"
+    }
+  },
+  "bitwise_and_scalar": {
+    "customized": false,
+    "accuracy": {
+      "total": 18,
+      "skipped": 0,
+      "failed": 0,
+      "passed": 18,
+      "details": {},
+      "status": "Passed",
+      "exit_code": 1,
+      "duration": 46.04415011405945,
+      "data_file": "bitwise_and_scalar/accuracy_result.json"
+    },
+    "performance": {
+      "duration": 45.193212032318115,
+      "exit_code": 1,
+      "data_file": "bitwise_and_scalar/performance_result.json",
+      "data": {},
+      "status": "Failed",
+      "reason": "Failed: No CUDA GPUs are available",
+      "test_case": "benchmark/test_bitwise_and.py::test_bitwise_and_scalar"
+    }
+  },
+  "bitwise_and_tensor_": {
+    "customized": false,
+    "accuracy": {
+      "total": 18,
+      "skipped": 0,
+      "failed": 0,
+      "passed": 18,
+      "details": {},
+      "status": "Passed",
+      "exit_code": 1,
+      "duration": 46.54532837867737,
+      "data_file": "bitwise_and_tensor_/accuracy_result.json"
+    },
+    "performance": {
+      "duration": 48.99831485748291,
+      "exit_code": 1,
+      "data_file": "bitwise_and_tensor_/performance_result.json",
+      "data": {},
+      "status": "Failed",
+      "reason": "Failed: No CUDA GPUs are available",
+      "test_case": "benchmark/test_bitwise_and.py::test_bitwise_and_inplace"
+    }
+  },
+  "bitwise_or_scalar_tensor": {
+    "customized": false,
+    "accuracy": {
+      "total": 18,
+      "skipped": 0,
+      "failed": 0,
+      "passed": 18,
+      "details": {},
+      "status": "Passed",
+      "exit_code": 1,
+      "duration": 44.93649220466614,
+      "data_file": "bitwise_or_scalar_tensor/accuracy_result.json"
+    },
+    "performance": {
+      "duration": 44.43888592720032,
+      "exit_code": 1,
+      "data_file": "bitwise_or_scalar_tensor/performance_result.json",
+      "data": {},
+      "status": "Failed",
+      "reason": "Failed: No CUDA GPUs are available",
+      "test_case": "benchmark/test_bitwise_or.py::test_bitwise_or_scalar_tensor"
+    }
+  },
+  "celu": {
+    "customized": false,
+    "accuracy": {
+      "total": 18,
+      "skipped": 0,
+      "failed": 0,
+      "passed": 18,
+      "details": {},
+      "status": "Passed",
+      "exit_code": 1,
+      "duration": 46.5421257019043,
+      "data_file": "celu/accuracy_result.json"
+    },
+    "performance": {
+      "duration": 71.33583116531372,
+      "exit_code": 1,
+      "data_file": "celu/performance_result.json",
+      "data": {},
+      "status": "Failed",
+      "reason": "Failed: No CUDA GPUs are available",
+      "test_case": "benchmark/test_celu.py::test_celu"
+    }
+  },
+  "clamp_": {
+    "customized": false,
+    "accuracy": {
+      "total": 864,
+      "skipped": 0,
+      "failed": 0,
+      "passed": 864,
+      "details": {},
+      "status": "Passed",
+      "exit_code": 1,
+      "duration": 94.51595115661621,
+      "data_file": "clamp_/accuracy_result.json"
+    },
+    "performance": {
+      "duration": 137.39253211021423,
+      "exit_code": 1,
+      "data_file": "clamp_/performance_result.json",
+      "data": {},
+      "status": "Failed",
+      "reason": "Failed: No CUDA GPUs are available",
+      "test_case": "benchmark/test_clamp.py::test_clamp_inplace"
+    }
+  },
+  "diagonal_backward": {
+    "customized": false,
+    "accuracy": {
+      "total": 36,
+      "skipped": 0,
+      "failed": 36,
+      "passed": 0,
+      "details": {
+        "failed": {
+          "IndexError: tuple index out of range": [
+            "tests/test_diagonal_backward.py::test_diagonal_backward:torch.bfloat16:-1:[1024,1024]:0:-1",
+            "tests/test_diagonal_backward.py::test_diagonal_backward:torch.float16:0:[1024,1024]:0:-1",
+            "tests/test_diagonal_backward.py::test_diagonal_backward:torch.float16:1:[16,128,64,1280]:0:-1",
+            "tests/test_diagonal_backward.py::test_diagonal_backward:torch.bfloat16:0:[1024,1024]:0:-1",
+            "tests/test_diagonal_backward.py::test_diagonal_backward:torch.bfloat16:-1:[16,128,64,1280]:0:-1",
+            "tests/test_diagonal_backward.py::test_diagonal_backward:torch.float16:1:[20,320,15]:2:-3",
+            "tests/test_diagonal_backward.py::test_diagonal_backward:torch.bfloat16:-1:[20,320,15]:2:-3",
+            "tests/test_diagonal_backward.py::test_diagonal_backward:torch.float32:0:[1024,1024]:0:-1",
+            "tests/test_diagonal_backward.py::test_diagonal_backward:torch.float32:1:[16,7,57,32,29]:-1:3",
+            "tests/test_diagonal_backward.py::test_diagonal_backward:torch.float32:0:[16,128,64,1280]:0:-1",
+            "tests/test_diagonal_backward.py::test_diagonal_backward:torch.float32:-1:[16,128,64,1280]:0:-1",
+            "tests/test_diagonal_backward.py::test_diagonal_backward:torch.float16:-1:[20,320,15]:2:-3",
+            "tests/test_diagonal_backward.py::test_diagonal_backward:torch.float16:1:[16,7,57,32,29]:-1:3",
+            "tests/test_diagonal_backward.py::test_diagonal_backward:torch.bfloat16:1:[1024,1024]:0:-1",
+            "tests/test_diagonal_backward.py::test_diagonal_backward:torch.float16:1:[1024,1024]:0:-1",
+            "tests/test_diagonal_backward.py::test_diagonal_backward:torch.float32:0:[20,320,15]:2:-3",
+            "tests/test_diagonal_backward.py::test_diagonal_backward:torch.float16:-1:[16,128,64,1280]:0:-1",
+            "tests/test_diagonal_backward.py::test_diagonal_backward:torch.bfloat16:0:[20,320,15]:2:-3",
+            "tests/test_diagonal_backward.py::test_diagonal_backward:torch.float16:-1:[1024,1024]:0:-1",
+            "tests/test_diagonal_backward.py::test_diagonal_backward:torch.float32:1:[20,320,15]:2:-3",
+            "tests/test_diagonal_backward.py::test_diagonal_backward:torch.float16:0:[16,128,64,1280]:0:-1",
+            "tests/test_diagonal_backward.py::test_diagonal_backward:torch.float32:1:[16,128,64,1280]:0:-1",
+            "tests/test_diagonal_backward.py::test_diagonal_backward:torch.float32:-1:[16,7,57,32,29]:-1:3",
+            "tests/test_diagonal_backward.py::test_diagonal_backward:torch.float16:-1:[16,7,57,32,29]:-1:3",
+            "tests/test_diagonal_backward.py::test_diagonal_backward:torch.bfloat16:0:[16,128,64,1280]:0:-1",
+            "tests/test_diagonal_backward.py::test_diagonal_backward:torch.float32:-1:[20,320,15]:2:-3",
+            "tests/test_diagonal_backward.py::test_diagonal_backward:torch.float32:-1:[1024,1024]:0:-1",
+            "tests/test_diagonal_backward.py::test_diagonal_backward:torch.bfloat16:0:[16,7,57,32,29]:-1:3",
+            "tests/test_diagonal_backward.py::test_diagonal_backward:torch.bfloat16:-1:[16,7,57,32,29]:-1:3",
+            "tests/test_diagonal_backward.py::test_diagonal_backward:torch.bfloat16:1:[16,7,57,32,29]:-1:3",
+            "tests/test_diagonal_backward.py::test_diagonal_backward:torch.bfloat16:1:[20,320,15]:2:-3",
+            "tests/test_diagonal_backward.py::test_diagonal_backward:torch.float32:0:[16,7,57,32,29]:-1:3",
+            "tests/test_diagonal_backward.py::test_diagonal_backward:torch.float16:0:[16,7,57,32,29]:-1:3",
+            "tests/test_diagonal_backward.py::test_diagonal_backward:torch.float32:1:[1024,1024]:0:-1",
+            "tests/test_diagonal_backward.py::test_diagonal_backward:torch.float16:0:[20,320,15]:2:-3",
+            "tests/test_diagonal_backward.py::test_diagonal_backward:torch.bfloat16:1:[16,128,64,1280]:0:-1"
+          ]
+        }
+      },
+      "status": "Failed",
+      "exit_code": 1,
+      "duration": 84.86602878570557,
+      "data_file": "diagonal_backward/accuracy_result.json"
+    },
+    "performance": {
+      "duration": 38.779781103134155,
+      "exit_code": 1,
+      "data_file": "diagonal_backward/performance_result.json",
+      "data": {},
+      "status": "Failed",
+      "reason": "Failed: No CUDA GPUs are available",
+      "test_case": "benchmark/test_diagonal.py::test_diagonal_backward"
+    }
+  },
+  "div_tensor": {
+    "customized": false,
+    "accuracy": {
+      "total": 144,
+      "skipped": 0,
+      "failed": 132,
+      "passed": 12,
+      "details": {
+        "failed": {
+          "IndexError: tuple index out of range": [
+            "tests/test_div.py::test_div_tensor_scalar:torch.float32:-111.999:[16,7,57,32,29]",
+            "tests/test_div.py::test_div_tensor_scalar:torch.float32:-0.999:[20,320,15]",
+            "tests/test_div.py::test_div_tensor_scalar:torch.bfloat16:0.001:[1024,1024]",
+            "tests/test_div.py::test_div_tensor_scalar:torch.float32:100.001:[1024,1024]",
+            "tests/test_div.py::test_div_tensor_scalar:torch.float32:-111.999:[1]",
+            "tests/test_div.py::test_div_tensor_scalar:torch.float16:-0.999:[16,7,57,32,29]",
+            "tests/test_div.py::test_div_tensor_scalar:torch.float16:-111.999:[20,320,15]",
+            "tests/test_div.py::test_div_tensor_int:torch.complex64:[]",
+            "tests/test_div.py::test_div_tensor_scalar:torch.float16:100.001:[16,128,64,60]",
+            "tests/test_div.py::test_div_tensor_scalar:torch.float32:0.001:[]",
+            "tests/test_div.py::test_div_complex_float_tensor:torch.complex32:[]",
+            "tests/test_div.py::test_div_tensor_scalar:torch.bfloat16:0.001:[16,128,64,60]",
+            "tests/test_div.py::test_div_tensor_scalar:torch.float32:0.001:[16,128,64,60]",
+            "tests/test_div.py::test_div_tensor_tensor:torch.float32:[1]",
+            "tests/test_div.py::test_div_tensor_scalar:torch.float32:100.001:[1]",
+            "tests/test_div.py::test_div_tensor_scalar:torch.float32:-0.999:[16,7,57,32,29]",
+            "tests/test_div.py::test_div_complex_float_tensor:torch.complex64:[1]",
+            "tests/test_div.py::test_div_tensor_scalar:torch.bfloat16:-111.999:[16,128,64,60]",
+            "tests/test_div.py::test_div_tensor_scalar:torch.float16:0.001:[16,128,64,60]",
+            "tests/test_div.py::test_div_tensor_scalar:torch.float16:-111.999:[1]",
+            "tests/test_div.py::test_div_tensor_scalar:torch.bfloat16:0.001:[16,7,57,32,29]",
+            "tests/test_div.py::test_div_tensor_scalar:torch.float16:100.001:[]",
+            "tests/test_div.py::test_div_tensor_scalar:torch.float32:100.001:[]",
+            "tests/test_div.py::test_div_tensor_scalar:torch.float32:-111.999:[20,320,15]",
+            "tests/test_div.py::test_div_tensor_scalar:torch.bfloat16:100.001:[16,128,64,60]",
+            "tests/test_div.py::test_div_tensor_scalar:torch.float16:100.001:[16,7,57,32,29]",
+            "tests/test_div.py::test_div_tensor_scalar:torch.float16:-111.999:[1024,1024]",
+            "tests/test_div.py::test_div_tensor_scalar:torch.bfloat16:100.001:[16,7,57,32,29]",
+            "tests/test_div.py::test_div_tensor_scalar:torch.float16:-0.999:[1024,1024]",
+            "tests/test_div.py::test_div_tensor_scalar:torch.float32:0.001:[1]",
+            "tests/test_div.py::test_div_tensor_scalar:torch.float16:0.001:[1024,1024]",
+            "tests/test_div.py::test_div_tensor_scalar:torch.float32:0.001:[20,320,15]",
+            "tests/test_div.py::test_div_tensor_scalar:torch.bfloat16:-0.999:[16,128,64,60]",
+            "tests/test_div.py::test_div_tensor_scalar:torch.float32:100.001:[16,7,57,32,29]",
+            "tests/test_true_divide.py::test_true_divide:torch.float16:[1]",
+            "tests/test_div.py::test_div_tensor_scalar:torch.float32:-111.999:[16,128,64,60]",
+            "tests/test_div.py::test_div_tensor_int:torch.complex64:[1]",
+            "tests/test_div.py::test_div_tensor_tensor:torch.float16:[1]",
+            "tests/test_div.py::test_div_tensor_tensor:torch.float32:[]",
+            "tests/test_div.py::test_div_complex_complex:torch.complex64:[]",
+            "tests/test_div.py::test_div_tensor_tensor:torch.float16:[]",
+            "tests/test_div.py::test_div_tensor_scalar:torch.float16:0.001:[]",
+            "tests/test_div.py::test_div_tensor_scalar:torch.float32:0.001:[1024,1024]",
+            "tests/test_div.py::test_div_complex_float_tensor:torch.complex64:[]",
+            "tests/test_div.py::test_div_tensor_scalar:torch.bfloat16:0.001:[20,320,15]",
+            "tests/test_div.py::test_div_tensor_scalar:torch.float32:0.001:[16,7,57,32,29]",
+            "tests/test_div.py::test_div_tensor_scalar:torch.float32:-0.999:[1]",
+            "tests/test_div.py::test_div_tensor_scalar:torch.float16:-0.999:[16,128,64,60]",
+            "tests/test_div.py::test_div_tensor_scalar:torch.float32:-0.999:[1024,1024]",
+            "tests/test_div.py::test_div_tensor_scalar:torch.float16:-111.999:[16,128,64,60]",
+            "tests/test_div.py::test_div_complex_complex:torch.complex64:[1]",
+            "tests/test_div.py::test_div_tensor_scalar:torch.float16:-111.999:[16,7,57,32,29]",
+            "tests/test_div.py::test_div_tensor_scalar:torch.float16:-111.999:[]",
+            "tests/test_div.py::test_div_tensor_scalar:torch.float32:-0.999:[]",
+            "tests/test_true_divide.py::test_true_divide:torch.float32:[1]",
+            "tests/test_div.py::test_div_tensor_scalar:torch.float16:100.001:[1024,1024]",
+            "tests/test_div.py::test_div_tensor_scalar:torch.float16:100.001:[20,320,15]",
+            "tests/test_div.py::test_div_tensor_scalar:torch.float16:-0.999:[]",
+            "tests/test_div.py::test_div_tensor_scalar:torch.float32:-111.999:[]",
+            "tests/test_div.py::test_div_tensor_scalar:torch.bfloat16:-0.999:[16,7,57,32,29]",
+            "tests/test_div.py::test_div_tensor_scalar:torch.float16:0.001:[20,320,15]",
+            "tests/test_div.py::test_div_tensor_scalar:torch.float16:-0.999:[20,320,15]",
+            "tests/test_div.py::test_div_complex_complex:torch.complex32:[]",
+            "tests/test_div.py::test_div_tensor_int:torch.complex32:[]",
+            "tests/test_true_divide.py::test_true_divide:torch.float32:[]",
+            "tests/test_div.py::test_div_tensor_scalar:torch.bfloat16:100.001:[20,320,15]",
+            "tests/test_div.py::test_div_complex_float_tensor:torch.complex32:[1]",
+            "tests/test_div.py::test_div_tensor_scalar:torch.float16:0.001:[16,7,57,32,29]",
+            "tests/test_div.py::test_div_tensor_scalar:torch.bfloat16:-111.999:[1024,1024]",
+            "tests/test_div.py::test_div_complex_complex:torch.complex32:[1]",
+            "tests/test_div.py::test_div_tensor_scalar:torch.bfloat16:-111.999:[20,320,15]",
+            "tests/test_true_divide.py::test_true_divide:torch.float16:[]",
+            "tests/test_div.py::test_div_tensor_scalar:torch.float32:100.001:[16,128,64,60]",
+            "tests/test_div.py::test_div_tensor_scalar:torch.bfloat16:100.001:[1024,1024]",
+            "tests/test_div.py::test_div_tensor_int:torch.complex32:[1]",
+            "tests/test_div.py::test_div_tensor_scalar:torch.bfloat16:-111.999:[16,7,57,32,29]",
+            "tests/test_div.py::test_div_tensor_scalar:torch.float16:0.001:[1]",
+            "tests/test_div.py::test_div_tensor_scalar:torch.float16:-0.999:[1]",
+            "tests/test_div.py::test_div_tensor_scalar:torch.float32:-111.999:[1024,1024]",
+            "tests/test_div.py::test_div_tensor_scalar:torch.bfloat16:-0.999:[20,320,15]",
+            "tests/test_div.py::test_div_tensor_scalar:torch.float32:-0.999:[16,128,64,60]",
+            "tests/test_div.py::test_div_tensor_scalar:torch.bfloat16:-0.999:[1024,1024]",
+            "tests/test_div.py::test_div_tensor_scalar:torch.float16:100.001:[1]",
+            "tests/test_div.py::test_div_tensor_scalar:torch.float32:100.001:[20,320,15]"
+          ],
+          "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.41551.140581202748608.f7899c470f404c699582f3cc19bf4c21.tmp'": [
+            "tests/test_div.py::test_div_tensor_tensor:torch.float16:[1024,1024]"
+          ],
+          "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.41551.140581202748608.3c23c6c70e774c169f301e27c109fb1b.tmp'": [
+            "tests/test_div.py::test_div_tensor_tensor:torch.float16:[20,320,15]"
+          ],
+          "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.41551.140581202748608.abdd2200bca843358bb556c07d7b4b52.tmp'": [
+            "tests/test_div.py::test_div_tensor_tensor:torch.float16:[16,128,64,60]"
+          ],
+          "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.41551.140581202748608.028e398887d34237ae29d4b9a4b9138f.tmp'": [
+            "tests/test_div.py::test_div_tensor_tensor:torch.float16:[16,7,57,32,29]"
+          ],
+          "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.41551.140581202748608.3bf6b551e4254b3aa76814e98c9a6148.tmp'": [
+            "tests/test_div.py::test_div_tensor_tensor:torch.float32:[1024,1024]"
+          ],
+          "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.41551.140581202748608.971fb11471bc461c9adf70e064d79db7.tmp'": [
+            "tests/test_div.py::test_div_tensor_tensor:torch.float32:[20,320,15]"
+          ],
+          "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.41551.140581202748608.ddd7bf406a7f47af815993634844ab5c.tmp'": [
+            "tests/test_div.py::test_div_tensor_tensor:torch.float32:[16,128,64,60]"
+          ],
+          "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.41551.140581202748608.436e460aeb6541a7abe09c18a3c610f9.tmp'": [
+            "tests/test_div.py::test_div_tensor_tensor:torch.float32:[16,7,57,32,29]"
+          ],
+          "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.41551.140581202748608.2fc43d42f3534bf8ad34cd6916c367c5.tmp'": [
+            "tests/test_div.py::test_div_tensor_tensor:torch.bfloat16:[1024,1024]"
+          ],
+          "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.41551.140581202748608.681aff765dff459eabc18db0967f24c9.tmp'": [
+            "tests/test_div.py::test_div_tensor_tensor:torch.bfloat16:[20,320,15]"
+          ],
+          "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.41551.140581202748608.64904bd9aebe46de9ee0a7d4b036d99c.tmp'": [
+            "tests/test_div.py::test_div_tensor_tensor:torch.bfloat16:[16,128,64,60]"
+          ],
+          "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.41551.140581202748608.422d2e17b7fd49c5990328b34336857f.tmp'": [
+            "tests/test_div.py::test_div_tensor_tensor:torch.bfloat16:[16,7,57,32,29]"
+          ],
+          "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.41551.140581202748608.789d062499ba4b85a01c41a3485442e8.tmp'": [
+            "tests/test_div.py::test_div_complex_complex:torch.complex32:[1024,1024]"
+          ],
+          "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.41551.140581202748608.06a2685bee8a423da9ec3df45ee6078b.tmp'": [
+            "tests/test_div.py::test_div_complex_complex:torch.complex32:[20,320,15]"
+          ],
+          "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.41551.140581202748608.af49064350754f4bbd6c4da91bdba46a.tmp'": [
+            "tests/test_div.py::test_div_complex_complex:torch.complex32:[16,128,64,60]"
+          ],
+          "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.41551.140581202748608.87aa8b791d6c4cf5a92a39c84b6d0d0a.tmp'": [
+            "tests/test_div.py::test_div_complex_complex:torch.complex32:[16,7,57,32,29]"
+          ],
+          "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.41551.140581202748608.635bf3ed71b94ae1b531428cf5aa23b9.tmp'": [
+            "tests/test_div.py::test_div_complex_complex:torch.complex64:[1024,1024]"
+          ],
+          "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.41551.140581202748608.97c00e0f577448faa50420232d4ec83e.tmp'": [
+            "tests/test_div.py::test_div_complex_complex:torch.complex64:[20,320,15]"
+          ],
+          "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.41551.140581202748608.ef122c6328524931af1cc1d3241977aa.tmp'": [
+            "tests/test_div.py::test_div_complex_complex:torch.complex64:[16,128,64,60]"
+          ],
+          "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.41551.140581202748608.f0adde7a03c04c38ab96e978f5f1c372.tmp'": [
+            "tests/test_div.py::test_div_complex_complex:torch.complex64:[16,7,57,32,29]"
+          ],
+          "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.41551.140581202748608.239f052e3ad54e168ba6280255049915.tmp'": [
+            "tests/test_div.py::test_div_complex_float_tensor:torch.complex32:[1024,1024]"
+          ],
+          "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.41551.140581202748608.c14c9e50cb82423b85ba62cfdd2f284a.tmp'": [
+            "tests/test_div.py::test_div_complex_float_tensor:torch.complex32:[20,320,15]"
+          ],
+          "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.41551.140581202748608.a61efed382204070a9e4fb6ef6c07795.tmp'": [
+            "tests/test_div.py::test_div_complex_float_tensor:torch.complex32:[16,128,64,60]"
+          ],
+          "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.41551.140581202748608.352be94e963c4dd9abc06932a9ad3dc4.tmp'": [
+            "tests/test_div.py::test_div_complex_float_tensor:torch.complex32:[16,7,57,32,29]"
+          ],
+          "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.41551.140581202748608.2ae0b36640824b2b930109cc5c19cfe3.tmp'": [
+            "tests/test_div.py::test_div_complex_float_tensor:torch.complex64:[1024,1024]"
+          ],
+          "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.41551.140581202748608.d2ed51d9ba504376b33aad605f9ecf58.tmp'": [
+            "tests/test_div.py::test_div_complex_float_tensor:torch.complex64:[20,320,15]"
+          ],
+          "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.41551.140581202748608.d37b3ef032ac469b90e4e64de95ad56a.tmp'": [
+            "tests/test_div.py::test_div_complex_float_tensor:torch.complex64:[16,128,64,60]"
+          ],
+          "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.41551.140581202748608.89e7adb0898b43428ebdc3595262018b.tmp'": [
+            "tests/test_div.py::test_div_complex_float_tensor:torch.complex64:[16,7,57,32,29]"
+          ],
+          "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.41551.140581202748608.bf3966e06cba47bcb67fa926ae3f839a.tmp'": [
+            "tests/test_div.py::test_div_tensor_int:torch.complex32:[1024,1024]"
+          ],
+          "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.41551.140581202748608.0a9469f90ee4482dbb6087c8ac02bcd1.tmp'": [
+            "tests/test_div.py::test_div_tensor_int:torch.complex32:[20,320,15]"
+          ],
+          "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.41551.140581202748608.17ae0a1fad144405b59511fec4fd3982.tmp'": [
+            "tests/test_div.py::test_div_tensor_int:torch.complex32:[16,128,64,60]"
+          ],
+          "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.41551.140581202748608.72c64bc71323467e9b4e2bbbab09af50.tmp'": [
+            "tests/test_div.py::test_div_tensor_int:torch.complex32:[16,7,57,32,29]"
+          ],
+          "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.41551.140581202748608.a22cf639076b46e1930b20f16f3406fb.tmp'": [
+            "tests/test_div.py::test_div_tensor_int:torch.complex64:[1024,1024]"
+          ],
+          "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.41551.140581202748608.cf1bb603672a4d6fb3eb5bfefd366575.tmp'": [
+            "tests/test_div.py::test_div_tensor_int:torch.complex64:[20,320,15]"
+          ],
+          "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.41551.140581202748608.a794ca3095c44f9799deeddb21bc7b43.tmp'": [
+            "tests/test_div.py::test_div_tensor_int:torch.complex64:[16,128,64,60]"
+          ],
+          "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.41551.140581202748608.7e205ab023024e02a9427d151aef5a9c.tmp'": [
+            "tests/test_div.py::test_div_tensor_int:torch.complex64:[16,7,57,32,29]"
+          ],
+          "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.41551.140581202748608.8cd2d54455b44c3282ed5c9fb1bc8fab.tmp'": [
+            "tests/test_true_divide.py::test_true_divide:torch.float16:[1024,1024]"
+          ],
+          "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.41551.140581202748608.5bc7d3ee1b384157a9fa25ae89628317.tmp'": [
+            "tests/test_true_divide.py::test_true_divide:torch.float16:[20,320,15]"
+          ],
+          "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.41551.140581202748608.2a69db28f43d432b8d8915ae5d43bfb5.tmp'": [
+            "tests/test_true_divide.py::test_true_divide:torch.float16:[16,128,64,60]"
+          ],
+          "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.41551.140581202748608.7386d3f20ab44e219dbf86c0e5975003.tmp'": [
+            "tests/test_true_divide.py::test_true_divide:torch.float16:[16,7,57,32,29]"
+          ],
+          "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.41551.140581202748608.f7f2fb1e611a4ba3ab794e7e5e9318ab.tmp'": [
+            "tests/test_true_divide.py::test_true_divide:torch.float32:[1024,1024]"
+          ],
+          "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.41551.140581202748608.d7e001a3e21047eba716967659dfa67f.tmp'": [
+            "tests/test_true_divide.py::test_true_divide:torch.float32:[20,320,15]"
+          ],
+          "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.41551.140581202748608.8f5ba04581ea42bfa498c0dbfc75217d.tmp'": [
+            "tests/test_true_divide.py::test_true_divide:torch.float32:[16,128,64,60]"
+          ],
+          "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.41551.140581202748608.87bf5d35748748d4b981f8cf66cbb5ec.tmp'": [
+            "tests/test_true_divide.py::test_true_divide:torch.float32:[16,7,57,32,29]"
+          ],
+          "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.41551.140581202748608.08b0c60417a346f5971f8cde5b71ca8f.tmp'": [
+            "tests/test_true_divide.py::test_true_divide:torch.bfloat16:[1024,1024]"
+          ],
+          "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.41551.140581202748608.e3173a8f6d0f4e62882d2ae4a3c93050.tmp'": [
+            "tests/test_true_divide.py::test_true_divide:torch.bfloat16:[20,320,15]"
+          ],
+          "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.41551.140581202748608.ab3b90818755473dba40a11c51ddde16.tmp'": [
+            "tests/test_true_divide.py::test_true_divide:torch.bfloat16:[16,128,64,60]"
+          ],
+          "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.41551.140581202748608.a0c460b3c7e84c188b821c858c7cc988.tmp'": [
+            "tests/test_true_divide.py::test_true_divide:torch.bfloat16:[16,7,57,32,29]"
+          ]
+        }
+      },
+      "status": "Failed",
+      "exit_code": 1,
+      "duration": 76.48812055587769,
+      "data_file": "div_tensor/accuracy_result.json"
+    },
+    "performance": {
+      "duration": 169.34942746162415,
+      "exit_code": 1,
+      "data_file": "div_tensor/performance_result.json",
+      "data": {},
+      "status": "Failed",
+      "reason": "Failed: No CUDA GPUs are available",
+      "test_case": "benchmark/test_true_divide.py::test_true_divide"
+    }
+  },
+  "eq": {
+    "customized": false,
+    "accuracy": {
+      "total": 18,
+      "skipped": 0,
+      "failed": 0,
+      "passed": 18,
+      "details": {},
+      "status": "Passed",
+      "exit_code": 1,
+      "duration": 49.493903398513794,
+      "data_file": "eq/accuracy_result.json"
+    },
+    "performance": {
+      "duration": 105.4821515083313,
+      "exit_code": 1,
+      "data_file": "eq/performance_result.json",
+      "data": {},
+      "status": "Failed",
+      "reason": "Failed: No CUDA GPUs are available",
+      "test_case": "benchmark/test_eq.py::test_eq"
+    }
+  },
+  "flip": {
+    "customized": false,
+    "accuracy": {
+      "total": 360,
+      "skipped": 0,
+      "failed": 0,
+      "passed": 360,
+      "details": {},
+      "status": "Passed",
+      "exit_code": 1,
+      "duration": 271.7040741443634,
+      "data_file": "flip/accuracy_result.json"
+    },
+    "performance": {
+      "duration": 74.63748002052307,
+      "exit_code": 1,
+      "data_file": "flip/performance_result.json",
+      "data": {},
+      "status": "Failed",
+      "reason": "Failed: No CUDA GPUs are available",
+      "test_case": "benchmark/test_flip.py::test_flip"
+    }
+  },
+  "index_add_": {
+    "customized": false,
+    "accuracy": {
+      "total": 12,
+      "skipped": 0,
+      "failed": 0,
+      "passed": 12,
+      "details": {},
+      "status": "Passed",
+      "exit_code": 1,
+      "duration": 50.650360345840454,
+      "data_file": "index_add_/accuracy_result.json"
+    },
+    "performance": {
+      "duration": 40.63198900222778,
+      "exit_code": 1,
+      "data_file": "index_add_/performance_result.json",
+      "data": {},
+      "status": "Failed",
+      "reason": "Failed: No CUDA GPUs are available",
+      "test_case": "benchmark/test_index_add.py::test_index_add_"
+    }
+  },
+  "isinf": {
+    "customized": false,
+    "accuracy": {
+      "total": 18,
+      "skipped": 0,
+      "failed": 0,
+      "passed": 18,
+      "details": {},
+      "status": "Passed",
+      "exit_code": 1,
+      "duration": 47.235748052597046,
+      "data_file": "isinf/accuracy_result.json"
+    },
+    "performance": {
+      "duration": 73.5324354171753,
+      "exit_code": 1,
+      "data_file": "isinf/performance_result.json",
+      "data": {},
+      "status": "Failed",
+      "reason": "Failed: No CUDA GPUs are available",
+      "test_case": "benchmark/test_isinf.py::test_isinf"
+    }
+  },
+  "le": {
+    "customized": false,
+    "accuracy": {
+      "total": 18,
+      "skipped": 0,
+      "failed": 0,
+      "passed": 18,
+      "details": {},
+      "status": "Passed",
+      "exit_code": 1,
+      "duration": 48.20122003555298,
+      "data_file": "le/accuracy_result.json"
+    },
+    "performance": {
+      "duration": 107.34630155563354,
+      "exit_code": 1,
+      "data_file": "le/performance_result.json",
+      "data": {},
+      "status": "Failed",
+      "reason": "Failed: No CUDA GPUs are available",
+      "test_case": "benchmark/test_le.py::test_le"
+    }
+  },
+  "logical_or": {
+    "customized": false,
+    "accuracy": {
+      "total": 48,
+      "skipped": 0,
+      "failed": 0,
+      "passed": 48,
+      "details": {},
+      "status": "Passed",
+      "exit_code": 1,
+      "duration": 49.49832224845886,
+      "data_file": "logical_or/accuracy_result.json"
+    },
+    "performance": {
+      "duration": 50.99716782569885,
+      "exit_code": 1,
+      "data_file": "logical_or/performance_result.json",
+      "data": {},
+      "status": "Failed",
+      "reason": "Failed: No CUDA GPUs are available",
+      "test_case": "benchmark/test_logical_or.py::test_logical_or"
+    }
+  },
+  "masked_fill": {
+    "customized": true,
+    "accuracy": {
+      "total": 162,
+      "skipped": 0,
+      "failed": 135,
+      "passed": 27,
+      "details": {
+        "failed": {
+          "IndexError: tuple index out of range": [
+            "tests/test_masked_fill.py::test_masked_fill:tensor:0.5:torch.float32:[1]",
+            "tests/test_masked_fill.py::test_masked_fill:scalar_tensor:0.3:torch.float32:[1024,1024]",
+            "tests/test_masked_fill.py::test_masked_fill:tensor:0.5:torch.float32:[16,128,64,60]",
+            "tests/test_masked_fill.py::test_masked_fill:tensor:0.7:torch.float16:[20,320,15]",
+            "tests/test_masked_fill.py::test_masked_fill:scalar_tensor:0.3:torch.float16:[1024,1024]",
+            "tests/test_masked_fill.py::test_masked_fill:scalar_tensor:0.5:torch.float16:[1024,1024]",
+            "tests/test_masked_fill.py::test_masked_fill:scalar_tensor:0.5:torch.bfloat16:[16,7,57,32,29]",
+            "tests/test_masked_fill.py::test_masked_fill:scalar:0.5:torch.float32:[16,7,57,32,29]",
+            "tests/test_masked_fill.py::test_masked_fill:scalar:0.7:torch.float32:[1]",
+            "tests/test_masked_fill.py::test_masked_fill:scalar:0.3:torch.float32:[16,7,57,32,29]",
+            "tests/test_masked_fill.py::test_masked_fill:scalar:0.3:torch.bfloat16:[16,128,64,60]",
+            "tests/test_masked_fill.py::test_masked_fill:scalar_tensor:0.3:torch.float16:[20,320,15]",
+            "tests/test_masked_fill.py::test_masked_fill:scalar:0.5:torch.float32:[16,128,64,60]",
+            "tests/test_masked_fill.py::test_masked_fill:tensor:0.5:torch.float32:[20,320,15]",
+            "tests/test_masked_fill.py::test_masked_fill:tensor:0.5:torch.bfloat16:[16,7,57,32,29]",
+            "tests/test_masked_fill.py::test_masked_fill:scalar:0.3:torch.bfloat16:[1024,1024]",
+            "tests/test_masked_fill.py::test_masked_fill:scalar_tensor:0.5:torch.bfloat16:[1]",
+            "tests/test_masked_fill.py::test_masked_fill:scalar_tensor:0.7:torch.bfloat16:[16,128,64,60]",
+            "tests/test_masked_fill.py::test_masked_fill:scalar:0.5:torch.bfloat16:[1]",
+            "tests/test_masked_fill.py::test_masked_fill:scalar_tensor:0.3:torch.float32:[1]",
+            "tests/test_masked_fill.py::test_masked_fill:scalar_tensor:0.5:torch.float16:[16,128,64,60]",
+            "tests/test_masked_fill.py::test_masked_fill:tensor:0.7:torch.float16:[1]",
+            "tests/test_masked_fill.py::test_masked_fill:scalar_tensor:0.3:torch.bfloat16:[1]",
+            "tests/test_masked_fill.py::test_masked_fill:scalar:0.5:torch.bfloat16:[16,7,57,32,29]",
+            "tests/test_masked_fill.py::test_masked_fill:scalar:0.3:torch.float16:[16,128,64,60]",
+            "tests/test_masked_fill.py::test_masked_fill:tensor:0.3:torch.float16:[16,128,64,60]",
+            "tests/test_masked_fill.py::test_masked_fill:tensor:0.5:torch.float16:[20,320,15]",
+            "tests/test_masked_fill.py::test_masked_fill:tensor:0.5:torch.float16:[16,7,57,32,29]",
+            "tests/test_masked_fill.py::test_masked_fill:scalar:0.7:torch.bfloat16:[16,128,64,60]",
+            "tests/test_masked_fill.py::test_masked_fill:tensor:0.5:torch.bfloat16:[1]",
+            "tests/test_masked_fill.py::test_masked_fill:scalar:0.7:torch.float16:[1]",
+            "tests/test_masked_fill.py::test_masked_fill:scalar_tensor:0.3:torch.bfloat16:[16,7,57,32,29]",
+            "tests/test_masked_fill.py::test_masked_fill:scalar_tensor:0.7:torch.bfloat16:[1]",
+            "tests/test_masked_fill.py::test_masked_fill:scalar:0.3:torch.bfloat16:[20,320,15]",
+            "tests/test_masked_fill.py::test_masked_fill:tensor:0.5:torch.float32:[16,7,57,32,29]",
+            "tests/test_masked_fill.py::test_masked_fill:scalar:0.5:torch.float16:[1024,1024]",
+            "tests/test_masked_fill.py::test_masked_fill:scalar_tensor:0.7:torch.float32:[20,320,15]",
+            "tests/test_masked_fill.py::test_masked_fill:scalar:0.5:torch.float32:[1]",
+            "tests/test_masked_fill.py::test_masked_fill:scalar_tensor:0.7:torch.float32:[1]",
+            "tests/test_masked_fill.py::test_masked_fill:scalar_tensor:0.3:torch.float32:[16,128,64,60]",
+            "tests/test_masked_fill.py::test_masked_fill:scalar:0.3:torch.float32:[20,320,15]",
+            "tests/test_masked_fill.py::test_masked_fill:scalar:0.5:torch.bfloat16:[1024,1024]",
+            "tests/test_masked_fill.py::test_masked_fill:scalar_tensor:0.3:torch.float16:[16,128,64,60]",
+            "tests/test_masked_fill.py::test_masked_fill:tensor:0.5:torch.bfloat16:[20,320,15]",
+            "tests/test_masked_fill.py::test_masked_fill:scalar:0.3:torch.bfloat16:[1]",
+            "tests/test_masked_fill.py::test_masked_fill:scalar_tensor:0.7:torch.bfloat16:[1024,1024]",
+            "tests/test_masked_fill.py::test_masked_fill:scalar:0.7:torch.bfloat16:[1]",
+            "tests/test_masked_fill.py::test_masked_fill:scalar_tensor:0.3:torch.bfloat16:[20,320,15]",
+            "tests/test_masked_fill.py::test_masked_fill:tensor:0.3:torch.float32:[1]",
+            "tests/test_masked_fill.py::test_masked_fill:scalar_tensor:0.5:torch.bfloat16:[20,320,15]",
+            "tests/test_masked_fill.py::test_masked_fill:scalar:0.5:torch.float16:[20,320,15]",
+            "tests/test_masked_fill.py::test_masked_fill:scalar_tensor:0.5:torch.bfloat16:[1024,1024]",
+            "tests/test_masked_fill.py::test_masked_fill:scalar_tensor:0.5:torch.float32:[20,320,15]",
+            "tests/test_masked_fill.py::test_masked_fill:scalar_tensor:0.5:torch.float16:[20,320,15]",
+            "tests/test_masked_fill.py::test_masked_fill:tensor:0.3:torch.float16:[1024,1024]",
+            "tests/test_masked_fill.py::test_masked_fill:scalar_tensor:0.3:torch.float32:[20,320,15]",
+            "tests/test_masked_fill.py::test_masked_fill:scalar:0.7:torch.float16:[16,7,57,32,29]",
+            "tests/test_masked_fill.py::test_masked_fill:scalar:0.5:torch.float32:[1024,1024]",
+            "tests/test_masked_fill.py::test_masked_fill:scalar_tensor:0.7:torch.float32:[1024,1024]",
+            "tests/test_masked_fill.py::test_masked_fill:scalar:0.3:torch.float16:[1024,1024]",
+            "tests/test_masked_fill.py::test_masked_fill:scalar:0.5:torch.float32:[20,320,15]",
+            "tests/test_masked_fill.py::test_masked_fill:scalar:0.3:torch.float32:[1]",
+            "tests/test_masked_fill.py::test_masked_fill:tensor:0.5:torch.float32:[1024,1024]",
+            "tests/test_masked_fill.py::test_masked_fill:scalar_tensor:0.3:torch.float32:[16,7,57,32,29]",
+            "tests/test_masked_fill.py::test_masked_fill:scalar:0.3:torch.float16:[20,320,15]",
+            "tests/test_masked_fill.py::test_masked_fill:scalar_tensor:0.7:torch.float16:[16,7,57,32,29]",
+            "tests/test_masked_fill.py::test_masked_fill:scalar_tensor:0.7:torch.bfloat16:[16,7,57,32,29]",
+            "tests/test_masked_fill.py::test_masked_fill:scalar:0.3:torch.bfloat16:[16,7,57,32,29]",
+            "tests/test_masked_fill.py::test_masked_fill:tensor:0.7:torch.float32:[1]",
+            "tests/test_masked_fill.py::test_masked_fill:tensor:0.3:torch.float16:[20,320,15]",
+            "tests/test_masked_fill.py::test_masked_fill:tensor:0.3:torch.float16:[16,7,57,32,29]",
+            "tests/test_masked_fill.py::test_masked_fill:scalar:0.3:torch.float16:[16,7,57,32,29]",
+            "tests/test_masked_fill.py::test_masked_fill:scalar:0.3:torch.float32:[1024,1024]",
+            "tests/test_masked_fill.py::test_masked_fill:scalar_tensor:0.3:torch.bfloat16:[1024,1024]",
+            "tests/test_masked_fill.py::test_masked_fill:tensor:0.3:torch.float32:[16,7,57,32,29]",
+            "tests/test_masked_fill.py::test_masked_fill:tensor:0.3:torch.float16:[1]",
+            "tests/test_masked_fill.py::test_masked_fill:scalar_tensor:0.3:torch.float16:[1]",
+            "tests/test_masked_fill.py::test_masked_fill:tensor:0.7:torch.bfloat16:[1]",
+            "tests/test_masked_fill.py::test_masked_fill:scalar_tensor:0.7:torch.float16:[1]",
+            "tests/test_masked_fill.py::test_masked_fill:tensor:0.3:torch.bfloat16:[20,320,15]",
+            "tests/test_masked_fill.py::test_masked_fill:tensor:0.7:torch.float16:[16,128,64,60]",
+            "tests/test_masked_fill.py::test_masked_fill:tensor:0.7:torch.bfloat16:[1024,1024]",
+            "tests/test_masked_fill.py::test_masked_fill:tensor:0.3:torch.bfloat16:[1024,1024]",
+            "tests/test_masked_fill.py::test_masked_fill:tensor:0.3:torch.bfloat16:[16,7,57,32,29]",
+            "tests/test_masked_fill.py::test_masked_fill:tensor:0.3:torch.bfloat16:[16,128,64,60]",
+            "tests/test_masked_fill.py::test_masked_fill:scalar:0.7:torch.float16:[20,320,15]",
+            "tests/test_masked_fill.py::test_masked_fill:tensor:0.3:torch.float32:[16,128,64,60]",
+            "tests/test_masked_fill.py::test_masked_fill:scalar_tensor:0.7:torch.float16:[1024,1024]",
+            "tests/test_masked_fill.py::test_masked_fill:scalar:0.7:torch.float32:[1024,1024]",
+            "tests/test_masked_fill.py::test_masked_fill:scalar_tensor:0.5:torch.float32:[16,128,64,60]",
+            "tests/test_masked_fill.py::test_masked_fill:scalar:0.5:torch.bfloat16:[20,320,15]",
+            "tests/test_masked_fill.py::test_masked_fill:scalar:0.5:torch.float16:[1]",
+            "tests/test_masked_fill.py::test_masked_fill:tensor:0.7:torch.float16:[16,7,57,32,29]",
+            "tests/test_masked_fill.py::test_masked_fill:tensor:0.7:torch.bfloat16:[20,320,15]",
+            "tests/test_masked_fill.py::test_masked_fill:scalar:0.7:torch.float32:[20,320,15]",
+            "tests/test_masked_fill.py::test_masked_fill:scalar:0.5:torch.bfloat16:[16,128,64,60]",
+            "tests/test_masked_fill.py::test_masked_fill:tensor:0.5:torch.float16:[16,128,64,60]",
+            "tests/test_masked_fill.py::test_masked_fill:scalar:0.7:torch.float16:[16,128,64,60]",
+            "tests/test_masked_fill.py::test_masked_fill:scalar_tensor:0.3:torch.float16:[16,7,57,32,29]",
+            "tests/test_masked_fill.py::test_masked_fill:scalar_tensor:0.7:torch.float16:[16,128,64,60]",
+            "tests/test_masked_fill.py::test_masked_fill:tensor:0.3:torch.float32:[20,320,15]",
+            "tests/test_masked_fill.py::test_masked_fill:tensor:0.7:torch.float32:[16,7,57,32,29]",
+            "tests/test_masked_fill.py::test_masked_fill:scalar:0.7:torch.float32:[16,128,64,60]",
+            "tests/test_masked_fill.py::test_masked_fill:tensor:0.7:torch.float16:[1024,1024]",
+            "tests/test_masked_fill.py::test_masked_fill:tensor:0.5:torch.bfloat16:[16,128,64,60]",
+            "tests/test_masked_fill.py::test_masked_fill:scalar_tensor:0.5:torch.float32:[1]",
+            "tests/test_masked_fill.py::test_masked_fill:tensor:0.7:torch.float32:[1024,1024]",
+            "tests/test_masked_fill.py::test_masked_fill:tensor:0.5:torch.float16:[1]",
+            "tests/test_masked_fill.py::test_masked_fill:scalar:0.7:torch.float16:[1024,1024]",
+            "tests/test_masked_fill.py::test_masked_fill:scalar:0.3:torch.float32:[16,128,64,60]",
+            "tests/test_masked_fill.py::test_masked_fill:scalar_tensor:0.5:torch.float16:[1]",
+            "tests/test_masked_fill.py::test_masked_fill:scalar:0.7:torch.bfloat16:[16,7,57,32,29]",
+            "tests/test_masked_fill.py::test_masked_fill:tensor:0.5:torch.bfloat16:[1024,1024]",
+            "tests/test_masked_fill.py::test_masked_fill:scalar_tensor:0.7:torch.bfloat16:[20,320,15]",
+            "tests/test_masked_fill.py::test_masked_fill:tensor:0.7:torch.float32:[20,320,15]",
+            "tests/test_masked_fill.py::test_masked_fill:tensor:0.3:torch.bfloat16:[1]",
+            "tests/test_masked_fill.py::test_masked_fill:scalar:0.7:torch.float32:[16,7,57,32,29]",
+            "tests/test_masked_fill.py::test_masked_fill:tensor:0.7:torch.float32:[16,128,64,60]",
+            "tests/test_masked_fill.py::test_masked_fill:scalar_tensor:0.5:torch.float32:[1024,1024]",
+            "tests/test_masked_fill.py::test_masked_fill:scalar_tensor:0.3:torch.bfloat16:[16,128,64,60]",
+            "tests/test_masked_fill.py::test_masked_fill:scalar:0.5:torch.float16:[16,7,57,32,29]",
+            "tests/test_masked_fill.py::test_masked_fill:tensor:0.3:torch.float32:[1024,1024]",
+            "tests/test_masked_fill.py::test_masked_fill:scalar:0.7:torch.bfloat16:[20,320,15]",
+            "tests/test_masked_fill.py::test_masked_fill:scalar_tensor:0.5:torch.bfloat16:[16,128,64,60]",
+            "tests/test_masked_fill.py::test_masked_fill:scalar:0.5:torch.float16:[16,128,64,60]",
+            "tests/test_masked_fill.py::test_masked_fill:scalar_tensor:0.7:torch.float32:[16,7,57,32,29]",
+            "tests/test_masked_fill.py::test_masked_fill:scalar:0.3:torch.float16:[1]",
+            "tests/test_masked_fill.py::test_masked_fill:scalar_tensor:0.5:torch.float32:[16,7,57,32,29]",
+            "tests/test_masked_fill.py::test_masked_fill:tensor:0.7:torch.bfloat16:[16,7,57,32,29]",
+            "tests/test_masked_fill.py::test_masked_fill:scalar_tensor:0.5:torch.float16:[16,7,57,32,29]",
+            "tests/test_masked_fill.py::test_masked_fill:scalar_tensor:0.7:torch.float32:[16,128,64,60]",
+            "tests/test_masked_fill.py::test_masked_fill:tensor:0.5:torch.float16:[1024,1024]",
+            "tests/test_masked_fill.py::test_masked_fill:tensor:0.7:torch.bfloat16:[16,128,64,60]",
+            "tests/test_masked_fill.py::test_masked_fill:scalar_tensor:0.7:torch.float16:[20,320,15]",
+            "tests/test_masked_fill.py::test_masked_fill:scalar:0.7:torch.bfloat16:[1024,1024]"
+          ]
+        }
+      },
+      "status": "Failed",
+      "exit_code": 1,
+      "duration": 77.13477945327759,
+      "data_file": "masked_fill/accuracy_result.json"
+    },
+    "performance": {
+      "duration": 105.28751826286316,
+      "exit_code": 1,
+      "data_file": "masked_fill/performance_result.json",
+      "data": {},
+      "status": "Failed",
+      "reason": "Failed: No CUDA GPUs are available",
+      "test_case": "benchmark/test_masked_fill.py::test_masked_fill"
+    }
+  },
+  "polar": {
+    "customized": false,
+    "accuracy": {
+      "total": 12,
+      "skipped": 0,
+      "failed": 0,
+      "passed": 12,
+      "details": {},
+      "status": "Passed",
+      "exit_code": 1,
+      "duration": 47.34375762939453,
+      "data_file": "polar/accuracy_result.json"
+    },
+    "performance": {
+      "duration": 54.009209632873535,
+      "exit_code": 1,
+      "data_file": "polar/performance_result.json",
+      "data": {},
+      "status": "Failed",
+      "reason": "Failed: No CUDA GPUs are available",
+      "test_case": "benchmark/test_polar.py::test_polar"
+    }
+  },
+  "resolve_neg": {
+    "customized": false,
+    "accuracy": {
+      "total": 5,
+      "skipped": 0,
+      "failed": 0,
+      "passed": 5,
+      "details": {},
+      "status": "Passed",
+      "exit_code": 1,
+      "duration": 52.098881483078,
+      "data_file": "resolve_neg/accuracy_result.json"
+    },
+    "performance": {
+      "duration": 41.78601026535034,
+      "exit_code": 1,
+      "data_file": "resolve_neg/performance_result.json",
+      "data": {},
+      "status": "Failed",
+      "reason": "Failed: No CUDA GPUs are available",
+      "test_case": "benchmark/test_resolve_neg.py::test_resolve_neg"
+    }
+  },
+  "stack": {
+    "customized": false,
+    "accuracy": {
+      "total": 60,
+      "skipped": 0,
+      "failed": 0,
+      "passed": 60,
+      "details": {},
+      "status": "Passed",
+      "exit_code": 1,
+      "duration": 45.78784775733948,
+      "data_file": "stack/accuracy_result.json"
+    },
+    "performance": {
+      "duration": 136.84544968605042,
+      "exit_code": 1,
+      "data_file": "stack/performance_result.json",
+      "data": {},
+      "status": "Failed",
+      "reason": "Failed: No CUDA GPUs are available",
+      "test_case": "benchmark/test_stack.py::test_stack"
+    }
+  },
+  "weight_norm": {
+    "customized": false,
+    "accuracy": {
+      "total": 18,
+      "skipped": 0,
+      "failed": 18,
+      "passed": 0,
+      "details": {
+        "failed": {
+          "IndexError: tuple index out of range": [
+            "tests/test_weight_norm.py::test_weight_norm:torch.bfloat16:0:[4096,256]",
+            "tests/test_weight_norm.py::test_weight_norm:torch.bfloat16:0:[4,256,3]",
+            "tests/test_weight_norm.py::test_weight_norm:torch.bfloat16:-1:[4,256,3]",
+            "tests/test_weight_norm.py::test_weight_norm:torch.float32:0:[4096,256]",
+            "tests/test_weight_norm.py::test_weight_norm:torch.float32:0:[4,256,3]",
+            "tests/test_weight_norm.py::test_weight_norm:torch.float32:-1:[4096,256]",
+            "tests/test_weight_norm.py::test_weight_norm:torch.float16:0:[4096,256]",
+            "tests/test_weight_norm.py::test_weight_norm:torch.float16:-1:[1,2]",
+            "tests/test_weight_norm.py::test_weight_norm:torch.bfloat16:0:[1,2]",
+            "tests/test_weight_norm.py::test_weight_norm:torch.bfloat16:-1:[4096,256]",
+            "tests/test_weight_norm.py::test_weight_norm:torch.bfloat16:-1:[1,2]",
+            "tests/test_weight_norm.py::test_weight_norm:torch.float32:-1:[1,2]",
+            "tests/test_weight_norm.py::test_weight_norm:torch.float16:0:[4,256,3]",
+            "tests/test_weight_norm.py::test_weight_norm:torch.float16:-1:[4096,256]",
+            "tests/test_weight_norm.py::test_weight_norm:torch.float32:-1:[4,256,3]",
+            "tests/test_weight_norm.py::test_weight_norm:torch.float32:0:[1,2]",
+            "tests/test_weight_norm.py::test_weight_norm:torch.float16:0:[1,2]",
+            "tests/test_weight_norm.py::test_weight_norm:torch.float16:-1:[4,256,3]"
+          ]
+        }
+      },
+      "status": "Failed",
+      "exit_code": 1,
+      "duration": 50.089693546295166,
+      "data_file": "weight_norm/accuracy_result.json"
+    },
+    "performance": {
+      "duration": 43.38667440414429,
+      "exit_code": 1,
+      "data_file": "weight_norm/performance_result.json",
+      "data": {},
+      "status": "Failed",
+      "reason": "Failed: No CUDA GPUs are available",
+      "test_case": "benchmark/test_weight_norm.py::test_weight_norm_dim_last"
+    }
+  }
+}

@@ -28,12 +28,32 @@ _FALLBACK_KEYSET = torch._C.DispatchKeySet(
     torch._C.DispatchKey.CompositeExplicitAutograd
 )
 
+_VENDOR_CAST_PAIRS = {
+    (torch.float16, torch.bfloat16),
+    (torch.bfloat16, torch.float16),
+    (torch.int32, torch.float16),
+    (torch.int32, torch.bfloat16),
+}
+
+copy_config = CodeGenConfig(
+    512,
+    (65536, 65536, 65536),
+    32,
+    True,
+    prefer_1d_tile=True,
+    # Large int32 -> fp16 tiles abort the current XPU LLVM lowering.
+    # Limiting each cluster buffer to 512 bytes caps that specialization at 8K
+    # lanes while retaining enough parallel CTAs for bandwidth-bound copies.
+    buffer_size_limit=512,
+)
+
 
 @pointwise_dynamic(
     is_tensor=[
         True,
     ],
     promotion_methods=[(0, "DEFAULT")],
+    config=copy_config,
 )
 @triton.jit
 def _to_copy_func(x):
@@ -47,6 +67,7 @@ close_interleave_config = CodeGenConfig(
     True,
     prefer_1d_tile=True,
     isCloseInterleave=True,
+    buffer_size_limit=512,
 )
 
 
@@ -88,8 +109,39 @@ def _allocate_preserve_format(x: torch.Tensor, empty_kwargs: dict) -> torch.Tens
     """Recreate tensor storage while honoring preserve_format semantics."""
     if torch.ops.aten.is_non_overlapping_and_dense(x):
         return torch.empty_strided(x.size(), x.stride(), **empty_kwargs)
-    # Fall back to PyTorch's best-effort layout suggestion when stride replication is unsafe.
-    return torch.empty_like(x, memory_format=torch.preserve_format, **empty_kwargs)
+
+    # PyTorch only preserves the exact strides of non-overlapping dense inputs.
+    # A non-dense view (for example a stepped transpose) is compacted in the
+    # logical, contiguous dimension order rather than in the input's physical
+    # dimension order.
+    return torch.empty_like(x, memory_format=torch.contiguous_format, **empty_kwargs)
+
+
+def _vendor_to_copy_out(
+    x: torch.Tensor,
+    target_dtype: torch.dtype,
+    target_device: torch.device,
+    non_blocking: bool,
+    memory_format: torch.memory_format,
+) -> torch.Tensor:
+    empty_kwargs = {"dtype": target_dtype, "device": target_device}
+    if memory_format is torch.preserve_format:
+        out = _allocate_preserve_format(x, empty_kwargs)
+    else:
+        out = torch.empty_like(x, memory_format=memory_format, **empty_kwargs)
+
+    # ``_to_copy.out`` is CompositeExplicitAutograd and decomposes through
+    # ``_to_copy.default`` before writing its result.  Calling it while the
+    # default overload is replaced by FlagGems therefore recurses back into
+    # this function.  Redispatch copy_ at the composite key instead: this skips
+    # the active FlagGems CUDA registration and reaches XDNN's dtype-converting
+    # copy kernel directly.
+    return torch.ops.aten.copy_.default.redispatch(
+        _FALLBACK_KEYSET,
+        out,
+        x,
+        non_blocking,
+    )
 
 
 # func: _to_copy(Tensor self, *, ScalarType? dtype=None, Layout? layout=None, Device? device=None,
@@ -104,11 +156,6 @@ def to_copy(
     non_blocking=False,
     memory_format=None,
 ):
-    if x.dtype == torch.bfloat16:
-        to_dtype_fn = _to_copy_func_close_interleave
-    else:
-        to_dtype_fn = _to_copy_func
-
     # We only implement the dense strided kernel today; all other layouts fall back to PyTorch.
     if (layout is not None and layout != torch.strided) or x.layout != torch.strided:
         raise NotImplementedError(
@@ -126,6 +173,13 @@ def to_copy(
     target_dtype = _resolve_dtype(x, dtype)
     target_device = _resolve_device(x, device)
     target_memory_format = _normalize_memory_format(memory_format)
+    # The XPU interleave pass corrupts either side of a BF16 conversion unless
+    # explicitly disabled.  This applies when BF16 is the destination as well
+    # as when it is the source (for example int16 -> bfloat16).
+    if x.dtype == torch.bfloat16 or target_dtype == torch.bfloat16:
+        to_dtype_fn = _to_copy_func_close_interleave
+    else:
+        to_dtype_fn = _to_copy_func
 
     # Triton on kunlunxin does not support complex dtypes; fall back to PyTorch.
     if x.dtype.is_complex or target_dtype.is_complex:
@@ -155,6 +209,30 @@ def to_copy(
             memory_format=target_memory_format,
         )
 
+    # These supported XDNN casts are either substantially faster than a
+    # multi-kernel workaround or cannot be lowered reliably by Triton-XPU
+    # (large int32 -> fp16/bf16 vectors abort during LLVM conversion).
+    if (x.dtype, target_dtype) in _VENDOR_CAST_PAIRS:
+        return _vendor_to_copy_out(
+            x,
+            target_dtype,
+            target_device,
+            non_blocking,
+            target_memory_format,
+        )
+
+    # Direct casts from either 16-bit representation to BF16 are broken in the
+    # current toolchain: fp16 -> bf16 is rejected by xpu3-elfconv, while
+    # int16 -> bf16 turns almost every nonzero value into zero.  Route through
+    # a supported wider representation for each source dtype.
+    if x.dtype in (torch.float16, torch.int16) and target_dtype == torch.bfloat16:
+        intermediate_dtype = torch.float32 if x.dtype == torch.float16 else torch.int32
+        intermediate = _allocate_preserve_format(
+            x, {"dtype": intermediate_dtype, "device": x.device}
+        )
+        _to_copy_func(x, out0=intermediate)
+        x = intermediate
+
     logger.debug("GEMS_KUNLUNXIN TO_COPY")
     empty_kwargs = {"dtype": target_dtype, "device": target_device}
 
@@ -163,7 +241,6 @@ def to_copy(
     else:
         out = torch.empty_like(x, memory_format=target_memory_format, **empty_kwargs)
 
-    out = torch.empty_like(x, dtype=dtype, memory_format=memory_format)
     if out.element_size() == 8:
         os.environ["TRITONXPU_ELEMBYTES"] = "8"
         os.environ["TRITONXPU_BF16_FAST"] = "1"

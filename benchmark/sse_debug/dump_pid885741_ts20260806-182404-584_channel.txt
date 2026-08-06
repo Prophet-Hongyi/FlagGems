@@ -1,0 +1,16 @@
+Channel State Dump:
+valueLastIssuedByCpu: 311c
+valueLastIssuedToGpu: 311c
+valueFinishedByGpu: 3119
+cpuPut: 1c
+cpuPutMonotonic: 311c
+gpuPut: 1c
+gpuGet: 84
+gpuGetMonotonica: 3084
+vstream_id: 0
+hwq_id: 0
+done_ptr: 19
+enq_ptr: 1c
+enq_ptr_monotonic: 311c
+error: 0
+marker->trackingSemaphoreValue: 311c

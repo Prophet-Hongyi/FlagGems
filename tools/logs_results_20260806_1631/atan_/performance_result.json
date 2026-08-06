@@ -1,0 +1,7 @@
+{
+  "atan_": {
+    "result": "failed",
+    "test_case": "benchmark/test_atan.py::test_atan_inplace",
+    "reason": "Failed: No CUDA GPUs are available"
+  }
+}

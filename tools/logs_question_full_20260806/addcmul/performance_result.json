@@ -1,0 +1,330 @@
+{
+  "addcmul": {
+    "details": [
+      {
+        "op_name": "addcmul",
+        "dtype": "torch.float16",
+        "mode": "kernel",
+        "level": "core",
+        "result": [
+          {
+            "legacy_shape": null,
+            "shape_detail": [
+              [
+                [
+                  64,
+                  64
+                ],
+                [
+                  64,
+                  64
+                ],
+                [
+                  64,
+                  64
+                ]
+              ],
+              {
+                "value": 0.5
+              }
+            ],
+            "latency_base": 0.006353999953716993,
+            "latency": 0.008340000174939632,
+            "gbps_base": null,
+            "gbps": null,
+            "speedup": 0.7618704820666249,
+            "accuracy": null,
+            "tflops": null,
+            "utilization": null,
+            "compared_speedup": null,
+            "error_msg": null
+          },
+          {
+            "legacy_shape": null,
+            "shape_detail": [
+              [
+                [
+                  4096,
+                  4096
+                ],
+                [
+                  4096,
+                  4096
+                ],
+                [
+                  4096,
+                  4096
+                ]
+              ],
+              {
+                "value": 0.5
+              }
+            ],
+            "latency_base": 0.08715800195932388,
+            "latency": 0.1175599992275238,
+            "gbps_base": null,
+            "gbps": null,
+            "speedup": 0.7413916513442607,
+            "accuracy": null,
+            "tflops": null,
+            "utilization": null,
+            "compared_speedup": null,
+            "error_msg": null
+          },
+          {
+            "legacy_shape": null,
+            "shape_detail": [
+              [
+                [
+                  64,
+                  512,
+                  512
+                ],
+                [
+                  64,
+                  512,
+                  512
+                ],
+                [
+                  64,
+                  512,
+                  512
+                ]
+              ],
+              {
+                "value": 0.5
+              }
+            ],
+            "latency_base": 0.08711200207471848,
+            "latency": 0.11753299832344055,
+            "gbps_base": null,
+            "gbps": null,
+            "speedup": 0.741170593087346,
+            "accuracy": null,
+            "tflops": null,
+            "utilization": null,
+            "compared_speedup": null,
+            "error_msg": null
+          }
+        ]
+      },
+      {
+        "op_name": "addcmul",
+        "dtype": "torch.float32",
+        "mode": "kernel",
+        "level": "core",
+        "result": [
+          {
+            "legacy_shape": null,
+            "shape_detail": [
+              [
+                [
+                  64,
+                  64
+                ],
+                [
+                  64,
+                  64
+                ],
+                [
+                  64,
+                  64
+                ]
+              ],
+              {
+                "value": 0.5
+              }
+            ],
+            "latency_base": 0.00596599979326129,
+            "latency": 0.006448000203818083,
+            "gbps_base": null,
+            "gbps": null,
+            "speedup": 0.9252480776487283,
+            "accuracy": null,
+            "tflops": null,
+            "utilization": null,
+            "compared_speedup": null,
+            "error_msg": null
+          },
+          {
+            "legacy_shape": null,
+            "shape_detail": [
+              [
+                [
+                  4096,
+                  4096
+                ],
+                [
+                  4096,
+                  4096
+                ],
+                [
+                  4096,
+                  4096
+                ]
+              ],
+              {
+                "value": 0.5
+              }
+            ],
+            "latency_base": 0.16192899644374847,
+            "latency": 0.16437099874019623,
+            "gbps_base": null,
+            "gbps": null,
+            "speedup": 0.9851433506204609,
+            "accuracy": null,
+            "tflops": null,
+            "utilization": null,
+            "compared_speedup": null,
+            "error_msg": null
+          },
+          {
+            "legacy_shape": null,
+            "shape_detail": [
+              [
+                [
+                  64,
+                  512,
+                  512
+                ],
+                [
+                  64,
+                  512,
+                  512
+                ],
+                [
+                  64,
+                  512,
+                  512
+                ]
+              ],
+              {
+                "value": 0.5
+              }
+            ],
+            "latency_base": 0.15659600496292114,
+            "latency": 0.16432000696659088,
+            "gbps_base": null,
+            "gbps": null,
+            "speedup": 0.9529941475401704,
+            "accuracy": null,
+            "tflops": null,
+            "utilization": null,
+            "compared_speedup": null,
+            "error_msg": null
+          }
+        ]
+      },
+      {
+        "op_name": "addcmul",
+        "dtype": "torch.bfloat16",
+        "mode": "kernel",
+        "level": "core",
+        "result": [
+          {
+            "legacy_shape": null,
+            "shape_detail": [
+              [
+                [
+                  64,
+                  64
+                ],
+                [
+                  64,
+                  64
+                ],
+                [
+                  64,
+                  64
+                ]
+              ],
+              {
+                "value": 0.5
+              }
+            ],
+            "latency_base": 0.00711200013756752,
+            "latency": 0.008320000022649765,
+            "gbps_base": null,
+            "gbps": null,
+            "speedup": 0.8548077065151835,
+            "accuracy": null,
+            "tflops": null,
+            "utilization": null,
+            "compared_speedup": null,
+            "error_msg": null
+          },
+          {
+            "legacy_shape": null,
+            "shape_detail": [
+              [
+                [
+                  4096,
+                  4096
+                ],
+                [
+                  4096,
+                  4096
+                ],
+                [
+                  4096,
+                  4096
+                ]
+              ],
+              {
+                "value": 0.5
+              }
+            ],
+            "latency_base": 0.08997999876737595,
+            "latency": 0.22796499729156494,
+            "gbps_base": null,
+            "gbps": null,
+            "speedup": 0.39470971349295536,
+            "accuracy": null,
+            "tflops": null,
+            "utilization": null,
+            "compared_speedup": null,
+            "error_msg": null
+          },
+          {
+            "legacy_shape": null,
+            "shape_detail": [
+              [
+                [
+                  64,
+                  512,
+                  512
+                ],
+                [
+                  64,
+                  512,
+                  512
+                ],
+                [
+                  64,
+                  512,
+                  512
+                ]
+              ],
+              {
+                "value": 0.5
+              }
+            ],
+            "latency_base": 0.08993600308895111,
+            "latency": 0.22798599302768707,
+            "gbps_base": null,
+            "gbps": null,
+            "speedup": 0.39448038844223693,
+            "accuracy": null,
+            "tflops": null,
+            "utilization": null,
+            "compared_speedup": null,
+            "error_msg": null
+          }
+        ]
+      }
+    ],
+    "result": "passed",
+    "test_case": "benchmark/test_addcmul.py::test_addcmul",
+    "reason": null
+  }
+}

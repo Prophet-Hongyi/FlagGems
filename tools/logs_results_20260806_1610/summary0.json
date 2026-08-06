@@ -1,0 +1,23 @@
+{
+  "dd": {
+    "customized": false,
+    "accuracy": {
+      "total": 0,
+      "skipped": 0,
+      "failed": 0,
+      "passed": 0,
+      "details": {},
+      "status": "NotFound",
+      "exit_code": 1,
+      "duration": 46.88760805130005,
+      "data_file": "dd/accuracy_result.json"
+    },
+    "performance": {
+      "duration": 41.43083119392395,
+      "exit_code": 5,
+      "data_file": "dd/performance_result.json",
+      "data": {},
+      "status": "NotFound"
+    }
+  }
+}

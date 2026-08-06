@@ -1,0 +1,7 @@
+{
+  "diagonal_backward": {
+    "result": "failed",
+    "test_case": "benchmark/test_diagonal.py::test_diagonal_backward",
+    "reason": "Failed: No CUDA GPUs are available"
+  }
+}

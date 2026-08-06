@@ -1,0 +1,285 @@
+{
+  "lerp_tensor_": {
+    "details": [
+      {
+        "op_name": "lerp_tensor_",
+        "dtype": "torch.float16",
+        "mode": "kernel",
+        "level": "core",
+        "result": [
+          {
+            "legacy_shape": null,
+            "shape_detail": {
+              "input": [
+                64,
+                64
+              ],
+              "end": [
+                64,
+                64
+              ],
+              "weight": [
+                64,
+                64
+              ]
+            },
+            "latency_base": 0.005919999908655882,
+            "latency": 0.005989000201225281,
+            "gbps_base": null,
+            "gbps": null,
+            "speedup": 0.9884788294788699,
+            "accuracy": null,
+            "tflops": null,
+            "utilization": null,
+            "compared_speedup": null,
+            "error_msg": null
+          },
+          {
+            "legacy_shape": null,
+            "shape_detail": {
+              "input": [
+                4096,
+                4096
+              ],
+              "end": [
+                4096,
+                4096
+              ],
+              "weight": [
+                4096,
+                4096
+              ]
+            },
+            "latency_base": 0.09046799689531326,
+            "latency": 0.09035000205039978,
+            "gbps_base": null,
+            "gbps": null,
+            "speedup": 1.00130597501091,
+            "accuracy": null,
+            "tflops": null,
+            "utilization": null,
+            "compared_speedup": null,
+            "error_msg": null
+          },
+          {
+            "legacy_shape": null,
+            "shape_detail": {
+              "input": [
+                64,
+                512,
+                512
+              ],
+              "end": [
+                64,
+                512,
+                512
+              ],
+              "weight": [
+                64,
+                512,
+                512
+              ]
+            },
+            "latency_base": 0.09024299681186676,
+            "latency": 0.09030400216579437,
+            "gbps_base": null,
+            "gbps": null,
+            "speedup": 0.9993244446263233,
+            "accuracy": null,
+            "tflops": null,
+            "utilization": null,
+            "compared_speedup": null,
+            "error_msg": null
+          }
+        ]
+      },
+      {
+        "op_name": "lerp_tensor_",
+        "dtype": "torch.float32",
+        "mode": "kernel",
+        "level": "core",
+        "result": [
+          {
+            "legacy_shape": null,
+            "shape_detail": {
+              "input": [
+                64,
+                64
+              ],
+              "end": [
+                64,
+                64
+              ],
+              "weight": [
+                64,
+                64
+              ]
+            },
+            "latency_base": 0.005934999790042639,
+            "latency": 0.005948000121861696,
+            "gbps_base": null,
+            "gbps": null,
+            "speedup": 0.9978143356501835,
+            "accuracy": null,
+            "tflops": null,
+            "utilization": null,
+            "compared_speedup": null,
+            "error_msg": null
+          },
+          {
+            "legacy_shape": null,
+            "shape_detail": {
+              "input": [
+                4096,
+                4096
+              ],
+              "end": [
+                4096,
+                4096
+              ],
+              "weight": [
+                4096,
+                4096
+              ]
+            },
+            "latency_base": 0.17223000526428223,
+            "latency": 0.24004800617694855,
+            "gbps_base": null,
+            "gbps": null,
+            "speedup": 0.7174815071670494,
+            "accuracy": null,
+            "tflops": null,
+            "utilization": null,
+            "compared_speedup": null,
+            "error_msg": null
+          },
+          {
+            "legacy_shape": null,
+            "shape_detail": {
+              "input": [
+                64,
+                512,
+                512
+              ],
+              "end": [
+                64,
+                512,
+                512
+              ],
+              "weight": [
+                64,
+                512,
+                512
+              ]
+            },
+            "latency_base": 0.16335999965667725,
+            "latency": 0.23009000718593597,
+            "gbps_base": null,
+            "gbps": null,
+            "speedup": 0.7099830264452374,
+            "accuracy": null,
+            "tflops": null,
+            "utilization": null,
+            "compared_speedup": null,
+            "error_msg": null
+          }
+        ]
+      },
+      {
+        "op_name": "lerp_tensor_",
+        "dtype": "torch.bfloat16",
+        "mode": "kernel",
+        "level": "core",
+        "result": [
+          {
+            "legacy_shape": null,
+            "shape_detail": {
+              "input": [
+                64,
+                64
+              ],
+              "end": [
+                64,
+                64
+              ],
+              "weight": [
+                64,
+                64
+              ]
+            },
+            "latency_base": 0.006006000097841024,
+            "latency": 0.0059980000369250774,
+            "gbps_base": null,
+            "gbps": null,
+            "speedup": 1.0013337880738074,
+            "accuracy": null,
+            "tflops": null,
+            "utilization": null,
+            "compared_speedup": null,
+            "error_msg": null
+          },
+          {
+            "legacy_shape": null,
+            "shape_detail": {
+              "input": [
+                4096,
+                4096
+              ],
+              "end": [
+                4096,
+                4096
+              ],
+              "weight": [
+                4096,
+                4096
+              ]
+            },
+            "latency_base": 0.11010000109672546,
+            "latency": 0.11007499694824219,
+            "gbps_base": null,
+            "gbps": null,
+            "speedup": 1.0002271555682625,
+            "accuracy": null,
+            "tflops": null,
+            "utilization": null,
+            "compared_speedup": null,
+            "error_msg": null
+          },
+          {
+            "legacy_shape": null,
+            "shape_detail": {
+              "input": [
+                64,
+                512,
+                512
+              ],
+              "end": [
+                64,
+                512,
+                512
+              ],
+              "weight": [
+                64,
+                512,
+                512
+              ]
+            },
+            "latency_base": 0.1100120022892952,
+            "latency": 0.1100580021739006,
+            "gbps_base": null,
+            "gbps": null,
+            "speedup": 0.9995820396182303,
+            "accuracy": null,
+            "tflops": null,
+            "utilization": null,
+            "compared_speedup": null,
+            "error_msg": null
+          }
+        ]
+      }
+    ],
+    "result": "passed",
+    "test_case": "benchmark/test_lerp.py::test_lerp_tensor_inplace",
+    "reason": null
+  }
+}

@@ -1,0 +1,1014 @@
+{
+  "tests/test_div.py::test_div_tensor_mode_float_[None-dtype0-shape0]": {
+    "params": {
+      "rounding_mode": null,
+      "dtype": "torch.float16",
+      "shape": []
+    },
+    "result": "failed",
+    "opname": [
+      "div_tensor_mode_"
+    ],
+    "reason": "IndexError: tuple index out of range"
+  },
+  "tests/test_div.py::test_div_tensor_mode_float_[None-dtype0-shape1]": {
+    "params": {
+      "rounding_mode": null,
+      "dtype": "torch.float16",
+      "shape": [
+        1
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "div_tensor_mode_"
+    ],
+    "reason": "IndexError: tuple index out of range"
+  },
+  "tests/test_div.py::test_div_tensor_mode_float_[None-dtype0-shape2]": {
+    "params": {
+      "rounding_mode": null,
+      "dtype": "torch.float16",
+      "shape": [
+        1024,
+        1024
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "div_tensor_mode_"
+    ],
+    "reason": "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.45290.140169018614976.09e70b9077334efc813b5af2ca470005.tmp'"
+  },
+  "tests/test_div.py::test_div_tensor_mode_float_[None-dtype0-shape3]": {
+    "params": {
+      "rounding_mode": null,
+      "dtype": "torch.float16",
+      "shape": [
+        20,
+        320,
+        15
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "div_tensor_mode_"
+    ],
+    "reason": "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.45290.140169018614976.4170367ab87a4ec38b1ff1b82fdfdf96.tmp'"
+  },
+  "tests/test_div.py::test_div_tensor_mode_float_[None-dtype0-shape4]": {
+    "params": {
+      "rounding_mode": null,
+      "dtype": "torch.float16",
+      "shape": [
+        16,
+        128,
+        64,
+        60
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "div_tensor_mode_"
+    ],
+    "reason": "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.45290.140169018614976.c326a3798bfc40478b8e148102ab1422.tmp'"
+  },
+  "tests/test_div.py::test_div_tensor_mode_float_[None-dtype0-shape5]": {
+    "params": {
+      "rounding_mode": null,
+      "dtype": "torch.float16",
+      "shape": [
+        16,
+        7,
+        57,
+        32,
+        29
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "div_tensor_mode_"
+    ],
+    "reason": "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.45290.140169018614976.faee686726bf40168fabbe25d9ce3d0c.tmp'"
+  },
+  "tests/test_div.py::test_div_tensor_mode_float_[None-dtype1-shape0]": {
+    "params": {
+      "rounding_mode": null,
+      "dtype": "torch.float32",
+      "shape": []
+    },
+    "result": "failed",
+    "opname": [
+      "div_tensor_mode_"
+    ],
+    "reason": "IndexError: tuple index out of range"
+  },
+  "tests/test_div.py::test_div_tensor_mode_float_[None-dtype1-shape1]": {
+    "params": {
+      "rounding_mode": null,
+      "dtype": "torch.float32",
+      "shape": [
+        1
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "div_tensor_mode_"
+    ],
+    "reason": "IndexError: tuple index out of range"
+  },
+  "tests/test_div.py::test_div_tensor_mode_float_[None-dtype1-shape2]": {
+    "params": {
+      "rounding_mode": null,
+      "dtype": "torch.float32",
+      "shape": [
+        1024,
+        1024
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "div_tensor_mode_"
+    ],
+    "reason": "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.45290.140169018614976.7c30622e730a492c8dc4aa50c8042a60.tmp'"
+  },
+  "tests/test_div.py::test_div_tensor_mode_float_[None-dtype1-shape3]": {
+    "params": {
+      "rounding_mode": null,
+      "dtype": "torch.float32",
+      "shape": [
+        20,
+        320,
+        15
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "div_tensor_mode_"
+    ],
+    "reason": "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.45290.140169018614976.350fd3dab41d4f2fbe365ca737924dd6.tmp'"
+  },
+  "tests/test_div.py::test_div_tensor_mode_float_[None-dtype1-shape4]": {
+    "params": {
+      "rounding_mode": null,
+      "dtype": "torch.float32",
+      "shape": [
+        16,
+        128,
+        64,
+        60
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "div_tensor_mode_"
+    ],
+    "reason": "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.45290.140169018614976.66f150e5941f467393ad80116a77916f.tmp'"
+  },
+  "tests/test_div.py::test_div_tensor_mode_float_[None-dtype1-shape5]": {
+    "params": {
+      "rounding_mode": null,
+      "dtype": "torch.float32",
+      "shape": [
+        16,
+        7,
+        57,
+        32,
+        29
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "div_tensor_mode_"
+    ],
+    "reason": "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.45290.140169018614976.5998f5c9f5bc4fd3b447692e23ab3c88.tmp'"
+  },
+  "tests/test_div.py::test_div_tensor_mode_float_[None-dtype2-shape0]": {
+    "params": {
+      "rounding_mode": null,
+      "dtype": "torch.bfloat16",
+      "shape": []
+    },
+    "result": "passed",
+    "opname": [
+      "div_tensor_mode_"
+    ],
+    "reason": null
+  },
+  "tests/test_div.py::test_div_tensor_mode_float_[None-dtype2-shape1]": {
+    "params": {
+      "rounding_mode": null,
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1
+      ]
+    },
+    "result": "passed",
+    "opname": [
+      "div_tensor_mode_"
+    ],
+    "reason": null
+  },
+  "tests/test_div.py::test_div_tensor_mode_float_[None-dtype2-shape2]": {
+    "params": {
+      "rounding_mode": null,
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1024,
+        1024
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "div_tensor_mode_"
+    ],
+    "reason": "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.45290.140169018614976.0942b1b73a7f43bcb88b428815f5f030.tmp'"
+  },
+  "tests/test_div.py::test_div_tensor_mode_float_[None-dtype2-shape3]": {
+    "params": {
+      "rounding_mode": null,
+      "dtype": "torch.bfloat16",
+      "shape": [
+        20,
+        320,
+        15
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "div_tensor_mode_"
+    ],
+    "reason": "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.45290.140169018614976.015a01e9467b4c5c99d9e766f48f3bd0.tmp'"
+  },
+  "tests/test_div.py::test_div_tensor_mode_float_[None-dtype2-shape4]": {
+    "params": {
+      "rounding_mode": null,
+      "dtype": "torch.bfloat16",
+      "shape": [
+        16,
+        128,
+        64,
+        60
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "div_tensor_mode_"
+    ],
+    "reason": "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.45290.140169018614976.5f9ca036887949c481b9def2dfb45fac.tmp'"
+  },
+  "tests/test_div.py::test_div_tensor_mode_float_[None-dtype2-shape5]": {
+    "params": {
+      "rounding_mode": null,
+      "dtype": "torch.bfloat16",
+      "shape": [
+        16,
+        7,
+        57,
+        32,
+        29
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "div_tensor_mode_"
+    ],
+    "reason": "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.45290.140169018614976.a12370eff3a64921a944813af0aa6e8a.tmp'"
+  },
+  "tests/test_div.py::test_div_tensor_mode_float_[floor-dtype3-shape0]": {
+    "params": {
+      "rounding_mode": "floor",
+      "dtype": "torch.float16",
+      "shape": []
+    },
+    "result": "failed",
+    "opname": [
+      "div_tensor_mode_"
+    ],
+    "reason": "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.45290.140169018614976.64bcacb2663041719885f95c8393a78a.tmp'"
+  },
+  "tests/test_div.py::test_div_tensor_mode_float_[floor-dtype3-shape1]": {
+    "params": {
+      "rounding_mode": "floor",
+      "dtype": "torch.float16",
+      "shape": [
+        1
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "div_tensor_mode_"
+    ],
+    "reason": "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.45290.140169018614976.34b1386c9b11409abe8e80affd358d94.tmp'"
+  },
+  "tests/test_div.py::test_div_tensor_mode_float_[floor-dtype3-shape2]": {
+    "params": {
+      "rounding_mode": "floor",
+      "dtype": "torch.float16",
+      "shape": [
+        1024,
+        1024
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "div_tensor_mode_"
+    ],
+    "reason": "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.45290.140169018614976.4568e9045f2f470eb88efa20e74c9c3f.tmp'"
+  },
+  "tests/test_div.py::test_div_tensor_mode_float_[floor-dtype3-shape3]": {
+    "params": {
+      "rounding_mode": "floor",
+      "dtype": "torch.float16",
+      "shape": [
+        20,
+        320,
+        15
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "div_tensor_mode_"
+    ],
+    "reason": "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.45290.140169018614976.c5e1cf7c028f425e99bb3c2e231e1bec.tmp'"
+  },
+  "tests/test_div.py::test_div_tensor_mode_float_[floor-dtype3-shape4]": {
+    "params": {
+      "rounding_mode": "floor",
+      "dtype": "torch.float16",
+      "shape": [
+        16,
+        128,
+        64,
+        60
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "div_tensor_mode_"
+    ],
+    "reason": "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.45290.140169018614976.68a7942c4f4143db8a1c49d57e84d92b.tmp'"
+  },
+  "tests/test_div.py::test_div_tensor_mode_float_[floor-dtype3-shape5]": {
+    "params": {
+      "rounding_mode": "floor",
+      "dtype": "torch.float16",
+      "shape": [
+        16,
+        7,
+        57,
+        32,
+        29
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "div_tensor_mode_"
+    ],
+    "reason": "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.45290.140169018614976.0d2d24d4fd5c4be6964344d3079bf401.tmp'"
+  },
+  "tests/test_div.py::test_div_tensor_mode_float_[floor-dtype4-shape0]": {
+    "params": {
+      "rounding_mode": "floor",
+      "dtype": "torch.float32",
+      "shape": []
+    },
+    "result": "failed",
+    "opname": [
+      "div_tensor_mode_"
+    ],
+    "reason": "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.45290.140169018614976.f56ee52dbbb344808e6f52bf67f53758.tmp'"
+  },
+  "tests/test_div.py::test_div_tensor_mode_float_[floor-dtype4-shape1]": {
+    "params": {
+      "rounding_mode": "floor",
+      "dtype": "torch.float32",
+      "shape": [
+        1
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "div_tensor_mode_"
+    ],
+    "reason": "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.45290.140169018614976.c56be8e27d304f83ab2b8257d66e6e2d.tmp'"
+  },
+  "tests/test_div.py::test_div_tensor_mode_float_[floor-dtype4-shape2]": {
+    "params": {
+      "rounding_mode": "floor",
+      "dtype": "torch.float32",
+      "shape": [
+        1024,
+        1024
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "div_tensor_mode_"
+    ],
+    "reason": "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.45290.140169018614976.edb6ce15cae44203b93974711d17eba2.tmp'"
+  },
+  "tests/test_div.py::test_div_tensor_mode_float_[floor-dtype4-shape3]": {
+    "params": {
+      "rounding_mode": "floor",
+      "dtype": "torch.float32",
+      "shape": [
+        20,
+        320,
+        15
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "div_tensor_mode_"
+    ],
+    "reason": "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.45290.140169018614976.bd2c0bdf5fa947a7a8b1cec33b3ff48f.tmp'"
+  },
+  "tests/test_div.py::test_div_tensor_mode_float_[floor-dtype4-shape4]": {
+    "params": {
+      "rounding_mode": "floor",
+      "dtype": "torch.float32",
+      "shape": [
+        16,
+        128,
+        64,
+        60
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "div_tensor_mode_"
+    ],
+    "reason": "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.45290.140169018614976.02350e93d5314d719f82c38b19f37b45.tmp'"
+  },
+  "tests/test_div.py::test_div_tensor_mode_float_[floor-dtype4-shape5]": {
+    "params": {
+      "rounding_mode": "floor",
+      "dtype": "torch.float32",
+      "shape": [
+        16,
+        7,
+        57,
+        32,
+        29
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "div_tensor_mode_"
+    ],
+    "reason": "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.45290.140169018614976.6bddd45f15d64cc5b65a87aaf2b035dc.tmp'"
+  },
+  "tests/test_div.py::test_div_tensor_mode_float_[floor-dtype5-shape0]": {
+    "params": {
+      "rounding_mode": "floor",
+      "dtype": "torch.bfloat16",
+      "shape": []
+    },
+    "result": "failed",
+    "opname": [
+      "div_tensor_mode_"
+    ],
+    "reason": "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.45290.140169018614976.3945bb14ead14956a659c7c803f07ed5.tmp'"
+  },
+  "tests/test_div.py::test_div_tensor_mode_float_[floor-dtype5-shape1]": {
+    "params": {
+      "rounding_mode": "floor",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "div_tensor_mode_"
+    ],
+    "reason": "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.45290.140169018614976.1f8ebb5d5fd94ec48460f2cfda9cf2d9.tmp'"
+  },
+  "tests/test_div.py::test_div_tensor_mode_float_[floor-dtype5-shape2]": {
+    "params": {
+      "rounding_mode": "floor",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1024,
+        1024
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "div_tensor_mode_"
+    ],
+    "reason": "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.45290.140169018614976.0fb8a25ccfb9402fb776f056f527d2da.tmp'"
+  },
+  "tests/test_div.py::test_div_tensor_mode_float_[floor-dtype5-shape3]": {
+    "params": {
+      "rounding_mode": "floor",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        20,
+        320,
+        15
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "div_tensor_mode_"
+    ],
+    "reason": "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.45290.140169018614976.18262d07d6674d5b9c90086c63b36f32.tmp'"
+  },
+  "tests/test_div.py::test_div_tensor_mode_float_[floor-dtype5-shape4]": {
+    "params": {
+      "rounding_mode": "floor",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        16,
+        128,
+        64,
+        60
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "div_tensor_mode_"
+    ],
+    "reason": "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.45290.140169018614976.8167bf5de74b47f7a8a3602653a2ca23.tmp'"
+  },
+  "tests/test_div.py::test_div_tensor_mode_float_[floor-dtype5-shape5]": {
+    "params": {
+      "rounding_mode": "floor",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        16,
+        7,
+        57,
+        32,
+        29
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "div_tensor_mode_"
+    ],
+    "reason": "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.45290.140169018614976.0017ff5f281f4a1195b0e38ec49e7f20.tmp'"
+  },
+  "tests/test_div.py::test_div_tensor_mode_float_[trunc-dtype6-shape0]": {
+    "params": {
+      "rounding_mode": "trunc",
+      "dtype": "torch.float32",
+      "shape": []
+    },
+    "result": "failed",
+    "opname": [
+      "div_tensor_mode_"
+    ],
+    "reason": "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.45290.140169018614976.96f3e37c76c44a44a437659f54908cba.tmp'"
+  },
+  "tests/test_div.py::test_div_tensor_mode_float_[trunc-dtype6-shape1]": {
+    "params": {
+      "rounding_mode": "trunc",
+      "dtype": "torch.float32",
+      "shape": [
+        1
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "div_tensor_mode_"
+    ],
+    "reason": "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.45290.140169018614976.b11b1252bc2d4c4b98f14f5b5e9fb5fa.tmp'"
+  },
+  "tests/test_div.py::test_div_tensor_mode_float_[trunc-dtype6-shape2]": {
+    "params": {
+      "rounding_mode": "trunc",
+      "dtype": "torch.float32",
+      "shape": [
+        1024,
+        1024
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "div_tensor_mode_"
+    ],
+    "reason": "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.45290.140169018614976.4076c7cf3f604ef9a50eaaf858d35e1c.tmp'"
+  },
+  "tests/test_div.py::test_div_tensor_mode_float_[trunc-dtype6-shape3]": {
+    "params": {
+      "rounding_mode": "trunc",
+      "dtype": "torch.float32",
+      "shape": [
+        20,
+        320,
+        15
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "div_tensor_mode_"
+    ],
+    "reason": "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.45290.140169018614976.6ed5337e29ff4384acb1d1be6cd7f06e.tmp'"
+  },
+  "tests/test_div.py::test_div_tensor_mode_float_[trunc-dtype6-shape4]": {
+    "params": {
+      "rounding_mode": "trunc",
+      "dtype": "torch.float32",
+      "shape": [
+        16,
+        128,
+        64,
+        60
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "div_tensor_mode_"
+    ],
+    "reason": "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.45290.140169018614976.d1ba6c54449f46a3bdc2c9acad5d7bec.tmp'"
+  },
+  "tests/test_div.py::test_div_tensor_mode_float_[trunc-dtype6-shape5]": {
+    "params": {
+      "rounding_mode": "trunc",
+      "dtype": "torch.float32",
+      "shape": [
+        16,
+        7,
+        57,
+        32,
+        29
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "div_tensor_mode_"
+    ],
+    "reason": "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.45290.140169018614976.26cd9ac1d1ef47adb84c4ef24c2ecda7.tmp'"
+  },
+  "tests/test_div.py::test_div_tensor_mode_int_[torch.int16-trunc-shape0]": {
+    "params": {
+      "dtype": "torch.int16",
+      "rounding_mode": "trunc",
+      "shape": []
+    },
+    "result": "failed",
+    "opname": [
+      "div_tensor_mode_"
+    ],
+    "reason": "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.45290.140169018614976.f3f7e6e85d324584b89bc2c39f48efd0.tmp'"
+  },
+  "tests/test_div.py::test_div_tensor_mode_int_[torch.int16-trunc-shape1]": {
+    "params": {
+      "dtype": "torch.int16",
+      "rounding_mode": "trunc",
+      "shape": [
+        1
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "div_tensor_mode_"
+    ],
+    "reason": "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.45290.140169018614976.acfcace1a46e400e85a23c11db01944f.tmp'"
+  },
+  "tests/test_div.py::test_div_tensor_mode_int_[torch.int16-trunc-shape2]": {
+    "params": {
+      "dtype": "torch.int16",
+      "rounding_mode": "trunc",
+      "shape": [
+        1024,
+        1024
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "div_tensor_mode_"
+    ],
+    "reason": "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.45290.140169018614976.c5c8554e1a4647b089673316ee49a73d.tmp'"
+  },
+  "tests/test_div.py::test_div_tensor_mode_int_[torch.int16-trunc-shape3]": {
+    "params": {
+      "dtype": "torch.int16",
+      "rounding_mode": "trunc",
+      "shape": [
+        20,
+        320,
+        15
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "div_tensor_mode_"
+    ],
+    "reason": "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.45290.140169018614976.696d57d0f2af4361a3b0b990b308b30f.tmp'"
+  },
+  "tests/test_div.py::test_div_tensor_mode_int_[torch.int16-trunc-shape4]": {
+    "params": {
+      "dtype": "torch.int16",
+      "rounding_mode": "trunc",
+      "shape": [
+        16,
+        128,
+        64,
+        60
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "div_tensor_mode_"
+    ],
+    "reason": "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.45290.140169018614976.f095236df5da46f6a63ffd18e48cca75.tmp'"
+  },
+  "tests/test_div.py::test_div_tensor_mode_int_[torch.int16-trunc-shape5]": {
+    "params": {
+      "dtype": "torch.int16",
+      "rounding_mode": "trunc",
+      "shape": [
+        16,
+        7,
+        57,
+        32,
+        29
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "div_tensor_mode_"
+    ],
+    "reason": "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.45290.140169018614976.190a2a1054ac4811bd8803989b50f347.tmp'"
+  },
+  "tests/test_div.py::test_div_tensor_mode_int_[torch.int16-floor-shape0]": {
+    "params": {
+      "dtype": "torch.int16",
+      "rounding_mode": "floor",
+      "shape": []
+    },
+    "result": "failed",
+    "opname": [
+      "div_tensor_mode_"
+    ],
+    "reason": "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.45290.140169018614976.2fd12c36b5ca453abfb4dadcacfb8708.tmp'"
+  },
+  "tests/test_div.py::test_div_tensor_mode_int_[torch.int16-floor-shape1]": {
+    "params": {
+      "dtype": "torch.int16",
+      "rounding_mode": "floor",
+      "shape": [
+        1
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "div_tensor_mode_"
+    ],
+    "reason": "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.45290.140169018614976.36318a08419b49e1ba86e7141585192d.tmp'"
+  },
+  "tests/test_div.py::test_div_tensor_mode_int_[torch.int16-floor-shape2]": {
+    "params": {
+      "dtype": "torch.int16",
+      "rounding_mode": "floor",
+      "shape": [
+        1024,
+        1024
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "div_tensor_mode_"
+    ],
+    "reason": "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.45290.140169018614976.129b8ff1915b45a69dc24c4a64a9ede7.tmp'"
+  },
+  "tests/test_div.py::test_div_tensor_mode_int_[torch.int16-floor-shape3]": {
+    "params": {
+      "dtype": "torch.int16",
+      "rounding_mode": "floor",
+      "shape": [
+        20,
+        320,
+        15
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "div_tensor_mode_"
+    ],
+    "reason": "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.45290.140169018614976.424338c99ccc4c39b975b8206f866dad.tmp'"
+  },
+  "tests/test_div.py::test_div_tensor_mode_int_[torch.int16-floor-shape4]": {
+    "params": {
+      "dtype": "torch.int16",
+      "rounding_mode": "floor",
+      "shape": [
+        16,
+        128,
+        64,
+        60
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "div_tensor_mode_"
+    ],
+    "reason": "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.45290.140169018614976.5a6e188345a341498448183ab58e1cd2.tmp'"
+  },
+  "tests/test_div.py::test_div_tensor_mode_int_[torch.int16-floor-shape5]": {
+    "params": {
+      "dtype": "torch.int16",
+      "rounding_mode": "floor",
+      "shape": [
+        16,
+        7,
+        57,
+        32,
+        29
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "div_tensor_mode_"
+    ],
+    "reason": "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.45290.140169018614976.2bf8060b13fa4df7aa769ba8dc6f0823.tmp'"
+  },
+  "tests/test_div.py::test_div_tensor_mode_int_[torch.int32-trunc-shape0]": {
+    "params": {
+      "dtype": "torch.int32",
+      "rounding_mode": "trunc",
+      "shape": []
+    },
+    "result": "failed",
+    "opname": [
+      "div_tensor_mode_"
+    ],
+    "reason": "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.45290.140169018614976.80dd26dc9b79460c88ca3866678ef94b.tmp'"
+  },
+  "tests/test_div.py::test_div_tensor_mode_int_[torch.int32-trunc-shape1]": {
+    "params": {
+      "dtype": "torch.int32",
+      "rounding_mode": "trunc",
+      "shape": [
+        1
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "div_tensor_mode_"
+    ],
+    "reason": "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.45290.140169018614976.e7857154c7bc48afacf02cf4739ab899.tmp'"
+  },
+  "tests/test_div.py::test_div_tensor_mode_int_[torch.int32-trunc-shape2]": {
+    "params": {
+      "dtype": "torch.int32",
+      "rounding_mode": "trunc",
+      "shape": [
+        1024,
+        1024
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "div_tensor_mode_"
+    ],
+    "reason": "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.45290.140169018614976.67be56ece63e4b6293a78e9fc67b939c.tmp'"
+  },
+  "tests/test_div.py::test_div_tensor_mode_int_[torch.int32-trunc-shape3]": {
+    "params": {
+      "dtype": "torch.int32",
+      "rounding_mode": "trunc",
+      "shape": [
+        20,
+        320,
+        15
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "div_tensor_mode_"
+    ],
+    "reason": "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.45290.140169018614976.1819a076716d4bcfb126f42f0c576982.tmp'"
+  },
+  "tests/test_div.py::test_div_tensor_mode_int_[torch.int32-trunc-shape4]": {
+    "params": {
+      "dtype": "torch.int32",
+      "rounding_mode": "trunc",
+      "shape": [
+        16,
+        128,
+        64,
+        60
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "div_tensor_mode_"
+    ],
+    "reason": "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.45290.140169018614976.b816b7383a42419cbb9cff80db824700.tmp'"
+  },
+  "tests/test_div.py::test_div_tensor_mode_int_[torch.int32-trunc-shape5]": {
+    "params": {
+      "dtype": "torch.int32",
+      "rounding_mode": "trunc",
+      "shape": [
+        16,
+        7,
+        57,
+        32,
+        29
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "div_tensor_mode_"
+    ],
+    "reason": "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.45290.140169018614976.4c5f0e69b2b3447fbf1178525f2dda3e.tmp'"
+  },
+  "tests/test_div.py::test_div_tensor_mode_int_[torch.int32-floor-shape0]": {
+    "params": {
+      "dtype": "torch.int32",
+      "rounding_mode": "floor",
+      "shape": []
+    },
+    "result": "failed",
+    "opname": [
+      "div_tensor_mode_"
+    ],
+    "reason": "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.45290.140169018614976.5e5f9a4a942a46b085734b4c1ebf21b3.tmp'"
+  },
+  "tests/test_div.py::test_div_tensor_mode_int_[torch.int32-floor-shape1]": {
+    "params": {
+      "dtype": "torch.int32",
+      "rounding_mode": "floor",
+      "shape": [
+        1
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "div_tensor_mode_"
+    ],
+    "reason": "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.45290.140169018614976.c677165979a54fa1b63c30f52c4a0985.tmp'"
+  },
+  "tests/test_div.py::test_div_tensor_mode_int_[torch.int32-floor-shape2]": {
+    "params": {
+      "dtype": "torch.int32",
+      "rounding_mode": "floor",
+      "shape": [
+        1024,
+        1024
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "div_tensor_mode_"
+    ],
+    "reason": "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.45290.140169018614976.370db23bc5924ee18eaed0d5456677f6.tmp'"
+  },
+  "tests/test_div.py::test_div_tensor_mode_int_[torch.int32-floor-shape3]": {
+    "params": {
+      "dtype": "torch.int32",
+      "rounding_mode": "floor",
+      "shape": [
+        20,
+        320,
+        15
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "div_tensor_mode_"
+    ],
+    "reason": "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.45290.140169018614976.da8ad5eb9eda46ff8152a08681d65b1e.tmp'"
+  },
+  "tests/test_div.py::test_div_tensor_mode_int_[torch.int32-floor-shape4]": {
+    "params": {
+      "dtype": "torch.int32",
+      "rounding_mode": "floor",
+      "shape": [
+        16,
+        128,
+        64,
+        60
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "div_tensor_mode_"
+    ],
+    "reason": "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.45290.140169018614976.440a487fd46648c5821b2ed96fdde7f6.tmp'"
+  },
+  "tests/test_div.py::test_div_tensor_mode_int_[torch.int32-floor-shape5]": {
+    "params": {
+      "dtype": "torch.int32",
+      "rounding_mode": "floor",
+      "shape": [
+        16,
+        7,
+        57,
+        32,
+        29
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "div_tensor_mode_"
+    ],
+    "reason": "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.45290.140169018614976.232e2fcb3ee84da480c6cc3809f37cc4.tmp'"
+  }
+}

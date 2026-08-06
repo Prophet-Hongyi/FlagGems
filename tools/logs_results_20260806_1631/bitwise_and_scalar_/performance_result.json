@@ -1,0 +1,7 @@
+{
+  "bitwise_and_scalar_": {
+    "result": "failed",
+    "test_case": "benchmark/test_bitwise_and.py::test_bitwise_and_scalar_",
+    "reason": "Failed: No CUDA GPUs are available"
+  }
+}

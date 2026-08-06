@@ -1,0 +1,7 @@
+{
+  "diag_embed": {
+    "result": "failed",
+    "test_case": "benchmark/test_diag_embed.py::test_diag_embed",
+    "reason": "Failed: No CUDA GPUs are available"
+  }
+}

@@ -1,0 +1,1622 @@
+{
+  "tests/test_div.py::test_div_tensor_tensor_[dtype0-shape0]": {
+    "params": {
+      "dtype": "torch.float16",
+      "shape": []
+    },
+    "result": "failed",
+    "opname": [
+      "div_tensor_"
+    ],
+    "reason": "IndexError: tuple index out of range"
+  },
+  "tests/test_div.py::test_div_tensor_tensor_[dtype0-shape1]": {
+    "params": {
+      "dtype": "torch.float16",
+      "shape": [
+        1
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "div_tensor_"
+    ],
+    "reason": "IndexError: tuple index out of range"
+  },
+  "tests/test_div.py::test_div_tensor_tensor_[dtype0-shape2]": {
+    "params": {
+      "dtype": "torch.float16",
+      "shape": [
+        1024,
+        1024
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "div_tensor_"
+    ],
+    "reason": "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.43691.139857258230976.79c9c4c819cb41bdacc36f99cc2f6907.tmp'"
+  },
+  "tests/test_div.py::test_div_tensor_tensor_[dtype0-shape3]": {
+    "params": {
+      "dtype": "torch.float16",
+      "shape": [
+        20,
+        320,
+        15
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "div_tensor_"
+    ],
+    "reason": "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.43691.139857258230976.60b67625043f4344b132fb11bc3d4622.tmp'"
+  },
+  "tests/test_div.py::test_div_tensor_tensor_[dtype0-shape4]": {
+    "params": {
+      "dtype": "torch.float16",
+      "shape": [
+        16,
+        128,
+        64,
+        60
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "div_tensor_"
+    ],
+    "reason": "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.43691.139857258230976.6414dfd0ed104a2b827d4b9d14890fe5.tmp'"
+  },
+  "tests/test_div.py::test_div_tensor_tensor_[dtype0-shape5]": {
+    "params": {
+      "dtype": "torch.float16",
+      "shape": [
+        16,
+        7,
+        57,
+        32,
+        29
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "div_tensor_"
+    ],
+    "reason": "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.43691.139857258230976.27b555b1f6864c0391dfe7cd8e7b0c39.tmp'"
+  },
+  "tests/test_div.py::test_div_tensor_tensor_[dtype1-shape0]": {
+    "params": {
+      "dtype": "torch.float32",
+      "shape": []
+    },
+    "result": "failed",
+    "opname": [
+      "div_tensor_"
+    ],
+    "reason": "IndexError: tuple index out of range"
+  },
+  "tests/test_div.py::test_div_tensor_tensor_[dtype1-shape1]": {
+    "params": {
+      "dtype": "torch.float32",
+      "shape": [
+        1
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "div_tensor_"
+    ],
+    "reason": "IndexError: tuple index out of range"
+  },
+  "tests/test_div.py::test_div_tensor_tensor_[dtype1-shape2]": {
+    "params": {
+      "dtype": "torch.float32",
+      "shape": [
+        1024,
+        1024
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "div_tensor_"
+    ],
+    "reason": "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.43691.139857258230976.ec423549f9dd491dad647b6037f69aa4.tmp'"
+  },
+  "tests/test_div.py::test_div_tensor_tensor_[dtype1-shape3]": {
+    "params": {
+      "dtype": "torch.float32",
+      "shape": [
+        20,
+        320,
+        15
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "div_tensor_"
+    ],
+    "reason": "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.43691.139857258230976.25ecb41d43c144a2af346266291a5094.tmp'"
+  },
+  "tests/test_div.py::test_div_tensor_tensor_[dtype1-shape4]": {
+    "params": {
+      "dtype": "torch.float32",
+      "shape": [
+        16,
+        128,
+        64,
+        60
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "div_tensor_"
+    ],
+    "reason": "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.43691.139857258230976.324f070fdf6f46f2ba07256a3592c1fd.tmp'"
+  },
+  "tests/test_div.py::test_div_tensor_tensor_[dtype1-shape5]": {
+    "params": {
+      "dtype": "torch.float32",
+      "shape": [
+        16,
+        7,
+        57,
+        32,
+        29
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "div_tensor_"
+    ],
+    "reason": "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.43691.139857258230976.9269385d22394942ae8b2bbe21210daa.tmp'"
+  },
+  "tests/test_div.py::test_div_tensor_tensor_[dtype2-shape0]": {
+    "params": {
+      "dtype": "torch.bfloat16",
+      "shape": []
+    },
+    "result": "passed",
+    "opname": [
+      "div_tensor_"
+    ],
+    "reason": null
+  },
+  "tests/test_div.py::test_div_tensor_tensor_[dtype2-shape1]": {
+    "params": {
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1
+      ]
+    },
+    "result": "passed",
+    "opname": [
+      "div_tensor_"
+    ],
+    "reason": null
+  },
+  "tests/test_div.py::test_div_tensor_tensor_[dtype2-shape2]": {
+    "params": {
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1024,
+        1024
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "div_tensor_"
+    ],
+    "reason": "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.43691.139857258230976.f8c2e8cb050143a69b5288577089dc36.tmp'"
+  },
+  "tests/test_div.py::test_div_tensor_tensor_[dtype2-shape3]": {
+    "params": {
+      "dtype": "torch.bfloat16",
+      "shape": [
+        20,
+        320,
+        15
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "div_tensor_"
+    ],
+    "reason": "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.43691.139857258230976.441be2e2c58e49bca6d8b03b64584d02.tmp'"
+  },
+  "tests/test_div.py::test_div_tensor_tensor_[dtype2-shape4]": {
+    "params": {
+      "dtype": "torch.bfloat16",
+      "shape": [
+        16,
+        128,
+        64,
+        60
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "div_tensor_"
+    ],
+    "reason": "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.43691.139857258230976.dc8ed04ff49943caa649744ea14246a5.tmp'"
+  },
+  "tests/test_div.py::test_div_tensor_tensor_[dtype2-shape5]": {
+    "params": {
+      "dtype": "torch.bfloat16",
+      "shape": [
+        16,
+        7,
+        57,
+        32,
+        29
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "div_tensor_"
+    ],
+    "reason": "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.43691.139857258230976.a78bfabc5d9046f4a83c0ee4b831c980.tmp'"
+  },
+  "tests/test_div.py::test_div_tensor_scalar_[dtype0-0.001-shape0]": {
+    "params": {
+      "dtype": "torch.float16",
+      "scalar": 0.001,
+      "shape": []
+    },
+    "result": "failed",
+    "opname": [
+      "div_tensor_"
+    ],
+    "reason": "IndexError: tuple index out of range"
+  },
+  "tests/test_div.py::test_div_tensor_scalar_[dtype0-0.001-shape1]": {
+    "params": {
+      "dtype": "torch.float16",
+      "scalar": 0.001,
+      "shape": [
+        1
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "div_tensor_"
+    ],
+    "reason": "IndexError: tuple index out of range"
+  },
+  "tests/test_div.py::test_div_tensor_scalar_[dtype0-0.001-shape2]": {
+    "params": {
+      "dtype": "torch.float16",
+      "scalar": 0.001,
+      "shape": [
+        1024,
+        1024
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "div_tensor_"
+    ],
+    "reason": "IndexError: tuple index out of range"
+  },
+  "tests/test_div.py::test_div_tensor_scalar_[dtype0-0.001-shape3]": {
+    "params": {
+      "dtype": "torch.float16",
+      "scalar": 0.001,
+      "shape": [
+        20,
+        320,
+        15
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "div_tensor_"
+    ],
+    "reason": "IndexError: tuple index out of range"
+  },
+  "tests/test_div.py::test_div_tensor_scalar_[dtype0-0.001-shape4]": {
+    "params": {
+      "dtype": "torch.float16",
+      "scalar": 0.001,
+      "shape": [
+        16,
+        128,
+        64,
+        60
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "div_tensor_"
+    ],
+    "reason": "IndexError: tuple index out of range"
+  },
+  "tests/test_div.py::test_div_tensor_scalar_[dtype0-0.001-shape5]": {
+    "params": {
+      "dtype": "torch.float16",
+      "scalar": 0.001,
+      "shape": [
+        16,
+        7,
+        57,
+        32,
+        29
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "div_tensor_"
+    ],
+    "reason": "IndexError: tuple index out of range"
+  },
+  "tests/test_div.py::test_div_tensor_scalar_[dtype0--0.999-shape0]": {
+    "params": {
+      "dtype": "torch.float16",
+      "scalar": -0.999,
+      "shape": []
+    },
+    "result": "failed",
+    "opname": [
+      "div_tensor_"
+    ],
+    "reason": "IndexError: tuple index out of range"
+  },
+  "tests/test_div.py::test_div_tensor_scalar_[dtype0--0.999-shape1]": {
+    "params": {
+      "dtype": "torch.float16",
+      "scalar": -0.999,
+      "shape": [
+        1
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "div_tensor_"
+    ],
+    "reason": "IndexError: tuple index out of range"
+  },
+  "tests/test_div.py::test_div_tensor_scalar_[dtype0--0.999-shape2]": {
+    "params": {
+      "dtype": "torch.float16",
+      "scalar": -0.999,
+      "shape": [
+        1024,
+        1024
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "div_tensor_"
+    ],
+    "reason": "IndexError: tuple index out of range"
+  },
+  "tests/test_div.py::test_div_tensor_scalar_[dtype0--0.999-shape3]": {
+    "params": {
+      "dtype": "torch.float16",
+      "scalar": -0.999,
+      "shape": [
+        20,
+        320,
+        15
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "div_tensor_"
+    ],
+    "reason": "IndexError: tuple index out of range"
+  },
+  "tests/test_div.py::test_div_tensor_scalar_[dtype0--0.999-shape4]": {
+    "params": {
+      "dtype": "torch.float16",
+      "scalar": -0.999,
+      "shape": [
+        16,
+        128,
+        64,
+        60
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "div_tensor_"
+    ],
+    "reason": "IndexError: tuple index out of range"
+  },
+  "tests/test_div.py::test_div_tensor_scalar_[dtype0--0.999-shape5]": {
+    "params": {
+      "dtype": "torch.float16",
+      "scalar": -0.999,
+      "shape": [
+        16,
+        7,
+        57,
+        32,
+        29
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "div_tensor_"
+    ],
+    "reason": "IndexError: tuple index out of range"
+  },
+  "tests/test_div.py::test_div_tensor_scalar_[dtype0-100.001-shape0]": {
+    "params": {
+      "dtype": "torch.float16",
+      "scalar": 100.001,
+      "shape": []
+    },
+    "result": "failed",
+    "opname": [
+      "div_tensor_"
+    ],
+    "reason": "IndexError: tuple index out of range"
+  },
+  "tests/test_div.py::test_div_tensor_scalar_[dtype0-100.001-shape1]": {
+    "params": {
+      "dtype": "torch.float16",
+      "scalar": 100.001,
+      "shape": [
+        1
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "div_tensor_"
+    ],
+    "reason": "IndexError: tuple index out of range"
+  },
+  "tests/test_div.py::test_div_tensor_scalar_[dtype0-100.001-shape2]": {
+    "params": {
+      "dtype": "torch.float16",
+      "scalar": 100.001,
+      "shape": [
+        1024,
+        1024
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "div_tensor_"
+    ],
+    "reason": "IndexError: tuple index out of range"
+  },
+  "tests/test_div.py::test_div_tensor_scalar_[dtype0-100.001-shape3]": {
+    "params": {
+      "dtype": "torch.float16",
+      "scalar": 100.001,
+      "shape": [
+        20,
+        320,
+        15
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "div_tensor_"
+    ],
+    "reason": "IndexError: tuple index out of range"
+  },
+  "tests/test_div.py::test_div_tensor_scalar_[dtype0-100.001-shape4]": {
+    "params": {
+      "dtype": "torch.float16",
+      "scalar": 100.001,
+      "shape": [
+        16,
+        128,
+        64,
+        60
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "div_tensor_"
+    ],
+    "reason": "IndexError: tuple index out of range"
+  },
+  "tests/test_div.py::test_div_tensor_scalar_[dtype0-100.001-shape5]": {
+    "params": {
+      "dtype": "torch.float16",
+      "scalar": 100.001,
+      "shape": [
+        16,
+        7,
+        57,
+        32,
+        29
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "div_tensor_"
+    ],
+    "reason": "IndexError: tuple index out of range"
+  },
+  "tests/test_div.py::test_div_tensor_scalar_[dtype0--111.999-shape0]": {
+    "params": {
+      "dtype": "torch.float16",
+      "scalar": -111.999,
+      "shape": []
+    },
+    "result": "failed",
+    "opname": [
+      "div_tensor_"
+    ],
+    "reason": "IndexError: tuple index out of range"
+  },
+  "tests/test_div.py::test_div_tensor_scalar_[dtype0--111.999-shape1]": {
+    "params": {
+      "dtype": "torch.float16",
+      "scalar": -111.999,
+      "shape": [
+        1
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "div_tensor_"
+    ],
+    "reason": "IndexError: tuple index out of range"
+  },
+  "tests/test_div.py::test_div_tensor_scalar_[dtype0--111.999-shape2]": {
+    "params": {
+      "dtype": "torch.float16",
+      "scalar": -111.999,
+      "shape": [
+        1024,
+        1024
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "div_tensor_"
+    ],
+    "reason": "IndexError: tuple index out of range"
+  },
+  "tests/test_div.py::test_div_tensor_scalar_[dtype0--111.999-shape3]": {
+    "params": {
+      "dtype": "torch.float16",
+      "scalar": -111.999,
+      "shape": [
+        20,
+        320,
+        15
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "div_tensor_"
+    ],
+    "reason": "IndexError: tuple index out of range"
+  },
+  "tests/test_div.py::test_div_tensor_scalar_[dtype0--111.999-shape4]": {
+    "params": {
+      "dtype": "torch.float16",
+      "scalar": -111.999,
+      "shape": [
+        16,
+        128,
+        64,
+        60
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "div_tensor_"
+    ],
+    "reason": "IndexError: tuple index out of range"
+  },
+  "tests/test_div.py::test_div_tensor_scalar_[dtype0--111.999-shape5]": {
+    "params": {
+      "dtype": "torch.float16",
+      "scalar": -111.999,
+      "shape": [
+        16,
+        7,
+        57,
+        32,
+        29
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "div_tensor_"
+    ],
+    "reason": "IndexError: tuple index out of range"
+  },
+  "tests/test_div.py::test_div_tensor_scalar_[dtype1-0.001-shape0]": {
+    "params": {
+      "dtype": "torch.float32",
+      "scalar": 0.001,
+      "shape": []
+    },
+    "result": "failed",
+    "opname": [
+      "div_tensor_"
+    ],
+    "reason": "IndexError: tuple index out of range"
+  },
+  "tests/test_div.py::test_div_tensor_scalar_[dtype1-0.001-shape1]": {
+    "params": {
+      "dtype": "torch.float32",
+      "scalar": 0.001,
+      "shape": [
+        1
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "div_tensor_"
+    ],
+    "reason": "IndexError: tuple index out of range"
+  },
+  "tests/test_div.py::test_div_tensor_scalar_[dtype1-0.001-shape2]": {
+    "params": {
+      "dtype": "torch.float32",
+      "scalar": 0.001,
+      "shape": [
+        1024,
+        1024
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "div_tensor_"
+    ],
+    "reason": "IndexError: tuple index out of range"
+  },
+  "tests/test_div.py::test_div_tensor_scalar_[dtype1-0.001-shape3]": {
+    "params": {
+      "dtype": "torch.float32",
+      "scalar": 0.001,
+      "shape": [
+        20,
+        320,
+        15
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "div_tensor_"
+    ],
+    "reason": "IndexError: tuple index out of range"
+  },
+  "tests/test_div.py::test_div_tensor_scalar_[dtype1-0.001-shape4]": {
+    "params": {
+      "dtype": "torch.float32",
+      "scalar": 0.001,
+      "shape": [
+        16,
+        128,
+        64,
+        60
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "div_tensor_"
+    ],
+    "reason": "IndexError: tuple index out of range"
+  },
+  "tests/test_div.py::test_div_tensor_scalar_[dtype1-0.001-shape5]": {
+    "params": {
+      "dtype": "torch.float32",
+      "scalar": 0.001,
+      "shape": [
+        16,
+        7,
+        57,
+        32,
+        29
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "div_tensor_"
+    ],
+    "reason": "IndexError: tuple index out of range"
+  },
+  "tests/test_div.py::test_div_tensor_scalar_[dtype1--0.999-shape0]": {
+    "params": {
+      "dtype": "torch.float32",
+      "scalar": -0.999,
+      "shape": []
+    },
+    "result": "failed",
+    "opname": [
+      "div_tensor_"
+    ],
+    "reason": "IndexError: tuple index out of range"
+  },
+  "tests/test_div.py::test_div_tensor_scalar_[dtype1--0.999-shape1]": {
+    "params": {
+      "dtype": "torch.float32",
+      "scalar": -0.999,
+      "shape": [
+        1
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "div_tensor_"
+    ],
+    "reason": "IndexError: tuple index out of range"
+  },
+  "tests/test_div.py::test_div_tensor_scalar_[dtype1--0.999-shape2]": {
+    "params": {
+      "dtype": "torch.float32",
+      "scalar": -0.999,
+      "shape": [
+        1024,
+        1024
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "div_tensor_"
+    ],
+    "reason": "IndexError: tuple index out of range"
+  },
+  "tests/test_div.py::test_div_tensor_scalar_[dtype1--0.999-shape3]": {
+    "params": {
+      "dtype": "torch.float32",
+      "scalar": -0.999,
+      "shape": [
+        20,
+        320,
+        15
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "div_tensor_"
+    ],
+    "reason": "IndexError: tuple index out of range"
+  },
+  "tests/test_div.py::test_div_tensor_scalar_[dtype1--0.999-shape4]": {
+    "params": {
+      "dtype": "torch.float32",
+      "scalar": -0.999,
+      "shape": [
+        16,
+        128,
+        64,
+        60
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "div_tensor_"
+    ],
+    "reason": "IndexError: tuple index out of range"
+  },
+  "tests/test_div.py::test_div_tensor_scalar_[dtype1--0.999-shape5]": {
+    "params": {
+      "dtype": "torch.float32",
+      "scalar": -0.999,
+      "shape": [
+        16,
+        7,
+        57,
+        32,
+        29
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "div_tensor_"
+    ],
+    "reason": "IndexError: tuple index out of range"
+  },
+  "tests/test_div.py::test_div_tensor_scalar_[dtype1-100.001-shape0]": {
+    "params": {
+      "dtype": "torch.float32",
+      "scalar": 100.001,
+      "shape": []
+    },
+    "result": "failed",
+    "opname": [
+      "div_tensor_"
+    ],
+    "reason": "IndexError: tuple index out of range"
+  },
+  "tests/test_div.py::test_div_tensor_scalar_[dtype1-100.001-shape1]": {
+    "params": {
+      "dtype": "torch.float32",
+      "scalar": 100.001,
+      "shape": [
+        1
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "div_tensor_"
+    ],
+    "reason": "IndexError: tuple index out of range"
+  },
+  "tests/test_div.py::test_div_tensor_scalar_[dtype1-100.001-shape2]": {
+    "params": {
+      "dtype": "torch.float32",
+      "scalar": 100.001,
+      "shape": [
+        1024,
+        1024
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "div_tensor_"
+    ],
+    "reason": "IndexError: tuple index out of range"
+  },
+  "tests/test_div.py::test_div_tensor_scalar_[dtype1-100.001-shape3]": {
+    "params": {
+      "dtype": "torch.float32",
+      "scalar": 100.001,
+      "shape": [
+        20,
+        320,
+        15
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "div_tensor_"
+    ],
+    "reason": "IndexError: tuple index out of range"
+  },
+  "tests/test_div.py::test_div_tensor_scalar_[dtype1-100.001-shape4]": {
+    "params": {
+      "dtype": "torch.float32",
+      "scalar": 100.001,
+      "shape": [
+        16,
+        128,
+        64,
+        60
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "div_tensor_"
+    ],
+    "reason": "IndexError: tuple index out of range"
+  },
+  "tests/test_div.py::test_div_tensor_scalar_[dtype1-100.001-shape5]": {
+    "params": {
+      "dtype": "torch.float32",
+      "scalar": 100.001,
+      "shape": [
+        16,
+        7,
+        57,
+        32,
+        29
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "div_tensor_"
+    ],
+    "reason": "IndexError: tuple index out of range"
+  },
+  "tests/test_div.py::test_div_tensor_scalar_[dtype1--111.999-shape0]": {
+    "params": {
+      "dtype": "torch.float32",
+      "scalar": -111.999,
+      "shape": []
+    },
+    "result": "failed",
+    "opname": [
+      "div_tensor_"
+    ],
+    "reason": "IndexError: tuple index out of range"
+  },
+  "tests/test_div.py::test_div_tensor_scalar_[dtype1--111.999-shape1]": {
+    "params": {
+      "dtype": "torch.float32",
+      "scalar": -111.999,
+      "shape": [
+        1
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "div_tensor_"
+    ],
+    "reason": "IndexError: tuple index out of range"
+  },
+  "tests/test_div.py::test_div_tensor_scalar_[dtype1--111.999-shape2]": {
+    "params": {
+      "dtype": "torch.float32",
+      "scalar": -111.999,
+      "shape": [
+        1024,
+        1024
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "div_tensor_"
+    ],
+    "reason": "IndexError: tuple index out of range"
+  },
+  "tests/test_div.py::test_div_tensor_scalar_[dtype1--111.999-shape3]": {
+    "params": {
+      "dtype": "torch.float32",
+      "scalar": -111.999,
+      "shape": [
+        20,
+        320,
+        15
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "div_tensor_"
+    ],
+    "reason": "IndexError: tuple index out of range"
+  },
+  "tests/test_div.py::test_div_tensor_scalar_[dtype1--111.999-shape4]": {
+    "params": {
+      "dtype": "torch.float32",
+      "scalar": -111.999,
+      "shape": [
+        16,
+        128,
+        64,
+        60
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "div_tensor_"
+    ],
+    "reason": "IndexError: tuple index out of range"
+  },
+  "tests/test_div.py::test_div_tensor_scalar_[dtype1--111.999-shape5]": {
+    "params": {
+      "dtype": "torch.float32",
+      "scalar": -111.999,
+      "shape": [
+        16,
+        7,
+        57,
+        32,
+        29
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "div_tensor_"
+    ],
+    "reason": "IndexError: tuple index out of range"
+  },
+  "tests/test_div.py::test_div_tensor_scalar_[dtype2-0.001-shape0]": {
+    "params": {
+      "dtype": "torch.bfloat16",
+      "scalar": 0.001,
+      "shape": []
+    },
+    "result": "passed",
+    "opname": [
+      "div_tensor_"
+    ],
+    "reason": null
+  },
+  "tests/test_div.py::test_div_tensor_scalar_[dtype2-0.001-shape1]": {
+    "params": {
+      "dtype": "torch.bfloat16",
+      "scalar": 0.001,
+      "shape": [
+        1
+      ]
+    },
+    "result": "passed",
+    "opname": [
+      "div_tensor_"
+    ],
+    "reason": null
+  },
+  "tests/test_div.py::test_div_tensor_scalar_[dtype2-0.001-shape2]": {
+    "params": {
+      "dtype": "torch.bfloat16",
+      "scalar": 0.001,
+      "shape": [
+        1024,
+        1024
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "div_tensor_"
+    ],
+    "reason": "IndexError: tuple index out of range"
+  },
+  "tests/test_div.py::test_div_tensor_scalar_[dtype2-0.001-shape3]": {
+    "params": {
+      "dtype": "torch.bfloat16",
+      "scalar": 0.001,
+      "shape": [
+        20,
+        320,
+        15
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "div_tensor_"
+    ],
+    "reason": "IndexError: tuple index out of range"
+  },
+  "tests/test_div.py::test_div_tensor_scalar_[dtype2-0.001-shape4]": {
+    "params": {
+      "dtype": "torch.bfloat16",
+      "scalar": 0.001,
+      "shape": [
+        16,
+        128,
+        64,
+        60
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "div_tensor_"
+    ],
+    "reason": "IndexError: tuple index out of range"
+  },
+  "tests/test_div.py::test_div_tensor_scalar_[dtype2-0.001-shape5]": {
+    "params": {
+      "dtype": "torch.bfloat16",
+      "scalar": 0.001,
+      "shape": [
+        16,
+        7,
+        57,
+        32,
+        29
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "div_tensor_"
+    ],
+    "reason": "IndexError: tuple index out of range"
+  },
+  "tests/test_div.py::test_div_tensor_scalar_[dtype2--0.999-shape0]": {
+    "params": {
+      "dtype": "torch.bfloat16",
+      "scalar": -0.999,
+      "shape": []
+    },
+    "result": "passed",
+    "opname": [
+      "div_tensor_"
+    ],
+    "reason": null
+  },
+  "tests/test_div.py::test_div_tensor_scalar_[dtype2--0.999-shape1]": {
+    "params": {
+      "dtype": "torch.bfloat16",
+      "scalar": -0.999,
+      "shape": [
+        1
+      ]
+    },
+    "result": "passed",
+    "opname": [
+      "div_tensor_"
+    ],
+    "reason": null
+  },
+  "tests/test_div.py::test_div_tensor_scalar_[dtype2--0.999-shape2]": {
+    "params": {
+      "dtype": "torch.bfloat16",
+      "scalar": -0.999,
+      "shape": [
+        1024,
+        1024
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "div_tensor_"
+    ],
+    "reason": "IndexError: tuple index out of range"
+  },
+  "tests/test_div.py::test_div_tensor_scalar_[dtype2--0.999-shape3]": {
+    "params": {
+      "dtype": "torch.bfloat16",
+      "scalar": -0.999,
+      "shape": [
+        20,
+        320,
+        15
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "div_tensor_"
+    ],
+    "reason": "IndexError: tuple index out of range"
+  },
+  "tests/test_div.py::test_div_tensor_scalar_[dtype2--0.999-shape4]": {
+    "params": {
+      "dtype": "torch.bfloat16",
+      "scalar": -0.999,
+      "shape": [
+        16,
+        128,
+        64,
+        60
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "div_tensor_"
+    ],
+    "reason": "IndexError: tuple index out of range"
+  },
+  "tests/test_div.py::test_div_tensor_scalar_[dtype2--0.999-shape5]": {
+    "params": {
+      "dtype": "torch.bfloat16",
+      "scalar": -0.999,
+      "shape": [
+        16,
+        7,
+        57,
+        32,
+        29
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "div_tensor_"
+    ],
+    "reason": "IndexError: tuple index out of range"
+  },
+  "tests/test_div.py::test_div_tensor_scalar_[dtype2-100.001-shape0]": {
+    "params": {
+      "dtype": "torch.bfloat16",
+      "scalar": 100.001,
+      "shape": []
+    },
+    "result": "passed",
+    "opname": [
+      "div_tensor_"
+    ],
+    "reason": null
+  },
+  "tests/test_div.py::test_div_tensor_scalar_[dtype2-100.001-shape1]": {
+    "params": {
+      "dtype": "torch.bfloat16",
+      "scalar": 100.001,
+      "shape": [
+        1
+      ]
+    },
+    "result": "passed",
+    "opname": [
+      "div_tensor_"
+    ],
+    "reason": null
+  },
+  "tests/test_div.py::test_div_tensor_scalar_[dtype2-100.001-shape2]": {
+    "params": {
+      "dtype": "torch.bfloat16",
+      "scalar": 100.001,
+      "shape": [
+        1024,
+        1024
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "div_tensor_"
+    ],
+    "reason": "IndexError: tuple index out of range"
+  },
+  "tests/test_div.py::test_div_tensor_scalar_[dtype2-100.001-shape3]": {
+    "params": {
+      "dtype": "torch.bfloat16",
+      "scalar": 100.001,
+      "shape": [
+        20,
+        320,
+        15
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "div_tensor_"
+    ],
+    "reason": "IndexError: tuple index out of range"
+  },
+  "tests/test_div.py::test_div_tensor_scalar_[dtype2-100.001-shape4]": {
+    "params": {
+      "dtype": "torch.bfloat16",
+      "scalar": 100.001,
+      "shape": [
+        16,
+        128,
+        64,
+        60
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "div_tensor_"
+    ],
+    "reason": "IndexError: tuple index out of range"
+  },
+  "tests/test_div.py::test_div_tensor_scalar_[dtype2-100.001-shape5]": {
+    "params": {
+      "dtype": "torch.bfloat16",
+      "scalar": 100.001,
+      "shape": [
+        16,
+        7,
+        57,
+        32,
+        29
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "div_tensor_"
+    ],
+    "reason": "IndexError: tuple index out of range"
+  },
+  "tests/test_div.py::test_div_tensor_scalar_[dtype2--111.999-shape0]": {
+    "params": {
+      "dtype": "torch.bfloat16",
+      "scalar": -111.999,
+      "shape": []
+    },
+    "result": "passed",
+    "opname": [
+      "div_tensor_"
+    ],
+    "reason": null
+  },
+  "tests/test_div.py::test_div_tensor_scalar_[dtype2--111.999-shape1]": {
+    "params": {
+      "dtype": "torch.bfloat16",
+      "scalar": -111.999,
+      "shape": [
+        1
+      ]
+    },
+    "result": "passed",
+    "opname": [
+      "div_tensor_"
+    ],
+    "reason": null
+  },
+  "tests/test_div.py::test_div_tensor_scalar_[dtype2--111.999-shape2]": {
+    "params": {
+      "dtype": "torch.bfloat16",
+      "scalar": -111.999,
+      "shape": [
+        1024,
+        1024
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "div_tensor_"
+    ],
+    "reason": "IndexError: tuple index out of range"
+  },
+  "tests/test_div.py::test_div_tensor_scalar_[dtype2--111.999-shape3]": {
+    "params": {
+      "dtype": "torch.bfloat16",
+      "scalar": -111.999,
+      "shape": [
+        20,
+        320,
+        15
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "div_tensor_"
+    ],
+    "reason": "IndexError: tuple index out of range"
+  },
+  "tests/test_div.py::test_div_tensor_scalar_[dtype2--111.999-shape4]": {
+    "params": {
+      "dtype": "torch.bfloat16",
+      "scalar": -111.999,
+      "shape": [
+        16,
+        128,
+        64,
+        60
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "div_tensor_"
+    ],
+    "reason": "IndexError: tuple index out of range"
+  },
+  "tests/test_div.py::test_div_tensor_scalar_[dtype2--111.999-shape5]": {
+    "params": {
+      "dtype": "torch.bfloat16",
+      "scalar": -111.999,
+      "shape": [
+        16,
+        7,
+        57,
+        32,
+        29
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "div_tensor_"
+    ],
+    "reason": "IndexError: tuple index out of range"
+  },
+  "tests/test_true_divide.py::test_true_divide_[dtype0-shape0]": {
+    "params": {
+      "dtype": "torch.float16",
+      "shape": []
+    },
+    "result": "failed",
+    "opname": [
+      "div_tensor_"
+    ],
+    "reason": "IndexError: tuple index out of range"
+  },
+  "tests/test_true_divide.py::test_true_divide_[dtype0-shape1]": {
+    "params": {
+      "dtype": "torch.float16",
+      "shape": [
+        1
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "div_tensor_"
+    ],
+    "reason": "IndexError: tuple index out of range"
+  },
+  "tests/test_true_divide.py::test_true_divide_[dtype0-shape2]": {
+    "params": {
+      "dtype": "torch.float16",
+      "shape": [
+        1024,
+        1024
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "div_tensor_"
+    ],
+    "reason": "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.43691.139857258230976.e91599463d3b4db0b107f81f2e39e516.tmp'"
+  },
+  "tests/test_true_divide.py::test_true_divide_[dtype0-shape3]": {
+    "params": {
+      "dtype": "torch.float16",
+      "shape": [
+        20,
+        320,
+        15
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "div_tensor_"
+    ],
+    "reason": "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.43691.139857258230976.b6594d6eb8cd48eebb1e59d8ed413053.tmp'"
+  },
+  "tests/test_true_divide.py::test_true_divide_[dtype0-shape4]": {
+    "params": {
+      "dtype": "torch.float16",
+      "shape": [
+        16,
+        128,
+        64,
+        60
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "div_tensor_"
+    ],
+    "reason": "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.43691.139857258230976.77c45808d0704267b479c57031b7d9ec.tmp'"
+  },
+  "tests/test_true_divide.py::test_true_divide_[dtype0-shape5]": {
+    "params": {
+      "dtype": "torch.float16",
+      "shape": [
+        16,
+        7,
+        57,
+        32,
+        29
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "div_tensor_"
+    ],
+    "reason": "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.43691.139857258230976.f46750817c4e40e48443c0711dde3b87.tmp'"
+  },
+  "tests/test_true_divide.py::test_true_divide_[dtype1-shape0]": {
+    "params": {
+      "dtype": "torch.float32",
+      "shape": []
+    },
+    "result": "failed",
+    "opname": [
+      "div_tensor_"
+    ],
+    "reason": "IndexError: tuple index out of range"
+  },
+  "tests/test_true_divide.py::test_true_divide_[dtype1-shape1]": {
+    "params": {
+      "dtype": "torch.float32",
+      "shape": [
+        1
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "div_tensor_"
+    ],
+    "reason": "IndexError: tuple index out of range"
+  },
+  "tests/test_true_divide.py::test_true_divide_[dtype1-shape2]": {
+    "params": {
+      "dtype": "torch.float32",
+      "shape": [
+        1024,
+        1024
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "div_tensor_"
+    ],
+    "reason": "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.43691.139857258230976.bbad4503205544a79641e6f322ccc7ba.tmp'"
+  },
+  "tests/test_true_divide.py::test_true_divide_[dtype1-shape3]": {
+    "params": {
+      "dtype": "torch.float32",
+      "shape": [
+        20,
+        320,
+        15
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "div_tensor_"
+    ],
+    "reason": "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.43691.139857258230976.efe994e84a0a40d389b5375d504939f7.tmp'"
+  },
+  "tests/test_true_divide.py::test_true_divide_[dtype1-shape4]": {
+    "params": {
+      "dtype": "torch.float32",
+      "shape": [
+        16,
+        128,
+        64,
+        60
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "div_tensor_"
+    ],
+    "reason": "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.43691.139857258230976.1df268c27d264b57a163500e26b8e10c.tmp'"
+  },
+  "tests/test_true_divide.py::test_true_divide_[dtype1-shape5]": {
+    "params": {
+      "dtype": "torch.float32",
+      "shape": [
+        16,
+        7,
+        57,
+        32,
+        29
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "div_tensor_"
+    ],
+    "reason": "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.43691.139857258230976.ff65fb76f5294defbbe4d52e4ffea936.tmp'"
+  },
+  "tests/test_true_divide.py::test_true_divide_[dtype2-shape0]": {
+    "params": {
+      "dtype": "torch.bfloat16",
+      "shape": []
+    },
+    "result": "passed",
+    "opname": [
+      "div_tensor_"
+    ],
+    "reason": null
+  },
+  "tests/test_true_divide.py::test_true_divide_[dtype2-shape1]": {
+    "params": {
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1
+      ]
+    },
+    "result": "passed",
+    "opname": [
+      "div_tensor_"
+    ],
+    "reason": null
+  },
+  "tests/test_true_divide.py::test_true_divide_[dtype2-shape2]": {
+    "params": {
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1024,
+        1024
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "div_tensor_"
+    ],
+    "reason": "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.43691.139857258230976.c6282513978a46e9b62c31bec7d894fb.tmp'"
+  },
+  "tests/test_true_divide.py::test_true_divide_[dtype2-shape3]": {
+    "params": {
+      "dtype": "torch.bfloat16",
+      "shape": [
+        20,
+        320,
+        15
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "div_tensor_"
+    ],
+    "reason": "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.43691.139857258230976.a8d013eb54d045f2bd61c0d79d655cc8.tmp'"
+  },
+  "tests/test_true_divide.py::test_true_divide_[dtype2-shape4]": {
+    "params": {
+      "dtype": "torch.bfloat16",
+      "shape": [
+        16,
+        128,
+        64,
+        60
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "div_tensor_"
+    ],
+    "reason": "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.43691.139857258230976.5e4059976528475abe882e5c360795e6.tmp'"
+  },
+  "tests/test_true_divide.py::test_true_divide_[dtype2-shape5]": {
+    "params": {
+      "dtype": "torch.bfloat16",
+      "shape": [
+        16,
+        7,
+        57,
+        32,
+        29
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "div_tensor_"
+    ],
+    "reason": "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.43691.139857258230976.142fc2b650bd4665aeca507949e8ab02.tmp'"
+  }
+}

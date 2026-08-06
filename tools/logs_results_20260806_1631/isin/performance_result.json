@@ -1,0 +1,7 @@
+{
+  "isin": {
+    "result": "failed",
+    "test_case": "benchmark/test_isin.py::test_isin",
+    "reason": "Failed: No CUDA GPUs are available"
+  }
+}

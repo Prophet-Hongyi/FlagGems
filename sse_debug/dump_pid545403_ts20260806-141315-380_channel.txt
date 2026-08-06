@@ -1,0 +1,16 @@
+Channel State Dump:
+valueLastIssuedByCpu: 15387
+valueLastIssuedToGpu: 15387
+valueFinishedByGpu: 15380
+cpuPut: 87
+cpuPutMonotonic: 15387
+gpuPut: 87
+gpuGet: 69
+gpuGetMonotonica: 15369
+vstream_id: 0
+hwq_id: 0
+done_ptr: 80
+enq_ptr: 87
+enq_ptr_monotonic: 15387
+error: 0
+marker->trackingSemaphoreValue: 15387

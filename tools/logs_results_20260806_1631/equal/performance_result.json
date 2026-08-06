@@ -1,0 +1,7 @@
+{
+  "equal": {
+    "result": "failed",
+    "test_case": "benchmark/test_equal.py::test_equal",
+    "reason": "Failed: No CUDA GPUs are available"
+  }
+}

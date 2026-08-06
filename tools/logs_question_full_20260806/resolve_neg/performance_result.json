@@ -1,0 +1,94 @@
+{
+  "resolve_neg": {
+    "details": [
+      {
+        "op_name": "resolve_neg",
+        "dtype": "torch.complex64",
+        "mode": "kernel",
+        "level": "core",
+        "result": [
+          {
+            "legacy_shape": null,
+            "shape_detail": [
+              [
+                64,
+                64
+              ]
+            ],
+            "latency_base": 0.005752000026404858,
+            "latency": 0.006113999988883734,
+            "gbps_base": null,
+            "gbps": null,
+            "speedup": 0.940791631806174,
+            "accuracy": null,
+            "tflops": null,
+            "utilization": null,
+            "compared_speedup": null,
+            "error_msg": null
+          },
+          {
+            "legacy_shape": null,
+            "shape_detail": [
+              [
+                1024,
+                1024
+              ]
+            ],
+            "latency_base": 0.01689399965107441,
+            "latency": 0.025102000683546066,
+            "gbps_base": null,
+            "gbps": null,
+            "speedup": 0.6730140702349728,
+            "accuracy": null,
+            "tflops": null,
+            "utilization": null,
+            "compared_speedup": null,
+            "error_msg": null
+          },
+          {
+            "legacy_shape": null,
+            "shape_detail": [
+              [
+                4096,
+                4096
+              ]
+            ],
+            "latency_base": 0.1485919952392578,
+            "latency": 0.30838000774383545,
+            "gbps_base": null,
+            "gbps": null,
+            "speedup": 0.4818470442568052,
+            "accuracy": null,
+            "tflops": null,
+            "utilization": null,
+            "compared_speedup": null,
+            "error_msg": null
+          },
+          {
+            "legacy_shape": null,
+            "shape_detail": [
+              [
+                64,
+                512,
+                512
+              ]
+            ],
+            "latency_base": 0.14850300550460815,
+            "latency": 0.30818501114845276,
+            "gbps_base": null,
+            "gbps": null,
+            "speedup": 0.4818631670346688,
+            "accuracy": null,
+            "tflops": null,
+            "utilization": null,
+            "compared_speedup": null,
+            "error_msg": null
+          }
+        ]
+      }
+    ],
+    "result": "passed",
+    "test_case": "benchmark/test_resolve_neg.py::test_resolve_neg",
+    "reason": null
+  }
+}

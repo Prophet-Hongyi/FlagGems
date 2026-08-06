@@ -1,0 +1,7 @@
+{
+  "masked_select": {
+    "result": "failed",
+    "test_case": "benchmark/test_masked_select.py::test_masked_select",
+    "reason": "Failed: No CUDA GPUs are available"
+  }
+}

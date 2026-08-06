@@ -1,0 +1,16 @@
+Channel State Dump:
+valueLastIssuedByCpu: a8d4d
+valueLastIssuedToGpu: a8d4d
+valueFinishedByGpu: a8d4a
+cpuPut: 4d
+cpuPutMonotonic: a8d4d
+gpuPut: 4d
+gpuGet: fd
+gpuGetMonotonica: a8cfd
+vstream_id: 0
+hwq_id: 0
+done_ptr: 4a
+enq_ptr: 4d
+enq_ptr_monotonic: a8d4d
+error: 0
+marker->trackingSemaphoreValue: a8d4d

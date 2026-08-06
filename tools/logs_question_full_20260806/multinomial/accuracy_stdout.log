@@ -1,0 +1,99 @@
+============================= test session starts ==============================
+platform linux -- Python 3.10.15, pytest-9.0.2, pluggy-1.6.0 -- /root/miniconda/envs/python310_torch25_cuda/bin/python3.1
+cachedir: .pytest_cache
+metadata: {'Python': '3.10.15', 'Platform': 'Linux-5.15.0-105-generic-x86_64-with-glibc2.31', 'Packages': {'pytest': '9.0.2', 'pluggy': '1.6.0'}, 'Plugins': {'html': '4.1.1', 'metadata': '3.1.1', 'timeout': '2.3.1', 'anyio': '4.9.0', 'typeguard': '4.4.4'}}
+rootdir: /workspace/FlagGems
+configfile: pytest.ini
+plugins: html-4.1.1, metadata-3.1.1, timeout-2.3.1, anyio-4.9.0, typeguard-4.4.4
+collecting ... vLLM not installed, the native pytorch implementation of FlashMLA for comparison
+collected 51091 items / 51011 deselected / 80 selected
+
+test_multinomial.py::test_multinomial_with_replacement[1000-dtype0-shape0] PASSED
+test_multinomial.py::test_multinomial_with_replacement[1000-dtype0-shape1] PASSED
+test_multinomial.py::test_multinomial_with_replacement[1000-dtype0-shape2] PASSED
+test_multinomial.py::test_multinomial_with_replacement[1000-dtype0-shape3] PASSED
+test_multinomial.py::test_multinomial_with_replacement[1000-dtype0-shape4] PASSED
+test_multinomial.py::test_multinomial_with_replacement[1000-dtype0-shape5] PASSED
+test_multinomial.py::test_multinomial_with_replacement[1000-dtype0-shape6] PASSED
+test_multinomial.py::test_multinomial_with_replacement[1000-dtype0-shape7] PASSED
+test_multinomial.py::test_multinomial_with_replacement[1000-dtype0-shape8] PASSED
+test_multinomial.py::test_multinomial_with_replacement[1000-dtype0-shape9] PASSED
+test_multinomial.py::test_multinomial_with_replacement[1000-dtype0-shape10] PASSED
+test_multinomial.py::test_multinomial_with_replacement[1000-dtype0-shape11] PASSED
+test_multinomial.py::test_multinomial_with_replacement[1000-dtype0-shape12] PASSED
+test_multinomial.py::test_multinomial_with_replacement[1000-dtype0-shape13] PASSED
+test_multinomial.py::test_multinomial_with_replacement[1000-dtype0-shape14] PASSED
+test_multinomial.py::test_multinomial_with_replacement[1000-dtype0-shape15] PASSED
+test_multinomial.py::test_multinomial_with_replacement[1000-dtype0-shape16] PASSED
+test_multinomial.py::test_multinomial_with_replacement[1000-dtype0-shape17] PASSED
+test_multinomial.py::test_multinomial_with_replacement[1000-dtype0-shape18] PASSED
+test_multinomial.py::test_multinomial_with_replacement[1000-dtype0-shape19] PASSED
+test_multinomial.py::test_multinomial_with_replacement[1000-dtype0-shape20] PASSED
+test_multinomial.py::test_multinomial_with_replacement[1000-dtype1-shape0] PASSED
+test_multinomial.py::test_multinomial_with_replacement[1000-dtype1-shape1] PASSED
+test_multinomial.py::test_multinomial_with_replacement[1000-dtype1-shape2] PASSED
+test_multinomial.py::test_multinomial_with_replacement[1000-dtype1-shape3] PASSED
+test_multinomial.py::test_multinomial_with_replacement[1000-dtype1-shape4] PASSED
+test_multinomial.py::test_multinomial_with_replacement[1000-dtype1-shape5] PASSED
+test_multinomial.py::test_multinomial_with_replacement[1000-dtype1-shape6] PASSED
+test_multinomial.py::test_multinomial_with_replacement[1000-dtype1-shape7] PASSED
+test_multinomial.py::test_multinomial_with_replacement[1000-dtype1-shape8] PASSED
+test_multinomial.py::test_multinomial_with_replacement[1000-dtype1-shape9] PASSED
+test_multinomial.py::test_multinomial_with_replacement[1000-dtype1-shape10] PASSED
+test_multinomial.py::test_multinomial_with_replacement[1000-dtype1-shape11] PASSED
+test_multinomial.py::test_multinomial_with_replacement[1000-dtype1-shape12] PASSED
+test_multinomial.py::test_multinomial_with_replacement[1000-dtype1-shape13] PASSED
+test_multinomial.py::test_multinomial_with_replacement[1000-dtype1-shape14] PASSED
+test_multinomial.py::test_multinomial_with_replacement[1000-dtype1-shape15] PASSED
+test_multinomial.py::test_multinomial_with_replacement[1000-dtype1-shape16] PASSED
+test_multinomial.py::test_multinomial_with_replacement[1000-dtype1-shape17] PASSED
+test_multinomial.py::test_multinomial_with_replacement[1000-dtype1-shape18] PASSED
+test_multinomial.py::test_multinomial_with_replacement[1000-dtype1-shape19] PASSED
+test_multinomial.py::test_multinomial_with_replacement[1000-dtype1-shape20] PASSED
+test_multinomial.py::test_multinomial_with_replacement_1[2048-dtype0-shape0] PASSED
+test_multinomial.py::test_multinomial_with_replacement_1[2048-dtype1-shape0] PASSED
+test_multinomial.py::test_multinomial_without_replacement[dtype0-pool0] PASSED
+test_multinomial.py::test_multinomial_without_replacement[dtype0-pool1] PASSED
+test_multinomial.py::test_multinomial_without_replacement[dtype0-pool2] PASSED
+test_multinomial.py::test_multinomial_without_replacement[dtype0-pool3] PASSED
+test_multinomial.py::test_multinomial_without_replacement[dtype0-pool4] PASSED
+test_multinomial.py::test_multinomial_without_replacement[dtype0-pool5] PASSED
+test_multinomial.py::test_multinomial_without_replacement[dtype0-pool6] PASSED
+test_multinomial.py::test_multinomial_without_replacement[dtype0-pool7] PASSED
+test_multinomial.py::test_multinomial_without_replacement[dtype0-pool8] PASSED
+test_multinomial.py::test_multinomial_without_replacement[dtype0-pool9] PASSED
+test_multinomial.py::test_multinomial_without_replacement[dtype0-pool10] PASSED
+test_multinomial.py::test_multinomial_without_replacement[dtype0-pool11] PASSED
+test_multinomial.py::test_multinomial_without_replacement[dtype1-pool0] PASSED
+test_multinomial.py::test_multinomial_without_replacement[dtype1-pool1] PASSED
+test_multinomial.py::test_multinomial_without_replacement[dtype1-pool2] PASSED
+test_multinomial.py::test_multinomial_without_replacement[dtype1-pool3] PASSED
+test_multinomial.py::test_multinomial_without_replacement[dtype1-pool4] PASSED
+test_multinomial.py::test_multinomial_without_replacement[dtype1-pool5] PASSED
+test_multinomial.py::test_multinomial_without_replacement[dtype1-pool6] PASSED
+test_multinomial.py::test_multinomial_without_replacement[dtype1-pool7] PASSED
+test_multinomial.py::test_multinomial_without_replacement[dtype1-pool8] PASSED
+test_multinomial.py::test_multinomial_without_replacement[dtype1-pool9] PASSED
+test_multinomial.py::test_multinomial_without_replacement[dtype1-pool10] PASSED
+test_multinomial.py::test_multinomial_without_replacement[dtype1-pool11] PASSED
+test_multinomial.py::test_multinomial_without_replacement[dtype2-pool0] PASSED
+test_multinomial.py::test_multinomial_without_replacement[dtype2-pool1] PASSED
+test_multinomial.py::test_multinomial_without_replacement[dtype2-pool2] PASSED
+test_multinomial.py::test_multinomial_without_replacement[dtype2-pool3] PASSED
+test_multinomial.py::test_multinomial_without_replacement[dtype2-pool4] PASSED
+test_multinomial.py::test_multinomial_without_replacement[dtype2-pool5] PASSED
+test_multinomial.py::test_multinomial_without_replacement[dtype2-pool6] PASSED
+test_multinomial.py::test_multinomial_without_replacement[dtype2-pool7] PASSED
+test_multinomial.py::test_multinomial_without_replacement[dtype2-pool8] PASSED
+test_multinomial.py::test_multinomial_without_replacement[dtype2-pool9] PASSED
+test_multinomial.py::test_multinomial_without_replacement[dtype2-pool10] PASSED
+test_multinomial.py::test_multinomial_without_replacement[dtype2-pool11] PASSED
+
+=============================== warnings summary ===============================
+tests/test_multinomial.py::test_multinomial_with_replacement_1[2048-dtype0-shape0]
+tests/test_multinomial.py::test_multinomial_with_replacement_1[2048-dtype1-shape0]
+  /root/miniconda/envs/python310_torch25_cuda/lib/python3.10/site-packages/scipy/stats/_stats_py.py:7335: RuntimeWarning: invalid value encountered in divide
+    terms = (f_obs - f_exp)**2 / f_exp
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+============== 80 passed, 51011 deselected, 2 warnings in 48.78s ===============

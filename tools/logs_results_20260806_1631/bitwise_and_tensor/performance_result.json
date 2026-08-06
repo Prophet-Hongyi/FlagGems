@@ -1,0 +1,7 @@
+{
+  "bitwise_and_tensor": {
+    "result": "failed",
+    "test_case": "benchmark/test_bitwise_and.py::test_bitwise_and",
+    "reason": "Failed: No CUDA GPUs are available"
+  }
+}

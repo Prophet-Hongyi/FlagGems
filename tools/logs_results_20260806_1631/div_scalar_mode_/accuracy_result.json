@@ -1,0 +1,1014 @@
+{
+  "tests/test_div.py::test_div_scalar_mode_float_[None-dtype0-shape0]": {
+    "params": {
+      "rounding_mode": null,
+      "dtype": "torch.float16",
+      "shape": []
+    },
+    "result": "failed",
+    "opname": [
+      "div_scalar_mode_"
+    ],
+    "reason": "IndexError: tuple index out of range"
+  },
+  "tests/test_div.py::test_div_scalar_mode_float_[None-dtype0-shape1]": {
+    "params": {
+      "rounding_mode": null,
+      "dtype": "torch.float16",
+      "shape": [
+        1
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "div_scalar_mode_"
+    ],
+    "reason": "IndexError: tuple index out of range"
+  },
+  "tests/test_div.py::test_div_scalar_mode_float_[None-dtype0-shape2]": {
+    "params": {
+      "rounding_mode": null,
+      "dtype": "torch.float16",
+      "shape": [
+        1024,
+        1024
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "div_scalar_mode_"
+    ],
+    "reason": "IndexError: tuple index out of range"
+  },
+  "tests/test_div.py::test_div_scalar_mode_float_[None-dtype0-shape3]": {
+    "params": {
+      "rounding_mode": null,
+      "dtype": "torch.float16",
+      "shape": [
+        20,
+        320,
+        15
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "div_scalar_mode_"
+    ],
+    "reason": "IndexError: tuple index out of range"
+  },
+  "tests/test_div.py::test_div_scalar_mode_float_[None-dtype0-shape4]": {
+    "params": {
+      "rounding_mode": null,
+      "dtype": "torch.float16",
+      "shape": [
+        16,
+        128,
+        64,
+        60
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "div_scalar_mode_"
+    ],
+    "reason": "IndexError: tuple index out of range"
+  },
+  "tests/test_div.py::test_div_scalar_mode_float_[None-dtype0-shape5]": {
+    "params": {
+      "rounding_mode": null,
+      "dtype": "torch.float16",
+      "shape": [
+        16,
+        7,
+        57,
+        32,
+        29
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "div_scalar_mode_"
+    ],
+    "reason": "IndexError: tuple index out of range"
+  },
+  "tests/test_div.py::test_div_scalar_mode_float_[None-dtype1-shape0]": {
+    "params": {
+      "rounding_mode": null,
+      "dtype": "torch.float32",
+      "shape": []
+    },
+    "result": "failed",
+    "opname": [
+      "div_scalar_mode_"
+    ],
+    "reason": "IndexError: tuple index out of range"
+  },
+  "tests/test_div.py::test_div_scalar_mode_float_[None-dtype1-shape1]": {
+    "params": {
+      "rounding_mode": null,
+      "dtype": "torch.float32",
+      "shape": [
+        1
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "div_scalar_mode_"
+    ],
+    "reason": "IndexError: tuple index out of range"
+  },
+  "tests/test_div.py::test_div_scalar_mode_float_[None-dtype1-shape2]": {
+    "params": {
+      "rounding_mode": null,
+      "dtype": "torch.float32",
+      "shape": [
+        1024,
+        1024
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "div_scalar_mode_"
+    ],
+    "reason": "IndexError: tuple index out of range"
+  },
+  "tests/test_div.py::test_div_scalar_mode_float_[None-dtype1-shape3]": {
+    "params": {
+      "rounding_mode": null,
+      "dtype": "torch.float32",
+      "shape": [
+        20,
+        320,
+        15
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "div_scalar_mode_"
+    ],
+    "reason": "IndexError: tuple index out of range"
+  },
+  "tests/test_div.py::test_div_scalar_mode_float_[None-dtype1-shape4]": {
+    "params": {
+      "rounding_mode": null,
+      "dtype": "torch.float32",
+      "shape": [
+        16,
+        128,
+        64,
+        60
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "div_scalar_mode_"
+    ],
+    "reason": "IndexError: tuple index out of range"
+  },
+  "tests/test_div.py::test_div_scalar_mode_float_[None-dtype1-shape5]": {
+    "params": {
+      "rounding_mode": null,
+      "dtype": "torch.float32",
+      "shape": [
+        16,
+        7,
+        57,
+        32,
+        29
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "div_scalar_mode_"
+    ],
+    "reason": "IndexError: tuple index out of range"
+  },
+  "tests/test_div.py::test_div_scalar_mode_float_[None-dtype2-shape0]": {
+    "params": {
+      "rounding_mode": null,
+      "dtype": "torch.bfloat16",
+      "shape": []
+    },
+    "result": "passed",
+    "opname": [
+      "div_scalar_mode_"
+    ],
+    "reason": null
+  },
+  "tests/test_div.py::test_div_scalar_mode_float_[None-dtype2-shape1]": {
+    "params": {
+      "rounding_mode": null,
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1
+      ]
+    },
+    "result": "passed",
+    "opname": [
+      "div_scalar_mode_"
+    ],
+    "reason": null
+  },
+  "tests/test_div.py::test_div_scalar_mode_float_[None-dtype2-shape2]": {
+    "params": {
+      "rounding_mode": null,
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1024,
+        1024
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "div_scalar_mode_"
+    ],
+    "reason": "IndexError: tuple index out of range"
+  },
+  "tests/test_div.py::test_div_scalar_mode_float_[None-dtype2-shape3]": {
+    "params": {
+      "rounding_mode": null,
+      "dtype": "torch.bfloat16",
+      "shape": [
+        20,
+        320,
+        15
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "div_scalar_mode_"
+    ],
+    "reason": "IndexError: tuple index out of range"
+  },
+  "tests/test_div.py::test_div_scalar_mode_float_[None-dtype2-shape4]": {
+    "params": {
+      "rounding_mode": null,
+      "dtype": "torch.bfloat16",
+      "shape": [
+        16,
+        128,
+        64,
+        60
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "div_scalar_mode_"
+    ],
+    "reason": "IndexError: tuple index out of range"
+  },
+  "tests/test_div.py::test_div_scalar_mode_float_[None-dtype2-shape5]": {
+    "params": {
+      "rounding_mode": null,
+      "dtype": "torch.bfloat16",
+      "shape": [
+        16,
+        7,
+        57,
+        32,
+        29
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "div_scalar_mode_"
+    ],
+    "reason": "IndexError: tuple index out of range"
+  },
+  "tests/test_div.py::test_div_scalar_mode_float_[floor-dtype3-shape0]": {
+    "params": {
+      "rounding_mode": "floor",
+      "dtype": "torch.float16",
+      "shape": []
+    },
+    "result": "failed",
+    "opname": [
+      "div_scalar_mode_"
+    ],
+    "reason": "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.39985.140174092522688.5eebb713fe7548e89a30384879a0ff25.tmp'"
+  },
+  "tests/test_div.py::test_div_scalar_mode_float_[floor-dtype3-shape1]": {
+    "params": {
+      "rounding_mode": "floor",
+      "dtype": "torch.float16",
+      "shape": [
+        1
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "div_scalar_mode_"
+    ],
+    "reason": "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.39985.140174092522688.d4acf5c9adf84a1fabf356ada00bd15e.tmp'"
+  },
+  "tests/test_div.py::test_div_scalar_mode_float_[floor-dtype3-shape2]": {
+    "params": {
+      "rounding_mode": "floor",
+      "dtype": "torch.float16",
+      "shape": [
+        1024,
+        1024
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "div_scalar_mode_"
+    ],
+    "reason": "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.39985.140174092522688.0630d897a1f44305aec1461355e45779.tmp'"
+  },
+  "tests/test_div.py::test_div_scalar_mode_float_[floor-dtype3-shape3]": {
+    "params": {
+      "rounding_mode": "floor",
+      "dtype": "torch.float16",
+      "shape": [
+        20,
+        320,
+        15
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "div_scalar_mode_"
+    ],
+    "reason": "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.39985.140174092522688.e05bf90933454017a7f79ca80223e3e9.tmp'"
+  },
+  "tests/test_div.py::test_div_scalar_mode_float_[floor-dtype3-shape4]": {
+    "params": {
+      "rounding_mode": "floor",
+      "dtype": "torch.float16",
+      "shape": [
+        16,
+        128,
+        64,
+        60
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "div_scalar_mode_"
+    ],
+    "reason": "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.39985.140174092522688.93aaa3057ed0405fa4965cef4f431ffb.tmp'"
+  },
+  "tests/test_div.py::test_div_scalar_mode_float_[floor-dtype3-shape5]": {
+    "params": {
+      "rounding_mode": "floor",
+      "dtype": "torch.float16",
+      "shape": [
+        16,
+        7,
+        57,
+        32,
+        29
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "div_scalar_mode_"
+    ],
+    "reason": "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.39985.140174092522688.5776e115f4fa45ce9dd4d0b40654b4fe.tmp'"
+  },
+  "tests/test_div.py::test_div_scalar_mode_float_[floor-dtype4-shape0]": {
+    "params": {
+      "rounding_mode": "floor",
+      "dtype": "torch.float32",
+      "shape": []
+    },
+    "result": "failed",
+    "opname": [
+      "div_scalar_mode_"
+    ],
+    "reason": "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.39985.140174092522688.ef32850b399547f385f0f90888c645f0.tmp'"
+  },
+  "tests/test_div.py::test_div_scalar_mode_float_[floor-dtype4-shape1]": {
+    "params": {
+      "rounding_mode": "floor",
+      "dtype": "torch.float32",
+      "shape": [
+        1
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "div_scalar_mode_"
+    ],
+    "reason": "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.39985.140174092522688.a3c5943aac1c4d129825141399afbb89.tmp'"
+  },
+  "tests/test_div.py::test_div_scalar_mode_float_[floor-dtype4-shape2]": {
+    "params": {
+      "rounding_mode": "floor",
+      "dtype": "torch.float32",
+      "shape": [
+        1024,
+        1024
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "div_scalar_mode_"
+    ],
+    "reason": "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.39985.140174092522688.09cd88f05200489ba45bb41fe5bbee57.tmp'"
+  },
+  "tests/test_div.py::test_div_scalar_mode_float_[floor-dtype4-shape3]": {
+    "params": {
+      "rounding_mode": "floor",
+      "dtype": "torch.float32",
+      "shape": [
+        20,
+        320,
+        15
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "div_scalar_mode_"
+    ],
+    "reason": "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.39985.140174092522688.abb946ee232746998e6dac36776bda1a.tmp'"
+  },
+  "tests/test_div.py::test_div_scalar_mode_float_[floor-dtype4-shape4]": {
+    "params": {
+      "rounding_mode": "floor",
+      "dtype": "torch.float32",
+      "shape": [
+        16,
+        128,
+        64,
+        60
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "div_scalar_mode_"
+    ],
+    "reason": "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.39985.140174092522688.4c01f1725af14f65993b7a31c12e4662.tmp'"
+  },
+  "tests/test_div.py::test_div_scalar_mode_float_[floor-dtype4-shape5]": {
+    "params": {
+      "rounding_mode": "floor",
+      "dtype": "torch.float32",
+      "shape": [
+        16,
+        7,
+        57,
+        32,
+        29
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "div_scalar_mode_"
+    ],
+    "reason": "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.39985.140174092522688.cba251f9295a4720acee462a324588c0.tmp'"
+  },
+  "tests/test_div.py::test_div_scalar_mode_float_[floor-dtype5-shape0]": {
+    "params": {
+      "rounding_mode": "floor",
+      "dtype": "torch.bfloat16",
+      "shape": []
+    },
+    "result": "failed",
+    "opname": [
+      "div_scalar_mode_"
+    ],
+    "reason": "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.39985.140174092522688.9559d28fdefc4d6185adf85900e270b4.tmp'"
+  },
+  "tests/test_div.py::test_div_scalar_mode_float_[floor-dtype5-shape1]": {
+    "params": {
+      "rounding_mode": "floor",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "div_scalar_mode_"
+    ],
+    "reason": "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.39985.140174092522688.f6b5b0fac9494a7f89a5584815c603cd.tmp'"
+  },
+  "tests/test_div.py::test_div_scalar_mode_float_[floor-dtype5-shape2]": {
+    "params": {
+      "rounding_mode": "floor",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1024,
+        1024
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "div_scalar_mode_"
+    ],
+    "reason": "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.39985.140174092522688.e092dbf95f60496ca1b4513342e444da.tmp'"
+  },
+  "tests/test_div.py::test_div_scalar_mode_float_[floor-dtype5-shape3]": {
+    "params": {
+      "rounding_mode": "floor",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        20,
+        320,
+        15
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "div_scalar_mode_"
+    ],
+    "reason": "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.39985.140174092522688.f8f49fddc5924ff98ff1a64cb2f93435.tmp'"
+  },
+  "tests/test_div.py::test_div_scalar_mode_float_[floor-dtype5-shape4]": {
+    "params": {
+      "rounding_mode": "floor",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        16,
+        128,
+        64,
+        60
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "div_scalar_mode_"
+    ],
+    "reason": "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.39985.140174092522688.02ef14fe15cb4c369235ec82975cfb44.tmp'"
+  },
+  "tests/test_div.py::test_div_scalar_mode_float_[floor-dtype5-shape5]": {
+    "params": {
+      "rounding_mode": "floor",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        16,
+        7,
+        57,
+        32,
+        29
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "div_scalar_mode_"
+    ],
+    "reason": "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.39985.140174092522688.1a1eefc106ad4a9db1d3604cfaf10c3c.tmp'"
+  },
+  "tests/test_div.py::test_div_scalar_mode_float_[trunc-dtype6-shape0]": {
+    "params": {
+      "rounding_mode": "trunc",
+      "dtype": "torch.float32",
+      "shape": []
+    },
+    "result": "failed",
+    "opname": [
+      "div_scalar_mode_"
+    ],
+    "reason": "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.39985.140174092522688.52cc03a2101e4c9b8e351cc965c22d29.tmp'"
+  },
+  "tests/test_div.py::test_div_scalar_mode_float_[trunc-dtype6-shape1]": {
+    "params": {
+      "rounding_mode": "trunc",
+      "dtype": "torch.float32",
+      "shape": [
+        1
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "div_scalar_mode_"
+    ],
+    "reason": "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.39985.140174092522688.f7abe236c476451a8085bc3f18959d0f.tmp'"
+  },
+  "tests/test_div.py::test_div_scalar_mode_float_[trunc-dtype6-shape2]": {
+    "params": {
+      "rounding_mode": "trunc",
+      "dtype": "torch.float32",
+      "shape": [
+        1024,
+        1024
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "div_scalar_mode_"
+    ],
+    "reason": "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.39985.140174092522688.60ccc3c39bfb4d97b4edce945f5411cd.tmp'"
+  },
+  "tests/test_div.py::test_div_scalar_mode_float_[trunc-dtype6-shape3]": {
+    "params": {
+      "rounding_mode": "trunc",
+      "dtype": "torch.float32",
+      "shape": [
+        20,
+        320,
+        15
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "div_scalar_mode_"
+    ],
+    "reason": "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.39985.140174092522688.29ef8993b68d473996292842a06b1354.tmp'"
+  },
+  "tests/test_div.py::test_div_scalar_mode_float_[trunc-dtype6-shape4]": {
+    "params": {
+      "rounding_mode": "trunc",
+      "dtype": "torch.float32",
+      "shape": [
+        16,
+        128,
+        64,
+        60
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "div_scalar_mode_"
+    ],
+    "reason": "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.39985.140174092522688.6b1eb5f522324745a295f2463e4913e6.tmp'"
+  },
+  "tests/test_div.py::test_div_scalar_mode_float_[trunc-dtype6-shape5]": {
+    "params": {
+      "rounding_mode": "trunc",
+      "dtype": "torch.float32",
+      "shape": [
+        16,
+        7,
+        57,
+        32,
+        29
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "div_scalar_mode_"
+    ],
+    "reason": "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.39985.140174092522688.acbfb40ee2b648a5b62f233eafd32c67.tmp'"
+  },
+  "tests/test_div.py::test_div_scalar_mode_int_[torch.int16-trunc-shape0]": {
+    "params": {
+      "dtype": "torch.int16",
+      "rounding_mode": "trunc",
+      "shape": []
+    },
+    "result": "failed",
+    "opname": [
+      "div_scalar_mode_"
+    ],
+    "reason": "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.39985.140174092522688.70bf0c9d1221470b8a144f8c3e55b5db.tmp'"
+  },
+  "tests/test_div.py::test_div_scalar_mode_int_[torch.int16-trunc-shape1]": {
+    "params": {
+      "dtype": "torch.int16",
+      "rounding_mode": "trunc",
+      "shape": [
+        1
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "div_scalar_mode_"
+    ],
+    "reason": "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.39985.140174092522688.5759c22d7941475f9cc3a20ec429a9c4.tmp'"
+  },
+  "tests/test_div.py::test_div_scalar_mode_int_[torch.int16-trunc-shape2]": {
+    "params": {
+      "dtype": "torch.int16",
+      "rounding_mode": "trunc",
+      "shape": [
+        1024,
+        1024
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "div_scalar_mode_"
+    ],
+    "reason": "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.39985.140174092522688.240d879fc8854cd69a1115f5f5eaa96e.tmp'"
+  },
+  "tests/test_div.py::test_div_scalar_mode_int_[torch.int16-trunc-shape3]": {
+    "params": {
+      "dtype": "torch.int16",
+      "rounding_mode": "trunc",
+      "shape": [
+        20,
+        320,
+        15
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "div_scalar_mode_"
+    ],
+    "reason": "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.39985.140174092522688.3e0e1b6d5b784132a548c1200485a711.tmp'"
+  },
+  "tests/test_div.py::test_div_scalar_mode_int_[torch.int16-trunc-shape4]": {
+    "params": {
+      "dtype": "torch.int16",
+      "rounding_mode": "trunc",
+      "shape": [
+        16,
+        128,
+        64,
+        60
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "div_scalar_mode_"
+    ],
+    "reason": "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.39985.140174092522688.054a330950b2464b9fffb5551ac78d30.tmp'"
+  },
+  "tests/test_div.py::test_div_scalar_mode_int_[torch.int16-trunc-shape5]": {
+    "params": {
+      "dtype": "torch.int16",
+      "rounding_mode": "trunc",
+      "shape": [
+        16,
+        7,
+        57,
+        32,
+        29
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "div_scalar_mode_"
+    ],
+    "reason": "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.39985.140174092522688.2e483c9e612f430ba024bb59061c6517.tmp'"
+  },
+  "tests/test_div.py::test_div_scalar_mode_int_[torch.int16-floor-shape0]": {
+    "params": {
+      "dtype": "torch.int16",
+      "rounding_mode": "floor",
+      "shape": []
+    },
+    "result": "failed",
+    "opname": [
+      "div_scalar_mode_"
+    ],
+    "reason": "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.39985.140174092522688.c2b529748a3c4a77b1f4b60049863ca9.tmp'"
+  },
+  "tests/test_div.py::test_div_scalar_mode_int_[torch.int16-floor-shape1]": {
+    "params": {
+      "dtype": "torch.int16",
+      "rounding_mode": "floor",
+      "shape": [
+        1
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "div_scalar_mode_"
+    ],
+    "reason": "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.39985.140174092522688.e495db636a4c491bb425df340185761e.tmp'"
+  },
+  "tests/test_div.py::test_div_scalar_mode_int_[torch.int16-floor-shape2]": {
+    "params": {
+      "dtype": "torch.int16",
+      "rounding_mode": "floor",
+      "shape": [
+        1024,
+        1024
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "div_scalar_mode_"
+    ],
+    "reason": "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.39985.140174092522688.ab3a7106f1cf4a0ea7b26b1be96cadf9.tmp'"
+  },
+  "tests/test_div.py::test_div_scalar_mode_int_[torch.int16-floor-shape3]": {
+    "params": {
+      "dtype": "torch.int16",
+      "rounding_mode": "floor",
+      "shape": [
+        20,
+        320,
+        15
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "div_scalar_mode_"
+    ],
+    "reason": "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.39985.140174092522688.9bb9374ced354843b9d3846291c96693.tmp'"
+  },
+  "tests/test_div.py::test_div_scalar_mode_int_[torch.int16-floor-shape4]": {
+    "params": {
+      "dtype": "torch.int16",
+      "rounding_mode": "floor",
+      "shape": [
+        16,
+        128,
+        64,
+        60
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "div_scalar_mode_"
+    ],
+    "reason": "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.39985.140174092522688.04bffc37184443bf8e9084e374ebab25.tmp'"
+  },
+  "tests/test_div.py::test_div_scalar_mode_int_[torch.int16-floor-shape5]": {
+    "params": {
+      "dtype": "torch.int16",
+      "rounding_mode": "floor",
+      "shape": [
+        16,
+        7,
+        57,
+        32,
+        29
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "div_scalar_mode_"
+    ],
+    "reason": "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.39985.140174092522688.ad979d4cbcba4a05a9f49e134b8a343b.tmp'"
+  },
+  "tests/test_div.py::test_div_scalar_mode_int_[torch.int32-trunc-shape0]": {
+    "params": {
+      "dtype": "torch.int32",
+      "rounding_mode": "trunc",
+      "shape": []
+    },
+    "result": "failed",
+    "opname": [
+      "div_scalar_mode_"
+    ],
+    "reason": "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.39985.140174092522688.92618f1c382b4863be7ea02db0d18624.tmp'"
+  },
+  "tests/test_div.py::test_div_scalar_mode_int_[torch.int32-trunc-shape1]": {
+    "params": {
+      "dtype": "torch.int32",
+      "rounding_mode": "trunc",
+      "shape": [
+        1
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "div_scalar_mode_"
+    ],
+    "reason": "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.39985.140174092522688.8afe8f002e244971a175dd742c1c935b.tmp'"
+  },
+  "tests/test_div.py::test_div_scalar_mode_int_[torch.int32-trunc-shape2]": {
+    "params": {
+      "dtype": "torch.int32",
+      "rounding_mode": "trunc",
+      "shape": [
+        1024,
+        1024
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "div_scalar_mode_"
+    ],
+    "reason": "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.39985.140174092522688.c3a2f21266cd44c3b7b2bf621e8d98af.tmp'"
+  },
+  "tests/test_div.py::test_div_scalar_mode_int_[torch.int32-trunc-shape3]": {
+    "params": {
+      "dtype": "torch.int32",
+      "rounding_mode": "trunc",
+      "shape": [
+        20,
+        320,
+        15
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "div_scalar_mode_"
+    ],
+    "reason": "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.39985.140174092522688.ccb5cc7456df42b58c08b3b30ab43ed6.tmp'"
+  },
+  "tests/test_div.py::test_div_scalar_mode_int_[torch.int32-trunc-shape4]": {
+    "params": {
+      "dtype": "torch.int32",
+      "rounding_mode": "trunc",
+      "shape": [
+        16,
+        128,
+        64,
+        60
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "div_scalar_mode_"
+    ],
+    "reason": "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.39985.140174092522688.b4dede16a45143de825e931e6e4642eb.tmp'"
+  },
+  "tests/test_div.py::test_div_scalar_mode_int_[torch.int32-trunc-shape5]": {
+    "params": {
+      "dtype": "torch.int32",
+      "rounding_mode": "trunc",
+      "shape": [
+        16,
+        7,
+        57,
+        32,
+        29
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "div_scalar_mode_"
+    ],
+    "reason": "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.39985.140174092522688.0abfcab8d9ce4610ba1d2831b9588622.tmp'"
+  },
+  "tests/test_div.py::test_div_scalar_mode_int_[torch.int32-floor-shape0]": {
+    "params": {
+      "dtype": "torch.int32",
+      "rounding_mode": "floor",
+      "shape": []
+    },
+    "result": "failed",
+    "opname": [
+      "div_scalar_mode_"
+    ],
+    "reason": "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.39985.140174092522688.6ab0971c55714b8eb74593ff28f93817.tmp'"
+  },
+  "tests/test_div.py::test_div_scalar_mode_int_[torch.int32-floor-shape1]": {
+    "params": {
+      "dtype": "torch.int32",
+      "rounding_mode": "floor",
+      "shape": [
+        1
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "div_scalar_mode_"
+    ],
+    "reason": "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.39985.140174092522688.d9486c30a8df4820a5b1faeb67868b57.tmp'"
+  },
+  "tests/test_div.py::test_div_scalar_mode_int_[torch.int32-floor-shape2]": {
+    "params": {
+      "dtype": "torch.int32",
+      "rounding_mode": "floor",
+      "shape": [
+        1024,
+        1024
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "div_scalar_mode_"
+    ],
+    "reason": "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.39985.140174092522688.111d073b1ced4b06a93a0bd0da51d629.tmp'"
+  },
+  "tests/test_div.py::test_div_scalar_mode_int_[torch.int32-floor-shape3]": {
+    "params": {
+      "dtype": "torch.int32",
+      "rounding_mode": "floor",
+      "shape": [
+        20,
+        320,
+        15
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "div_scalar_mode_"
+    ],
+    "reason": "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.39985.140174092522688.00750faf162f4f26a7d792eebbad5854.tmp'"
+  },
+  "tests/test_div.py::test_div_scalar_mode_int_[torch.int32-floor-shape4]": {
+    "params": {
+      "dtype": "torch.int32",
+      "rounding_mode": "floor",
+      "shape": [
+        16,
+        128,
+        64,
+        60
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "div_scalar_mode_"
+    ],
+    "reason": "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.39985.140174092522688.ec3bb13cf39b455986c337e67f957e4b.tmp'"
+  },
+  "tests/test_div.py::test_div_scalar_mode_int_[torch.int32-floor-shape5]": {
+    "params": {
+      "dtype": "torch.int32",
+      "rounding_mode": "floor",
+      "shape": [
+        16,
+        7,
+        57,
+        32,
+        29
+      ]
+    },
+    "result": "failed",
+    "opname": [
+      "div_scalar_mode_"
+    ],
+    "reason": "OSError: [Errno 30] Read-only file system: '/root/.flaggems/code_cache/.39985.140174092522688.f532266759fd47ecbb700eadce8e7403.tmp'"
+  }
+}

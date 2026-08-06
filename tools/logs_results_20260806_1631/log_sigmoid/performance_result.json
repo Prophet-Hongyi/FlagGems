@@ -1,0 +1,7 @@
+{
+  "log_sigmoid": {
+    "result": "failed",
+    "test_case": "benchmark/test_log_sigmoid.py::test_log_sigmoid",
+    "reason": "Failed: No CUDA GPUs are available"
+  }
+}

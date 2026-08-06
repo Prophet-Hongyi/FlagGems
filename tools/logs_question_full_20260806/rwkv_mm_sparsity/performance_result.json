@@ -1,0 +1,231 @@
+{
+  "rwkv_mm_sparsity": {
+    "details": [
+      {
+        "op_name": "rwkv_mm_sparsity",
+        "dtype": "torch.float16",
+        "mode": "kernel",
+        "level": "core",
+        "result": [
+          {
+            "legacy_shape": null,
+            "shape_detail": [
+              [
+                16384
+              ],
+              [
+                16384,
+                4096
+              ]
+            ],
+            "latency_base": 0.40782999992370605,
+            "latency": 0.28523901104927063,
+            "gbps_base": null,
+            "gbps": null,
+            "speedup": 1.429783389107529,
+            "accuracy": null,
+            "tflops": null,
+            "utilization": null,
+            "compared_speedup": null,
+            "error_msg": null
+          },
+          {
+            "legacy_shape": null,
+            "shape_detail": [
+              [
+                16384
+              ],
+              [
+                16384,
+                4096
+              ]
+            ],
+            "latency_base": 0.40848100185394287,
+            "latency": 0.28569599986076355,
+            "gbps_base": null,
+            "gbps": null,
+            "speedup": 1.429775012786387,
+            "accuracy": null,
+            "tflops": null,
+            "utilization": null,
+            "compared_speedup": null,
+            "error_msg": null
+          },
+          {
+            "legacy_shape": null,
+            "shape_detail": [
+              [
+                16384
+              ],
+              [
+                16384,
+                4096
+              ]
+            ],
+            "latency_base": 0.40816599130630493,
+            "latency": 0.28532999753952026,
+            "gbps_base": null,
+            "gbps": null,
+            "speedup": 1.4305050111310886,
+            "accuracy": null,
+            "tflops": null,
+            "utilization": null,
+            "compared_speedup": null,
+            "error_msg": null
+          }
+        ]
+      },
+      {
+        "op_name": "rwkv_mm_sparsity",
+        "dtype": "torch.float32",
+        "mode": "kernel",
+        "level": "core",
+        "result": [
+          {
+            "legacy_shape": null,
+            "shape_detail": [
+              [
+                16384
+              ],
+              [
+                16384,
+                4096
+              ]
+            ],
+            "latency_base": 0.8521170020103455,
+            "latency": 0.30083200335502625,
+            "gbps_base": null,
+            "gbps": null,
+            "speedup": 2.8325344129185663,
+            "accuracy": null,
+            "tflops": null,
+            "utilization": null,
+            "compared_speedup": null,
+            "error_msg": null
+          },
+          {
+            "legacy_shape": null,
+            "shape_detail": [
+              [
+                16384
+              ],
+              [
+                16384,
+                4096
+              ]
+            ],
+            "latency_base": 0.8519960045814514,
+            "latency": 0.30085399746894836,
+            "gbps_base": null,
+            "gbps": null,
+            "speedup": 2.8319251588783936,
+            "accuracy": null,
+            "tflops": null,
+            "utilization": null,
+            "compared_speedup": null,
+            "error_msg": null
+          },
+          {
+            "legacy_shape": null,
+            "shape_detail": [
+              [
+                16384
+              ],
+              [
+                16384,
+                4096
+              ]
+            ],
+            "latency_base": 0.8522080183029175,
+            "latency": 0.3006710112094879,
+            "gbps_base": null,
+            "gbps": null,
+            "speedup": 2.83435378380776,
+            "accuracy": null,
+            "tflops": null,
+            "utilization": null,
+            "compared_speedup": null,
+            "error_msg": null
+          }
+        ]
+      },
+      {
+        "op_name": "rwkv_mm_sparsity",
+        "dtype": "torch.bfloat16",
+        "mode": "kernel",
+        "level": "core",
+        "result": [
+          {
+            "legacy_shape": null,
+            "shape_detail": [
+              [
+                16384
+              ],
+              [
+                16384,
+                4096
+              ]
+            ],
+            "latency_base": 0.46201398968696594,
+            "latency": 0.3129909932613373,
+            "gbps_base": null,
+            "gbps": null,
+            "speedup": 1.4761255104270663,
+            "accuracy": null,
+            "tflops": null,
+            "utilization": null,
+            "compared_speedup": null,
+            "error_msg": null
+          },
+          {
+            "legacy_shape": null,
+            "shape_detail": [
+              [
+                16384
+              ],
+              [
+                16384,
+                4096
+              ]
+            ],
+            "latency_base": 0.46191099286079407,
+            "latency": 0.31276100873947144,
+            "gbps_base": null,
+            "gbps": null,
+            "speedup": 1.4768816443022919,
+            "accuracy": null,
+            "tflops": null,
+            "utilization": null,
+            "compared_speedup": null,
+            "error_msg": null
+          },
+          {
+            "legacy_shape": null,
+            "shape_detail": [
+              [
+                16384
+              ],
+              [
+                16384,
+                4096
+              ]
+            ],
+            "latency_base": 0.46186700463294983,
+            "latency": 0.3124989867210388,
+            "gbps_base": null,
+            "gbps": null,
+            "speedup": 1.4779792071621936,
+            "accuracy": null,
+            "tflops": null,
+            "utilization": null,
+            "compared_speedup": null,
+            "error_msg": null
+          }
+        ]
+      }
+    ],
+    "result": "passed",
+    "test_case": "benchmark/test_rwkv_mm_sparsity.py::test_rwkv_mm_sparsity",
+    "reason": null
+  }
+}

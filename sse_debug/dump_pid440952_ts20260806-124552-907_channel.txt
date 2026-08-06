@@ -1,0 +1,16 @@
+Channel State Dump:
+valueLastIssuedByCpu: 2abf30
+valueLastIssuedToGpu: 2abf30
+valueFinishedByGpu: 2abf2d
+cpuPut: 30
+cpuPutMonotonic: 2abf30
+gpuPut: 30
+gpuGet: 32
+gpuGetMonotonica: 2abe32
+vstream_id: 0
+hwq_id: 0
+done_ptr: 2d
+enq_ptr: 30
+enq_ptr_monotonic: 2abf30
+error: 0
+marker->trackingSemaphoreValue: 2abf30

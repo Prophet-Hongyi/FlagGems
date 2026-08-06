@@ -1,0 +1,7 @@
+{
+  "vstack": {
+    "result": "failed",
+    "test_case": "benchmark/test_vstack.py::test_vstack",
+    "reason": "Failed: No CUDA GPUs are available"
+  }
+}

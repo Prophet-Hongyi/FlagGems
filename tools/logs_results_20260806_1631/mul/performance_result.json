@@ -1,0 +1,7 @@
+{
+  "mul": {
+    "result": "failed",
+    "test_case": "benchmark/test_mul.py::test_mul",
+    "reason": "Failed: No CUDA GPUs are available"
+  }
+}

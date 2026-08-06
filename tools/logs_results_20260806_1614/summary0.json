@@ -1,0 +1,137 @@
+{
+  "dd": {
+    "customized": false,
+    "accuracy": {
+      "total": 0,
+      "skipped": 0,
+      "failed": 0,
+      "passed": 0,
+      "details": {},
+      "status": "NotFound",
+      "exit_code": 1,
+      "duration": 49.94580674171448,
+      "data_file": "dd/accuracy_result.json"
+    },
+    "performance": {
+      "duration": 41.68568778038025,
+      "exit_code": 5,
+      "data_file": "dd/performance_result.json",
+      "data": {},
+      "status": "NotFound"
+    }
+  },
+  "add_": {
+    "customized": false,
+    "accuracy": {
+      "total": 360,
+      "skipped": 0,
+      "failed": 14,
+      "passed": 346,
+      "details": {
+        "failed": {
+          "AssertionError: Tensor-likes are not close!\n\nMismatched elements: 35 / 5924352 (0.0%)\nGreatest absolute difference: 0.0005025863647460938 at index (13, 5, 47, 15, 15) (up to 0.0001 allowed)\nGreatest relative difference: 0.33984375 at index (13, 5, 47, 15, 15) (up to 0.001 allowed)": [
+            "tests/test_add.py::test_add_:torch.float16:-0.999:[16,7,57,32,29]"
+          ],
+          "AssertionError: Tensor-likes are not close!\n\nMismatched elements: 1 / 5924352 (0.0%)\nGreatest absolute difference: 0.0003662109375 at index (8, 2, 18, 31, 14) (up to 0.0001 allowed)\nGreatest relative difference: 0.0016117095947265625 at index (8, 2, 18, 31, 14) (up to 0.001 allowed)": [
+            "tests/test_add.py::test_add_:torch.float16:-111.999:[16,7,57,32,29]"
+          ],
+          "AssertionError: Tensor-likes are not close!\n\nMismatched elements: 17822 / 1048576 (1.7%)\nGreatest absolute difference: 0.00311279296875 at index (213, 742) (up to 0.0001 allowed)\nGreatest relative difference: 1.0 at index (1, 946) (up to 0.016 allowed)": [
+            "tests/test_add.py::test_add_:torch.bfloat16:-0.999:[1024,1024]"
+          ],
+          "AssertionError: Tensor-likes are not close!\n\nMismatched elements: 1657 / 96000 (1.7%)\nGreatest absolute difference: 0.0029296875 at index (2, 192, 9) (up to 0.0001 allowed)\nGreatest relative difference: 1.0 at index (0, 13, 14) (up to 0.016 allowed)": [
+            "tests/test_add.py::test_add_:torch.bfloat16:-0.999:[20,320,15]"
+          ],
+          "AssertionError: Tensor-likes are not close!\n\nMismatched elements: 131182 / 7864320 (1.7%)\nGreatest absolute difference: 0.003173828125 at index (4, 110, 5, 23) (up to 0.0001 allowed)\nGreatest relative difference: 1.0 at index (0, 0, 1, 8) (up to 0.016 allowed)": [
+            "tests/test_add.py::test_add_:torch.bfloat16:-0.999:[16,128,64,60]"
+          ],
+          "AssertionError: Tensor-likes are not close!\n\nMismatched elements: 99626 / 5924352 (1.7%)\nGreatest absolute difference: 0.00341796875 at index (0, 0, 20, 28, 9) (up to 0.0001 allowed)\nGreatest relative difference: 1.0 at index (0, 0, 0, 10, 11) (up to 0.016 allowed)": [
+            "tests/test_add.py::test_add_:torch.bfloat16:-0.999:[16,7,57,32,29]"
+          ],
+          "AssertionError: Tensor-likes are not close!\n\nMismatched elements: 4 / 5924352 (0.0%)\nGreatest absolute difference: 0.00018310546875 at index (1, 4, 37, 31, 21) (up to 0.0001 allowed)\nGreatest relative difference: 0.142578125 at index (1, 4, 37, 31, 21) (up to 0.016 allowed)": [
+            "tests/test_add.py::test_add_tensor_scalar_:torch.bfloat16:0.001:-111.999:[16,7,57,32,29]"
+          ],
+          "AssertionError: Scalars are not close!\n\nExpected 0.115234375 but got 0.1171875.\nAbsolute difference: 0.001953125 (up to 0.0001 allowed)\nRelative difference: 0.01694915254237288 (up to 0.016 allowed)": [
+            "tests/test_add.py::test_add_tensor_scalar_:torch.bfloat16:-0.999:-0.999:[]"
+          ],
+          "AssertionError: Tensor-likes are not close!\n\nMismatched elements: 1 / 1 (100.0%)\nGreatest absolute difference: 0.001953125 at index (0,) (up to 0.0001 allowed)\nGreatest relative difference: 0.0203857421875 at index (0,) (up to 0.016 allowed)": [
+            "tests/test_add.py::test_add_tensor_scalar_:torch.bfloat16:-0.999:-0.999:[1]"
+          ],
+          "AssertionError: Tensor-likes are not close!\n\nMismatched elements: 59006 / 1048576 (5.6%)\nGreatest absolute difference: 0.00201416015625 at index (0, 33) (up to 0.0001 allowed)\nGreatest relative difference: 1.046875 at index (3, 519) (up to 0.016 allowed)": [
+            "tests/test_add.py::test_add_tensor_scalar_:torch.bfloat16:-0.999:-0.999:[1024,1024]"
+          ],
+          "AssertionError: Tensor-likes are not close!\n\nMismatched elements: 5513 / 96000 (5.7%)\nGreatest absolute difference: 0.00201416015625 at index (0, 0, 2) (up to 0.0001 allowed)\nGreatest relative difference: 1.046875 at index (0, 15, 9) (up to 0.016 allowed)": [
+            "tests/test_add.py::test_add_tensor_scalar_:torch.bfloat16:-0.999:-0.999:[20,320,15]"
+          ],
+          "AssertionError: Tensor-likes are not close!\n\nMismatched elements: 441504 / 7864320 (5.6%)\nGreatest absolute difference: 0.00201416015625 at index (0, 0, 0, 35) (up to 0.0001 allowed)\nGreatest relative difference: 1.046875 at index (0, 0, 3, 57) (up to 0.016 allowed)": [
+            "tests/test_add.py::test_add_tensor_scalar_:torch.bfloat16:-0.999:-0.999:[16,128,64,60]"
+          ],
+          "AssertionError: Tensor-likes are not close!\n\nMismatched elements: 334243 / 5924352 (5.6%)\nGreatest absolute difference: 0.00201416015625 at index (0, 0, 0, 0, 6) (up to 0.0001 allowed)\nGreatest relative difference: 1.046875 at index (0, 0, 0, 28, 21) (up to 0.016 allowed)": [
+            "tests/test_add.py::test_add_tensor_scalar_:torch.bfloat16:-0.999:-0.999:[16,7,57,32,29]"
+          ],
+          "AssertionError: Tensor-likes are not close!\n\nMismatched elements: 7 / 5924352 (0.0%)\nGreatest absolute difference: 0.00018310546875 at index (0, 4, 37, 31, 18) (up to 0.0001 allowed)\nGreatest relative difference: 0.103515625 at index (0, 4, 37, 31, 18) (up to 0.016 allowed)": [
+            "tests/test_add.py::test_add_tensor_scalar_:torch.bfloat16:-111.999:0.001:[16,7,57,32,29]"
+          ]
+        }
+      },
+      "status": "Failed",
+      "exit_code": 1,
+      "duration": 76.99269485473633,
+      "data_file": "add_/accuracy_result.json"
+    },
+    "performance": {
+      "duration": 106.13593697547913,
+      "exit_code": 1,
+      "data_file": "add_/performance_result.json",
+      "data": {},
+      "status": "Failed",
+      "reason": "Failed: No CUDA GPUs are available",
+      "test_case": "benchmark/test_add.py::test_add_inplace"
+    }
+  },
+  "addcdiv": {
+    "customized": false,
+    "accuracy": {
+      "total": 18,
+      "skipped": 0,
+      "failed": 0,
+      "passed": 18,
+      "details": {},
+      "status": "Passed",
+      "exit_code": 1,
+      "duration": 51.70110297203064,
+      "data_file": "addcdiv/accuracy_result.json"
+    },
+    "performance": {
+      "duration": 137.83784985542297,
+      "exit_code": 1,
+      "data_file": "addcdiv/performance_result.json",
+      "data": {},
+      "status": "Failed",
+      "reason": "Failed: No CUDA GPUs are available",
+      "test_case": "benchmark/test_addcdiv.py::test_addcdiv"
+    }
+  },
+  "addcmul": {
+    "customized": false,
+    "accuracy": {
+      "total": 18,
+      "skipped": 0,
+      "failed": 0,
+      "passed": 18,
+      "details": {},
+      "status": "Passed",
+      "exit_code": 1,
+      "duration": 50.54722309112549,
+      "data_file": "addcmul/accuracy_result.json"
+    },
+    "performance": {
+      "duration": 139.38481497764587,
+      "exit_code": 1,
+      "data_file": "addcmul/performance_result.json",
+      "data": {},
+      "status": "Failed",
+      "reason": "Failed: No CUDA GPUs are available",
+      "test_case": "benchmark/test_addcmul.py::test_addcmul"
+    }
+  }
+}

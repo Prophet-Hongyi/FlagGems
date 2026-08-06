@@ -1,0 +1,7 @@
+{
+  "hstack": {
+    "result": "failed",
+    "test_case": "benchmark/test_hstack.py::test_hstack",
+    "reason": "Failed: No CUDA GPUs are available"
+  }
+}

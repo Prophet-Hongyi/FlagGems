@@ -1,0 +1,7 @@
+{
+  "polar": {
+    "result": "failed",
+    "test_case": "benchmark/test_polar.py::test_polar",
+    "reason": "Failed: No CUDA GPUs are available"
+  }
+}

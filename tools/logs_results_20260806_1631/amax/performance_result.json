@@ -1,0 +1,7 @@
+{
+  "amax": {
+    "result": "failed",
+    "test_case": "benchmark/test_amax.py::test_amax",
+    "reason": "Failed: No CUDA GPUs are available"
+  }
+}

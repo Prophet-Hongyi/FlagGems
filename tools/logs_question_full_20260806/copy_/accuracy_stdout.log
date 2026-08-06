@@ -1,0 +1,39 @@
+============================= test session starts ==============================
+platform linux -- Python 3.10.15, pytest-9.0.2, pluggy-1.6.0 -- /root/miniconda/envs/python310_torch25_cuda/bin/python3.1
+cachedir: .pytest_cache
+metadata: {'Python': '3.10.15', 'Platform': 'Linux-5.15.0-105-generic-x86_64-with-glibc2.31', 'Packages': {'pytest': '9.0.2', 'pluggy': '1.6.0'}, 'Plugins': {'html': '4.1.1', 'metadata': '3.1.1', 'timeout': '2.3.1', 'anyio': '4.9.0', 'typeguard': '4.4.4'}}
+rootdir: /workspace/FlagGems
+configfile: pytest.ini
+plugins: html-4.1.1, metadata-3.1.1, timeout-2.3.1, anyio-4.9.0, typeguard-4.4.4
+collecting ... vLLM not installed, the native pytorch implementation of FlashMLA for comparison
+collected 51091 items / 51064 deselected / 27 selected
+
+test_copy.py::test_copy_inplace_same_dtype[dtype0-shape0] PASSED
+test_copy.py::test_copy_inplace_same_dtype[dtype0-shape1] PASSED
+test_copy.py::test_copy_inplace_same_dtype[dtype0-shape2] PASSED
+test_copy.py::test_copy_inplace_same_dtype[dtype0-shape3] PASSED
+test_copy.py::test_copy_inplace_same_dtype[dtype0-shape4] PASSED
+test_copy.py::test_copy_inplace_same_dtype[dtype0-shape5] PASSED
+test_copy.py::test_copy_inplace_same_dtype[dtype1-shape0] PASSED
+test_copy.py::test_copy_inplace_same_dtype[dtype1-shape1] PASSED
+test_copy.py::test_copy_inplace_same_dtype[dtype1-shape2] PASSED
+test_copy.py::test_copy_inplace_same_dtype[dtype1-shape3] PASSED
+test_copy.py::test_copy_inplace_same_dtype[dtype1-shape4] PASSED
+test_copy.py::test_copy_inplace_same_dtype[dtype1-shape5] PASSED
+test_copy.py::test_copy_inplace_same_dtype[dtype2-shape0] PASSED
+test_copy.py::test_copy_inplace_same_dtype[dtype2-shape1] PASSED
+test_copy.py::test_copy_inplace_same_dtype[dtype2-shape2] PASSED
+test_copy.py::test_copy_inplace_same_dtype[dtype2-shape3] PASSED
+test_copy.py::test_copy_inplace_same_dtype[dtype2-shape4] PASSED
+test_copy.py::test_copy_inplace_same_dtype[dtype2-shape5] PASSED
+test_copy.py::test_copy_inplace_broadcast PASSED
+test_copy.py::test_copy_inplace_dtype_fallback PASSED
+test_copy.py::test_copy_inplace_float8_e8m0fnu[shape0] SKIPPED (PyTo...)
+test_copy.py::test_copy_inplace_float8_e8m0fnu[shape1] SKIPPED (PyTo...)
+test_copy.py::test_copy_inplace_float8_e8m0fnu[shape2] SKIPPED (PyTo...)
+test_copy.py::test_copy_inplace_float8_e8m0fnu_to_float32 SKIPPED (P...)
+test_copy.py::test_copy_inplace_mixed_dtype_triton[src_dtype0-dst_dtype0] PASSED
+test_copy.py::test_copy_inplace_mixed_dtype_triton[src_dtype1-dst_dtype1] PASSED
+test_copy.py::test_copy_inplace_mixed_dtype_triton[src_dtype2-dst_dtype2] PASSED
+
+=============== 23 passed, 4 skipped, 51064 deselected in 11.14s ===============

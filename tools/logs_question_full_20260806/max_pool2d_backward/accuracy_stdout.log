@@ -1,0 +1,33 @@
+============================= test session starts ==============================
+platform linux -- Python 3.10.15, pytest-9.0.2, pluggy-1.6.0 -- /root/miniconda/envs/python310_torch25_cuda/bin/python3.1
+cachedir: .pytest_cache
+metadata: {'Python': '3.10.15', 'Platform': 'Linux-5.15.0-105-generic-x86_64-with-glibc2.31', 'Packages': {'pytest': '9.0.2', 'pluggy': '1.6.0'}, 'Plugins': {'html': '4.1.1', 'metadata': '3.1.1', 'timeout': '2.3.1', 'anyio': '4.9.0', 'typeguard': '4.4.4'}}
+rootdir: /workspace/FlagGems
+configfile: pytest.ini
+plugins: html-4.1.1, metadata-3.1.1, timeout-2.3.1, anyio-4.9.0, typeguard-4.4.4
+collecting ... vLLM not installed, the native pytorch implementation of FlashMLA for comparison
+collected 51091 items / 51070 deselected / 21 selected
+
+test_max_pool2d.py::test_max_pool2d_backward[dtype0-shape0-3-2-1-1-False] PASSED
+test_max_pool2d.py::test_max_pool2d_backward[dtype0-shape1-kernel_size1-stride1-1-1-False] PASSED
+test_max_pool2d.py::test_max_pool2d_backward[dtype0-shape2-3-2-1-1-True] PASSED
+test_max_pool2d.py::test_max_pool2d_backward[dtype0-shape3-2-1-0-2-False] PASSED
+test_max_pool2d.py::test_max_pool2d_backward[dtype0-shape4-3-2-1-1-False] PASSED
+test_max_pool2d.py::test_max_pool2d_backward[dtype0-shape5-2-2-0-1-False] PASSED
+test_max_pool2d.py::test_max_pool2d_backward[dtype0-shape6-2-2-padding6-1-False] PASSED
+test_max_pool2d.py::test_max_pool2d_backward[dtype1-shape0-3-2-1-1-False] PASSED
+test_max_pool2d.py::test_max_pool2d_backward[dtype1-shape1-kernel_size1-stride1-1-1-False] PASSED
+test_max_pool2d.py::test_max_pool2d_backward[dtype1-shape2-3-2-1-1-True] PASSED
+test_max_pool2d.py::test_max_pool2d_backward[dtype1-shape3-2-1-0-2-False] PASSED
+test_max_pool2d.py::test_max_pool2d_backward[dtype1-shape4-3-2-1-1-False] PASSED
+test_max_pool2d.py::test_max_pool2d_backward[dtype1-shape5-2-2-0-1-False] PASSED
+test_max_pool2d.py::test_max_pool2d_backward[dtype1-shape6-2-2-padding6-1-False] PASSED
+test_max_pool2d.py::test_max_pool2d_backward[dtype2-shape0-3-2-1-1-False] PASSED
+test_max_pool2d.py::test_max_pool2d_backward[dtype2-shape1-kernel_size1-stride1-1-1-False] PASSED
+test_max_pool2d.py::test_max_pool2d_backward[dtype2-shape2-3-2-1-1-True] PASSED
+test_max_pool2d.py::test_max_pool2d_backward[dtype2-shape3-2-1-0-2-False] PASSED
+test_max_pool2d.py::test_max_pool2d_backward[dtype2-shape4-3-2-1-1-False] PASSED
+test_max_pool2d.py::test_max_pool2d_backward[dtype2-shape5-2-2-0-1-False] PASSED
+test_max_pool2d.py::test_max_pool2d_backward[dtype2-shape6-2-2-padding6-1-False] PASSED
+
+===================== 21 passed, 51070 deselected in 8.68s =====================

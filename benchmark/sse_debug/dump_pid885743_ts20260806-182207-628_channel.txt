@@ -1,0 +1,16 @@
+Channel State Dump:
+valueLastIssuedByCpu: 388a
+valueLastIssuedToGpu: 388a
+valueFinishedByGpu: 3883
+cpuPut: 8a
+cpuPutMonotonic: 388a
+gpuPut: 8a
+gpuGet: 47
+gpuGetMonotonica: 3847
+vstream_id: 0
+hwq_id: 0
+done_ptr: 83
+enq_ptr: 8a
+enq_ptr_monotonic: 388a
+error: 0
+marker->trackingSemaphoreValue: 388a

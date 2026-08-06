@@ -1,0 +1,207 @@
+{
+  "log_sigmoid": {
+    "details": [
+      {
+        "op_name": "log_sigmoid",
+        "dtype": "torch.float16",
+        "mode": "kernel",
+        "level": "core",
+        "result": [
+          {
+            "legacy_shape": null,
+            "shape_detail": [
+              [
+                64,
+                64
+              ]
+            ],
+            "latency_base": 0.010470000095665455,
+            "latency": 0.007348999846726656,
+            "gbps_base": null,
+            "gbps": null,
+            "speedup": 1.4246836731570942,
+            "accuracy": null,
+            "tflops": 0.0005573547537661759,
+            "utilization": null,
+            "compared_speedup": null,
+            "error_msg": null
+          },
+          {
+            "legacy_shape": null,
+            "shape_detail": [
+              [
+                4096,
+                4096
+              ]
+            ],
+            "latency_base": 0.36186501383781433,
+            "latency": 0.3942619860172272,
+            "gbps_base": null,
+            "gbps": null,
+            "speedup": 0.9178288211179526,
+            "accuracy": null,
+            "tflops": 0.04255347102945635,
+            "utilization": null,
+            "compared_speedup": null,
+            "error_msg": null
+          },
+          {
+            "legacy_shape": null,
+            "shape_detail": [
+              [
+                64,
+                512,
+                512
+              ]
+            ],
+            "latency_base": 0.36132198572158813,
+            "latency": 0.3942260146141052,
+            "gbps_base": null,
+            "gbps": null,
+            "speedup": 0.9165351152061191,
+            "accuracy": null,
+            "tflops": 0.042557353847951056,
+            "utilization": null,
+            "compared_speedup": null,
+            "error_msg": null
+          }
+        ]
+      },
+      {
+        "op_name": "log_sigmoid",
+        "dtype": "torch.float32",
+        "mode": "kernel",
+        "level": "core",
+        "result": [
+          {
+            "legacy_shape": null,
+            "shape_detail": [
+              [
+                64,
+                64
+              ]
+            ],
+            "latency_base": 0.010889999568462372,
+            "latency": 0.006322000175714493,
+            "gbps_base": null,
+            "gbps": null,
+            "speedup": 1.7225560369794861,
+            "accuracy": null,
+            "tflops": 0.0006478962173608423,
+            "utilization": null,
+            "compared_speedup": null,
+            "error_msg": null
+          },
+          {
+            "legacy_shape": null,
+            "shape_detail": [
+              [
+                4096,
+                4096
+              ]
+            ],
+            "latency_base": 0.3651350140571594,
+            "latency": 0.39111799001693726,
+            "gbps_base": null,
+            "gbps": null,
+            "speedup": 0.9335674230718647,
+            "accuracy": null,
+            "tflops": 0.04289553645761339,
+            "utilization": null,
+            "compared_speedup": null,
+            "error_msg": null
+          },
+          {
+            "legacy_shape": null,
+            "shape_detail": [
+              [
+                64,
+                512,
+                512
+              ]
+            ],
+            "latency_base": 0.3649680018424988,
+            "latency": 0.3910380005836487,
+            "gbps_base": null,
+            "gbps": null,
+            "speedup": 0.9333312908151157,
+            "accuracy": null,
+            "tflops": 0.04290431102593343,
+            "utilization": null,
+            "compared_speedup": null,
+            "error_msg": null
+          }
+        ]
+      },
+      {
+        "op_name": "log_sigmoid",
+        "dtype": "torch.bfloat16",
+        "mode": "kernel",
+        "level": "core",
+        "result": [
+          {
+            "legacy_shape": null,
+            "shape_detail": [
+              [
+                64,
+                64
+              ]
+            ],
+            "latency_base": 0.011044999584555626,
+            "latency": 0.007282999809831381,
+            "gbps_base": null,
+            "gbps": null,
+            "speedup": 1.5165453622071898,
+            "accuracy": null,
+            "tflops": 0.0005624056167721954,
+            "utilization": null,
+            "compared_speedup": null,
+            "error_msg": null
+          },
+          {
+            "legacy_shape": null,
+            "shape_detail": [
+              [
+                4096,
+                4096
+              ]
+            ],
+            "latency_base": 0.47981101274490356,
+            "latency": 0.5110080242156982,
+            "gbps_base": null,
+            "gbps": null,
+            "speedup": 0.9389500555912478,
+            "accuracy": null,
+            "tflops": 0.03283160969096305,
+            "utilization": null,
+            "compared_speedup": null,
+            "error_msg": null
+          },
+          {
+            "legacy_shape": null,
+            "shape_detail": [
+              [
+                64,
+                512,
+                512
+              ]
+            ],
+            "latency_base": 0.48022401332855225,
+            "latency": 0.5112900137901306,
+            "gbps_base": null,
+            "gbps": null,
+            "speedup": 0.939239962401593,
+            "accuracy": null,
+            "tflops": 0.03281350221498077,
+            "utilization": null,
+            "compared_speedup": null,
+            "error_msg": null
+          }
+        ]
+      }
+    ],
+    "result": "passed",
+    "test_case": "benchmark/test_log_sigmoid.py::test_log_sigmoid",
+    "reason": null
+  }
+}

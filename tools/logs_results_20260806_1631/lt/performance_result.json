@@ -1,0 +1,7 @@
+{
+  "lt": {
+    "result": "failed",
+    "test_case": "benchmark/test_lt.py::test_lt",
+    "reason": "Failed: No CUDA GPUs are available"
+  }
+}

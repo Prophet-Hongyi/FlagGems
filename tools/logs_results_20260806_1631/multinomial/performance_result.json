@@ -1,0 +1,7 @@
+{
+  "multinomial": {
+    "result": "failed",
+    "test_case": "benchmark/test_multinomial.py::test_multinomial_with_replacement",
+    "reason": "Failed: No CUDA GPUs are available"
+  }
+}

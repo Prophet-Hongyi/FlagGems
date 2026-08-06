@@ -1,0 +1,7 @@
+{
+  "cos_": {
+    "result": "failed",
+    "test_case": "benchmark/test_cos.py::test_cos_inplace",
+    "reason": "Failed: No CUDA GPUs are available"
+  }
+}

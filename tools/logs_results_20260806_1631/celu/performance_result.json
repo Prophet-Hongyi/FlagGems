@@ -1,0 +1,7 @@
+{
+  "celu": {
+    "result": "failed",
+    "test_case": "benchmark/test_celu.py::test_celu",
+    "reason": "Failed: No CUDA GPUs are available"
+  }
+}

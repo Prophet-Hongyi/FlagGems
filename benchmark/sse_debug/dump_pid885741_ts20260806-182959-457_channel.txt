@@ -1,0 +1,16 @@
+Channel State Dump:
+valueLastIssuedByCpu: 7c6f
+valueLastIssuedToGpu: 7c6f
+valueFinishedByGpu: 7c6c
+cpuPut: 6f
+cpuPutMonotonic: 7c6f
+gpuPut: 6f
+gpuGet: 1
+gpuGetMonotonica: 7c01
+vstream_id: 0
+hwq_id: 0
+done_ptr: 6c
+enq_ptr: 6f
+enq_ptr_monotonic: 7c6f
+error: 0
+marker->trackingSemaphoreValue: 7c6f

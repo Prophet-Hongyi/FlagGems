@@ -1,0 +1,7 @@
+{
+  "sort": {
+    "result": "failed",
+    "test_case": "benchmark/test_sort.py::test_perf_sort",
+    "reason": "Failed: No CUDA GPUs are available"
+  }
+}

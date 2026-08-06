@@ -1,0 +1,52 @@
+{
+  "timestamp": "2026-08-06 16:11:49",
+  "total_duration": "0:01:29",
+  "env": {
+    "architecture": "x86_64",
+    "os_name": "linux",
+    "os_release": "",
+    "python": "3.10.15",
+    "torch": {
+      "version": "2.5.1+cu118",
+      "cuda_available": false,
+      "device_name": "N/A",
+      "device_count": 0
+    },
+    "flagtree": "0.6.0+xpu.gitdab9cbf5",
+    "triton": {
+      "version": "3.0.0",
+      "has_config": true
+    },
+    "flag_gems": {
+      "version": "0.0.0",
+      "vendor": "arm",
+      "device": "cpu"
+    },
+    "vllm": {
+      "version": null
+    }
+  },
+  "result": {
+    "dd": {
+      "customized": false,
+      "accuracy": {
+        "total": 0,
+        "skipped": 0,
+        "failed": 0,
+        "passed": 0,
+        "details": {},
+        "status": "NotFound",
+        "exit_code": 1,
+        "duration": 46.88760805130005,
+        "data_file": "dd/accuracy_result.json"
+      },
+      "performance": {
+        "duration": 41.43083119392395,
+        "exit_code": 5,
+        "data_file": "dd/performance_result.json",
+        "data": {},
+        "status": "NotFound"
+      }
+    }
+  }
+}

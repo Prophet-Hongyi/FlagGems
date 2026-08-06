@@ -1,0 +1,7 @@
+{
+  "ne": {
+    "result": "failed",
+    "test_case": "benchmark/test_ne.py::test_ne",
+    "reason": "Failed: No CUDA GPUs are available"
+  }
+}

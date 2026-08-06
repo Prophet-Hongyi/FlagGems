@@ -1,0 +1,618 @@
+============================= test session starts ==============================
+platform linux -- Python 3.10.15, pytest-9.0.2, pluggy-1.6.0 -- /root/miniconda/envs/python310_torch25_cuda/bin/python3.1
+cachedir: .pytest_cache
+metadata: {'Python': '3.10.15', 'Platform': 'Linux-5.15.0-105-generic-x86_64-with-glibc2.31', 'Packages': {'pytest': '9.0.2', 'pluggy': '1.6.0'}, 'Plugins': {'html': '4.1.1', 'metadata': '3.1.1', 'timeout': '2.3.1', 'anyio': '4.9.0', 'typeguard': '4.4.4'}}
+rootdir: /workspace/FlagGems
+configfile: pytest.ini
+plugins: html-4.1.1, metadata-3.1.1, timeout-2.3.1, anyio-4.9.0, typeguard-4.4.4
+collecting ... vLLM not installed, the native pytorch implementation of FlashMLA for comparison
+collected 51091 items / 50731 deselected / 360 selected
+
+test_vector_norm.py::test_accuracy_vectornorm[dtype0-0-True-2-shape0] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype0-0-True-2-shape1] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype0-0-True-2-shape2] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype0-0-True-inf-shape0] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype0-0-True-inf-shape1] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype0-0-True-inf-shape2] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype0-0-True--inf-shape0] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype0-0-True--inf-shape1] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype0-0-True--inf-shape2] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype0-0-True-0-shape0] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype0-0-True-0-shape1] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype0-0-True-0-shape2] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype0-0-True-1-shape0] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype0-0-True-1-shape1] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype0-0-True-1-shape2] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype0-0-False-2-shape0] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype0-0-False-2-shape1] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype0-0-False-2-shape2] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype0-0-False-inf-shape0] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype0-0-False-inf-shape1] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype0-0-False-inf-shape2] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype0-0-False--inf-shape0] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype0-0-False--inf-shape1] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype0-0-False--inf-shape2] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype0-0-False-0-shape0] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype0-0-False-0-shape1] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype0-0-False-0-shape2] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype0-0-False-1-shape0] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype0-0-False-1-shape1] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype0-0-False-1-shape2] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype0-1-True-2-shape0] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype0-1-True-2-shape1] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype0-1-True-2-shape2] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype0-1-True-inf-shape0] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype0-1-True-inf-shape1] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype0-1-True-inf-shape2] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype0-1-True--inf-shape0] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype0-1-True--inf-shape1] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype0-1-True--inf-shape2] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype0-1-True-0-shape0] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype0-1-True-0-shape1] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype0-1-True-0-shape2] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype0-1-True-1-shape0] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype0-1-True-1-shape1] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype0-1-True-1-shape2] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype0-1-False-2-shape0] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype0-1-False-2-shape1] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype0-1-False-2-shape2] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype0-1-False-inf-shape0] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype0-1-False-inf-shape1] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype0-1-False-inf-shape2] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype0-1-False--inf-shape0] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype0-1-False--inf-shape1] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype0-1-False--inf-shape2] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype0-1-False-0-shape0] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype0-1-False-0-shape1] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype0-1-False-0-shape2] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype0-1-False-1-shape0] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype0-1-False-1-shape1] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype0-1-False-1-shape2] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype0-dim2-True-2-shape0] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype0-dim2-True-2-shape1] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype0-dim2-True-2-shape2] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype0-dim2-True-inf-shape0] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype0-dim2-True-inf-shape1] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype0-dim2-True-inf-shape2] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype0-dim2-True--inf-shape0] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype0-dim2-True--inf-shape1] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype0-dim2-True--inf-shape2] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype0-dim2-True-0-shape0] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype0-dim2-True-0-shape1] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype0-dim2-True-0-shape2] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype0-dim2-True-1-shape0] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype0-dim2-True-1-shape1] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype0-dim2-True-1-shape2] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype0-dim2-False-2-shape0] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype0-dim2-False-2-shape1] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype0-dim2-False-2-shape2] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype0-dim2-False-inf-shape0] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype0-dim2-False-inf-shape1] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype0-dim2-False-inf-shape2] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype0-dim2-False--inf-shape0] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype0-dim2-False--inf-shape1] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype0-dim2-False--inf-shape2] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype0-dim2-False-0-shape0] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype0-dim2-False-0-shape1] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype0-dim2-False-0-shape2] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype0-dim2-False-1-shape0] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype0-dim2-False-1-shape1] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype0-dim2-False-1-shape2] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype0-dim3-True-2-shape0] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype0-dim3-True-2-shape1] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype0-dim3-True-2-shape2] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype0-dim3-True-inf-shape0] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype0-dim3-True-inf-shape1] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype0-dim3-True-inf-shape2] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype0-dim3-True--inf-shape0] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype0-dim3-True--inf-shape1] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype0-dim3-True--inf-shape2] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype0-dim3-True-0-shape0] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype0-dim3-True-0-shape1] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype0-dim3-True-0-shape2] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype0-dim3-True-1-shape0] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype0-dim3-True-1-shape1] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype0-dim3-True-1-shape2] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype0-dim3-False-2-shape0] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype0-dim3-False-2-shape1] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype0-dim3-False-2-shape2] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype0-dim3-False-inf-shape0] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype0-dim3-False-inf-shape1] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype0-dim3-False-inf-shape2] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype0-dim3-False--inf-shape0] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype0-dim3-False--inf-shape1] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype0-dim3-False--inf-shape2] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype0-dim3-False-0-shape0] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype0-dim3-False-0-shape1] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype0-dim3-False-0-shape2] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype0-dim3-False-1-shape0] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype0-dim3-False-1-shape1] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype0-dim3-False-1-shape2] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype1-0-True-2-shape0] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype1-0-True-2-shape1] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype1-0-True-2-shape2] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype1-0-True-inf-shape0] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype1-0-True-inf-shape1] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype1-0-True-inf-shape2] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype1-0-True--inf-shape0] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype1-0-True--inf-shape1] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype1-0-True--inf-shape2] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype1-0-True-0-shape0] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype1-0-True-0-shape1] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype1-0-True-0-shape2] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype1-0-True-1-shape0] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype1-0-True-1-shape1] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype1-0-True-1-shape2] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype1-0-False-2-shape0] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype1-0-False-2-shape1] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype1-0-False-2-shape2] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype1-0-False-inf-shape0] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype1-0-False-inf-shape1] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype1-0-False-inf-shape2] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype1-0-False--inf-shape0] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype1-0-False--inf-shape1] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype1-0-False--inf-shape2] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype1-0-False-0-shape0] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype1-0-False-0-shape1] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype1-0-False-0-shape2] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype1-0-False-1-shape0] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype1-0-False-1-shape1] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype1-0-False-1-shape2] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype1-1-True-2-shape0] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype1-1-True-2-shape1] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype1-1-True-2-shape2] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype1-1-True-inf-shape0] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype1-1-True-inf-shape1] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype1-1-True-inf-shape2] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype1-1-True--inf-shape0] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype1-1-True--inf-shape1] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype1-1-True--inf-shape2] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype1-1-True-0-shape0] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype1-1-True-0-shape1] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype1-1-True-0-shape2] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype1-1-True-1-shape0] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype1-1-True-1-shape1] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype1-1-True-1-shape2] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype1-1-False-2-shape0] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype1-1-False-2-shape1] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype1-1-False-2-shape2] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype1-1-False-inf-shape0] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype1-1-False-inf-shape1] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype1-1-False-inf-shape2] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype1-1-False--inf-shape0] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype1-1-False--inf-shape1] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype1-1-False--inf-shape2] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype1-1-False-0-shape0] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype1-1-False-0-shape1] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype1-1-False-0-shape2] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype1-1-False-1-shape0] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype1-1-False-1-shape1] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype1-1-False-1-shape2] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype1-dim2-True-2-shape0] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype1-dim2-True-2-shape1] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype1-dim2-True-2-shape2] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype1-dim2-True-inf-shape0] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype1-dim2-True-inf-shape1] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype1-dim2-True-inf-shape2] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype1-dim2-True--inf-shape0] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype1-dim2-True--inf-shape1] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype1-dim2-True--inf-shape2] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype1-dim2-True-0-shape0] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype1-dim2-True-0-shape1] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype1-dim2-True-0-shape2] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype1-dim2-True-1-shape0] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype1-dim2-True-1-shape1] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype1-dim2-True-1-shape2] FAILED
+test_vector_norm.py::test_accuracy_vectornorm[dtype1-dim2-False-2-shape0] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype1-dim2-False-2-shape1] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype1-dim2-False-2-shape2] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype1-dim2-False-inf-shape0] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype1-dim2-False-inf-shape1] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype1-dim2-False-inf-shape2] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype1-dim2-False--inf-shape0] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype1-dim2-False--inf-shape1] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype1-dim2-False--inf-shape2] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype1-dim2-False-0-shape0] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype1-dim2-False-0-shape1] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype1-dim2-False-0-shape2] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype1-dim2-False-1-shape0] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype1-dim2-False-1-shape1] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype1-dim2-False-1-shape2] FAILED
+test_vector_norm.py::test_accuracy_vectornorm[dtype1-dim3-True-2-shape0] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype1-dim3-True-2-shape1] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype1-dim3-True-2-shape2] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype1-dim3-True-inf-shape0] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype1-dim3-True-inf-shape1] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype1-dim3-True-inf-shape2] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype1-dim3-True--inf-shape0] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype1-dim3-True--inf-shape1] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype1-dim3-True--inf-shape2] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype1-dim3-True-0-shape0] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype1-dim3-True-0-shape1] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype1-dim3-True-0-shape2] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype1-dim3-True-1-shape0] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype1-dim3-True-1-shape1] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype1-dim3-True-1-shape2] FAILED
+test_vector_norm.py::test_accuracy_vectornorm[dtype1-dim3-False-2-shape0] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype1-dim3-False-2-shape1] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype1-dim3-False-2-shape2] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype1-dim3-False-inf-shape0] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype1-dim3-False-inf-shape1] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype1-dim3-False-inf-shape2] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype1-dim3-False--inf-shape0] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype1-dim3-False--inf-shape1] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype1-dim3-False--inf-shape2] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype1-dim3-False-0-shape0] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype1-dim3-False-0-shape1] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype1-dim3-False-0-shape2] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype1-dim3-False-1-shape0] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype1-dim3-False-1-shape1] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype1-dim3-False-1-shape2] FAILED
+test_vector_norm.py::test_accuracy_vectornorm[dtype2-0-True-2-shape0] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype2-0-True-2-shape1] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype2-0-True-2-shape2] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype2-0-True-inf-shape0] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype2-0-True-inf-shape1] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype2-0-True-inf-shape2] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype2-0-True--inf-shape0] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype2-0-True--inf-shape1] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype2-0-True--inf-shape2] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype2-0-True-0-shape0] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype2-0-True-0-shape1] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype2-0-True-0-shape2] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype2-0-True-1-shape0] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype2-0-True-1-shape1] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype2-0-True-1-shape2] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype2-0-False-2-shape0] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype2-0-False-2-shape1] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype2-0-False-2-shape2] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype2-0-False-inf-shape0] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype2-0-False-inf-shape1] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype2-0-False-inf-shape2] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype2-0-False--inf-shape0] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype2-0-False--inf-shape1] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype2-0-False--inf-shape2] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype2-0-False-0-shape0] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype2-0-False-0-shape1] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype2-0-False-0-shape2] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype2-0-False-1-shape0] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype2-0-False-1-shape1] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype2-0-False-1-shape2] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype2-1-True-2-shape0] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype2-1-True-2-shape1] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype2-1-True-2-shape2] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype2-1-True-inf-shape0] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype2-1-True-inf-shape1] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype2-1-True-inf-shape2] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype2-1-True--inf-shape0] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype2-1-True--inf-shape1] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype2-1-True--inf-shape2] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype2-1-True-0-shape0] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype2-1-True-0-shape1] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype2-1-True-0-shape2] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype2-1-True-1-shape0] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype2-1-True-1-shape1] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype2-1-True-1-shape2] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype2-1-False-2-shape0] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype2-1-False-2-shape1] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype2-1-False-2-shape2] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype2-1-False-inf-shape0] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype2-1-False-inf-shape1] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype2-1-False-inf-shape2] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype2-1-False--inf-shape0] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype2-1-False--inf-shape1] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype2-1-False--inf-shape2] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype2-1-False-0-shape0] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype2-1-False-0-shape1] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype2-1-False-0-shape2] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype2-1-False-1-shape0] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype2-1-False-1-shape1] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype2-1-False-1-shape2] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype2-dim2-True-2-shape0] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype2-dim2-True-2-shape1] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype2-dim2-True-2-shape2] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype2-dim2-True-inf-shape0] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype2-dim2-True-inf-shape1] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype2-dim2-True-inf-shape2] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype2-dim2-True--inf-shape0] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype2-dim2-True--inf-shape1] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype2-dim2-True--inf-shape2] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype2-dim2-True-0-shape0] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype2-dim2-True-0-shape1] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype2-dim2-True-0-shape2] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype2-dim2-True-1-shape0] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype2-dim2-True-1-shape1] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype2-dim2-True-1-shape2] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype2-dim2-False-2-shape0] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype2-dim2-False-2-shape1] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype2-dim2-False-2-shape2] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype2-dim2-False-inf-shape0] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype2-dim2-False-inf-shape1] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype2-dim2-False-inf-shape2] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype2-dim2-False--inf-shape0] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype2-dim2-False--inf-shape1] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype2-dim2-False--inf-shape2] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype2-dim2-False-0-shape0] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype2-dim2-False-0-shape1] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype2-dim2-False-0-shape2] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype2-dim2-False-1-shape0] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype2-dim2-False-1-shape1] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype2-dim2-False-1-shape2] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype2-dim3-True-2-shape0] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype2-dim3-True-2-shape1] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype2-dim3-True-2-shape2] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype2-dim3-True-inf-shape0] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype2-dim3-True-inf-shape1] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype2-dim3-True-inf-shape2] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype2-dim3-True--inf-shape0] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype2-dim3-True--inf-shape1] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype2-dim3-True--inf-shape2] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype2-dim3-True-0-shape0] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype2-dim3-True-0-shape1] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype2-dim3-True-0-shape2] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype2-dim3-True-1-shape0] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype2-dim3-True-1-shape1] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype2-dim3-True-1-shape2] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype2-dim3-False-2-shape0] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype2-dim3-False-2-shape1] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype2-dim3-False-2-shape2] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype2-dim3-False-inf-shape0] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype2-dim3-False-inf-shape1] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype2-dim3-False-inf-shape2] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype2-dim3-False--inf-shape0] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype2-dim3-False--inf-shape1] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype2-dim3-False--inf-shape2] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype2-dim3-False-0-shape0] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype2-dim3-False-0-shape1] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype2-dim3-False-0-shape2] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype2-dim3-False-1-shape0] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype2-dim3-False-1-shape1] PASSED
+test_vector_norm.py::test_accuracy_vectornorm[dtype2-dim3-False-1-shape2] PASSED
+
+=================================== FAILURES ===================================
+_____________ test_accuracy_vectornorm[dtype1-dim2-True-1-shape2] ______________
+
+shape = (200, 40999, 3), ord = 1, dim = [0, 1], keepdim = True
+dtype = torch.float32
+
+    @pytest.mark.vector_norm
+    @pytest.mark.parametrize("shape", utils.REDUCTION_SHAPES)
+    @pytest.mark.parametrize("ord", ORD_LIST)
+    @pytest.mark.parametrize("keepdim", KEEP_DIM)
+    @pytest.mark.parametrize("dim", DIM_LIST)
+    @pytest.mark.parametrize("dtype", FLOAT_DTYPES)
+    def test_accuracy_vectornorm(shape, ord, dim, keepdim, dtype):
+        if flag_gems.vendor_name == "kunlunxin":
+            torch.manual_seed(0)
+            torch.cuda.manual_seed_all(0)
+    
+        if flag_gems.vendor_name == "tsingmicro" and dtype in (
+            torch.float16,
+            torch.float32,
+        ):
+            pytest.skip("Issue #3796: not working")
+    
+        inp = torch.randn(shape, dtype=dtype, device=flag_gems.device)
+        ref_inp = utils.to_reference(inp, True)
+    
+        ref_out = torch.linalg.vector_norm(ref_inp, ord, dim, keepdim)
+        with flag_gems.use_gems():
+            res_out = torch.linalg.vector_norm(inp, ord, dim, keepdim)
+    
+>       utils.gems_assert_close(
+            res_out, ref_out, dtype, reduce_dim=_get_reduce_dim(shape, dim)
+        )
+
+test_vector_norm.py:72: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+accuracy_utils.py:312: in gems_assert_close
+    flag_gems.testing.assert_close(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+res = tensor([[[6541555.5000, 6543795.5000, 6541175.0000]]])
+ref = tensor([[[6510712.5000, 6512616.5000, 6510232.5000]]])
+dtype = torch.float32, equal_nan = False, reduce_dim = 8199800, atol = 0.0001
+
+    def assert_close(res, ref, dtype, equal_nan=False, reduce_dim=1, atol=1e-4):
+        if dtype is None:
+            dtype = torch.float32
+        assert res.dtype == dtype
+        ref = ref.to(dtype)
+        res, ref = _maybe_move_to_cpu(res, ref)
+        rtol = RESOLUTION[dtype]
+>       torch.testing.assert_close(
+            res, ref, atol=atol * reduce_dim, rtol=rtol, equal_nan=equal_nan
+        )
+E       AssertionError: Tensor-likes are not close!
+E       
+E       Mismatched elements: 3 / 3 (100.0%)
+E       Greatest absolute difference: 31179.0 at index (0, 0, 1) (up to 819.98 allowed)
+E       Greatest relative difference: 0.004787476733326912 at index (0, 0, 1) (up to 1.3e-06 allowed)
+
+../src/flag_gems/testing/__init__.py:85: AssertionError
+_____________ test_accuracy_vectornorm[dtype1-dim2-False-1-shape2] _____________
+
+shape = (200, 40999, 3), ord = 1, dim = [0, 1], keepdim = False
+dtype = torch.float32
+
+    @pytest.mark.vector_norm
+    @pytest.mark.parametrize("shape", utils.REDUCTION_SHAPES)
+    @pytest.mark.parametrize("ord", ORD_LIST)
+    @pytest.mark.parametrize("keepdim", KEEP_DIM)
+    @pytest.mark.parametrize("dim", DIM_LIST)
+    @pytest.mark.parametrize("dtype", FLOAT_DTYPES)
+    def test_accuracy_vectornorm(shape, ord, dim, keepdim, dtype):
+        if flag_gems.vendor_name == "kunlunxin":
+            torch.manual_seed(0)
+            torch.cuda.manual_seed_all(0)
+    
+        if flag_gems.vendor_name == "tsingmicro" and dtype in (
+            torch.float16,
+            torch.float32,
+        ):
+            pytest.skip("Issue #3796: not working")
+    
+        inp = torch.randn(shape, dtype=dtype, device=flag_gems.device)
+        ref_inp = utils.to_reference(inp, True)
+    
+        ref_out = torch.linalg.vector_norm(ref_inp, ord, dim, keepdim)
+        with flag_gems.use_gems():
+            res_out = torch.linalg.vector_norm(inp, ord, dim, keepdim)
+    
+>       utils.gems_assert_close(
+            res_out, ref_out, dtype, reduce_dim=_get_reduce_dim(shape, dim)
+        )
+
+test_vector_norm.py:72: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+accuracy_utils.py:312: in gems_assert_close
+    flag_gems.testing.assert_close(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+res = tensor([6541555.5000, 6543795.5000, 6541175.0000])
+ref = tensor([6510712.5000, 6512616.5000, 6510232.5000]), dtype = torch.float32
+equal_nan = False, reduce_dim = 8199800, atol = 0.0001
+
+    def assert_close(res, ref, dtype, equal_nan=False, reduce_dim=1, atol=1e-4):
+        if dtype is None:
+            dtype = torch.float32
+        assert res.dtype == dtype
+        ref = ref.to(dtype)
+        res, ref = _maybe_move_to_cpu(res, ref)
+        rtol = RESOLUTION[dtype]
+>       torch.testing.assert_close(
+            res, ref, atol=atol * reduce_dim, rtol=rtol, equal_nan=equal_nan
+        )
+E       AssertionError: Tensor-likes are not close!
+E       
+E       Mismatched elements: 3 / 3 (100.0%)
+E       Greatest absolute difference: 31179.0 at index (1,) (up to 819.98 allowed)
+E       Greatest relative difference: 0.004787476733326912 at index (1,) (up to 1.3e-06 allowed)
+
+../src/flag_gems/testing/__init__.py:85: AssertionError
+_____________ test_accuracy_vectornorm[dtype1-dim3-True-1-shape2] ______________
+
+shape = (200, 40999, 3), ord = 1, dim = [1, 0], keepdim = True
+dtype = torch.float32
+
+    @pytest.mark.vector_norm
+    @pytest.mark.parametrize("shape", utils.REDUCTION_SHAPES)
+    @pytest.mark.parametrize("ord", ORD_LIST)
+    @pytest.mark.parametrize("keepdim", KEEP_DIM)
+    @pytest.mark.parametrize("dim", DIM_LIST)
+    @pytest.mark.parametrize("dtype", FLOAT_DTYPES)
+    def test_accuracy_vectornorm(shape, ord, dim, keepdim, dtype):
+        if flag_gems.vendor_name == "kunlunxin":
+            torch.manual_seed(0)
+            torch.cuda.manual_seed_all(0)
+    
+        if flag_gems.vendor_name == "tsingmicro" and dtype in (
+            torch.float16,
+            torch.float32,
+        ):
+            pytest.skip("Issue #3796: not working")
+    
+        inp = torch.randn(shape, dtype=dtype, device=flag_gems.device)
+        ref_inp = utils.to_reference(inp, True)
+    
+        ref_out = torch.linalg.vector_norm(ref_inp, ord, dim, keepdim)
+        with flag_gems.use_gems():
+            res_out = torch.linalg.vector_norm(inp, ord, dim, keepdim)
+    
+>       utils.gems_assert_close(
+            res_out, ref_out, dtype, reduce_dim=_get_reduce_dim(shape, dim)
+        )
+
+test_vector_norm.py:72: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+accuracy_utils.py:312: in gems_assert_close
+    flag_gems.testing.assert_close(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+res = tensor([[[6541555.5000, 6543795.5000, 6541175.0000]]])
+ref = tensor([[[6510712.5000, 6512616.5000, 6510232.5000]]])
+dtype = torch.float32, equal_nan = False, reduce_dim = 8199800, atol = 0.0001
+
+    def assert_close(res, ref, dtype, equal_nan=False, reduce_dim=1, atol=1e-4):
+        if dtype is None:
+            dtype = torch.float32
+        assert res.dtype == dtype
+        ref = ref.to(dtype)
+        res, ref = _maybe_move_to_cpu(res, ref)
+        rtol = RESOLUTION[dtype]
+>       torch.testing.assert_close(
+            res, ref, atol=atol * reduce_dim, rtol=rtol, equal_nan=equal_nan
+        )
+E       AssertionError: Tensor-likes are not close!
+E       
+E       Mismatched elements: 3 / 3 (100.0%)
+E       Greatest absolute difference: 31179.0 at index (0, 0, 1) (up to 819.98 allowed)
+E       Greatest relative difference: 0.004787476733326912 at index (0, 0, 1) (up to 1.3e-06 allowed)
+
+../src/flag_gems/testing/__init__.py:85: AssertionError
+_____________ test_accuracy_vectornorm[dtype1-dim3-False-1-shape2] _____________
+
+shape = (200, 40999, 3), ord = 1, dim = [1, 0], keepdim = False
+dtype = torch.float32
+
+    @pytest.mark.vector_norm
+    @pytest.mark.parametrize("shape", utils.REDUCTION_SHAPES)
+    @pytest.mark.parametrize("ord", ORD_LIST)
+    @pytest.mark.parametrize("keepdim", KEEP_DIM)
+    @pytest.mark.parametrize("dim", DIM_LIST)
+    @pytest.mark.parametrize("dtype", FLOAT_DTYPES)
+    def test_accuracy_vectornorm(shape, ord, dim, keepdim, dtype):
+        if flag_gems.vendor_name == "kunlunxin":
+            torch.manual_seed(0)
+            torch.cuda.manual_seed_all(0)
+    
+        if flag_gems.vendor_name == "tsingmicro" and dtype in (
+            torch.float16,
+            torch.float32,
+        ):
+            pytest.skip("Issue #3796: not working")
+    
+        inp = torch.randn(shape, dtype=dtype, device=flag_gems.device)
+        ref_inp = utils.to_reference(inp, True)
+    
+        ref_out = torch.linalg.vector_norm(ref_inp, ord, dim, keepdim)
+        with flag_gems.use_gems():
+            res_out = torch.linalg.vector_norm(inp, ord, dim, keepdim)
+    
+>       utils.gems_assert_close(
+            res_out, ref_out, dtype, reduce_dim=_get_reduce_dim(shape, dim)
+        )
+
+test_vector_norm.py:72: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+accuracy_utils.py:312: in gems_assert_close
+    flag_gems.testing.assert_close(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+res = tensor([6541555.5000, 6543795.5000, 6541175.0000])
+ref = tensor([6510712.5000, 6512616.5000, 6510232.5000]), dtype = torch.float32
+equal_nan = False, reduce_dim = 8199800, atol = 0.0001
+
+    def assert_close(res, ref, dtype, equal_nan=False, reduce_dim=1, atol=1e-4):
+        if dtype is None:
+            dtype = torch.float32
+        assert res.dtype == dtype
+        ref = ref.to(dtype)
+        res, ref = _maybe_move_to_cpu(res, ref)
+        rtol = RESOLUTION[dtype]
+>       torch.testing.assert_close(
+            res, ref, atol=atol * reduce_dim, rtol=rtol, equal_nan=equal_nan
+        )
+E       AssertionError: Tensor-likes are not close!
+E       
+E       Mismatched elements: 3 / 3 (100.0%)
+E       Greatest absolute difference: 31179.0 at index (1,) (up to 819.98 allowed)
+E       Greatest relative difference: 0.004787476733326912 at index (1,) (up to 1.3e-06 allowed)
+
+../src/flag_gems/testing/__init__.py:85: AssertionError
+=========================== short test summary info ============================
+FAILED test_vector_norm.py::test_accuracy_vectornorm[dtype1-dim2-True-1-shape2]
+FAILED test_vector_norm.py::test_accuracy_vectornorm[dtype1-dim2-False-1-shape2]
+FAILED test_vector_norm.py::test_accuracy_vectornorm[dtype1-dim3-True-1-shape2]
+FAILED test_vector_norm.py::test_accuracy_vectornorm[dtype1-dim3-False-1-shape2]
+========= 4 failed, 356 passed, 50731 deselected in 111.50s (0:01:51) ==========

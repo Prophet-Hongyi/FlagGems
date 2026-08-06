@@ -1,0 +1,7 @@
+{
+  "lerp_tensor_": {
+    "result": "failed",
+    "test_case": "benchmark/test_lerp.py::test_lerp_tensor_inplace",
+    "reason": "Failed: No CUDA GPUs are available"
+  }
+}

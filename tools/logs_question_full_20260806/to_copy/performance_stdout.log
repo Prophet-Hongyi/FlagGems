@@ -1,0 +1,10 @@
+============================= test session starts ==============================
+platform linux -- Python 3.10.15, pytest-9.0.2, pluggy-1.6.0
+rootdir: /workspace/FlagGems
+configfile: pytest.ini
+plugins: html-4.1.1, metadata-3.1.1, timeout-2.3.1, anyio-4.9.0, typeguard-4.4.4
+collected 1031 items / 988 deselected / 43 selected
+
+test_to_copy.py ss.........................................              [100%]
+
+========== 41 passed, 2 skipped, 988 deselected in 167.46s (0:02:47) ===========
