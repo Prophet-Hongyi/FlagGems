@@ -20,7 +20,6 @@ import flag_gems
 from . import accuracy_utils as utils
 from . import conftest as cfg
 
-
 TRUE_DIV_SCALAR_TENSOR_DTYPES = [
     pytest.param(
         dtype,

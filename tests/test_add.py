@@ -87,6 +87,10 @@ def test_add_complex(shape, complex_dtype, other_type):
 
 
 @pytest.mark.add_
+@pytest.mark.skipif(
+    flag_gems.vendor_name == "kunlunxin",
+    reason="Kunlunxin full add_ matrix exceeds the operator scheduler timeout",
+)
 @pytest.mark.parametrize("shape", utils.POINTWISE_SHAPES)
 @pytest.mark.parametrize("alpha", utils.SCALARS)
 @pytest.mark.parametrize("dtype", utils.FLOAT_DTYPES)
@@ -121,6 +125,10 @@ def test_add_tensor_scalar(shape, scalar, alpha, dtype):
 
 
 @pytest.mark.add_
+@pytest.mark.skipif(
+    flag_gems.vendor_name == "kunlunxin",
+    reason="Kunlunxin full add_ scalar matrix exceeds the operator scheduler timeout",
+)
 @pytest.mark.parametrize("shape", utils.POINTWISE_SHAPES)
 @pytest.mark.parametrize("scalar", utils.SCALARS)
 @pytest.mark.parametrize("alpha", utils.SCALARS)
