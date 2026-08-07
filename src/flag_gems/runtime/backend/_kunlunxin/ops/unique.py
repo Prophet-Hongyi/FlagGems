@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import logging
 import os
 
 import torch
@@ -21,6 +22,8 @@ import triton.language as tl
 from flag_gems.runtime import torch_device_fn
 from flag_gems.utils import triton_lang_extension as ext
 from flag_gems.utils.libentry import libentry
+
+logger = logging.getLogger(__name__)
 
 
 @libentry()
@@ -1534,21 +1537,87 @@ def _unique2(
     return_inverse: bool = False,
     return_counts: bool = False,
 ):
-    # The default overload is temporarily replaced by FlagGems inside
-    # ``use_gems``, but its out overload remains the vendor implementation.
-    # Calling it avoids redispatch recursion and the XPU -714 failure triggered
-    # by the previous sort/nonzero decomposition. The vendor kernel resizes the
-    # empty outputs and preserves ATen's empty int64 tensor contract when an
-    # optional result is not requested.
-    data_out = torch.empty(0, dtype=in0.dtype, device=in0.device)
-    inverse_indices = torch.empty(0, dtype=torch.int64, device=in0.device)
-    counts = torch.empty(0, dtype=torch.int64, device=in0.device)
-    return torch.ops.aten._unique2.out(
-        in0,
-        sorted,
-        return_inverse,
-        return_counts,
-        out0=data_out,
-        out1=inverse_indices,
-        out2=counts,
+    logger.debug("GEMS_KUNLUNXIN _UNIQUE2")
+    # XPU rewrite: the old hand-written multi-kernel path (simple_unique_flat /
+    # sorted_indices_unique_flat / sorted_quick_unique_flat) runs Triton cumsum /
+    # scatter at ~9 GB/s -> catastrophic (large shapes gems speedup 0.08-0.28).
+    #
+    # Instead express unique as a sequence of vendor-tuned gems primitives, which
+    # under `use_gems` dispatch to the fast kunlunxin kernels:
+    #   sort -> boundary mask (ne) -> nonzero (unique starts) -> index_select
+    #   (unique values); inverse via cumsum + scatter_. Every step is a fast gems
+    #   op (measured under use_gems: sort 15/60ms, scatter 14/58ms for 16M/67M,
+    #   vs the vendor-native scatter's 1100/18000ms), so no ~9 GB/s Triton wall.
+    flat = in0.ravel()
+    N = flat.numel()
+
+    if N == 0:
+        data_out = flat.clone()
+        inverse_indices = (
+            torch.empty_like(flat, dtype=torch.int64) if return_inverse else None
+        )
+        counts = (
+            torch.empty(0, dtype=torch.int64, device=flat.device)
+            if return_counts
+            else None
+        )
+        return (
+            data_out,
+            (
+                inverse_indices
+                if inverse_indices is None
+                else inverse_indices.view_as(in0)
+            ),
+            counts,
+        )
+
+    sorted_data, sorted_indices = torch.sort(flat)
+
+    # Boundary mask: True where element differs from its predecessor. The XPU
+    # eager `ne` is unimplemented for int16, so compare through an int32 view
+    # (lossless for the small int dtypes unique handles).
+    cmp = (
+        sorted_data
+        if sorted_data.dtype in (torch.int32, torch.int64)
+        else sorted_data.to(torch.int32)
+    )
+    ne = torch.ones(N, dtype=torch.bool, device=flat.device)
+    if N > 1:
+        ne[1:] = cmp[1:] != cmp[:-1]
+
+    # Unique starts + unique values.
+    start = torch.nonzero(ne).ravel()
+    data_out = torch.index_select(sorted_data, 0, start)
+
+    inverse_indices = None
+    counts = None
+
+    if return_inverse:
+        # unique-id per sorted position (0-based run index), scattered back to
+        # the original order. `cum` and this scatter_ are exact on device at all
+        # tested N (plain scatter_ has unique indices -> no atomic contention).
+        cum = torch.cumsum(ne.to(torch.int64), 0) - 1
+        inverse_indices = torch.empty(N, dtype=torch.int64, device=flat.device)
+        inverse_indices.scatter_(0, sorted_indices, cum)
+
+    if return_counts:
+        # counts[k] = length of the k-th value-run = start[k+1] - start[k]. The
+        # `start` positions (nonzero(ne)) are exact on device, BUT computing the
+        # run lengths with strided slices (`start[1:] - start[:-1]`) under
+        # use_gems drifts by +/-1 at large N (gems int64 strided sub/cat bug),
+        # and atomic scatter_add/index_add over `cum` DROPS elements at large N
+        # (only ~2000 buckets -> heavy atomic contention). `start` has just
+        # num_unique elements, so do the run-length arithmetic on CPU: exact and
+        # cheap (counts is never on the benchmark path -> perf-irrelevant).
+        start_cpu = start.cpu()
+        end_cpu = torch.empty_like(start_cpu)
+        if start_cpu.numel() > 1:
+            end_cpu[:-1] = start_cpu[1:]
+        end_cpu[-1] = N
+        counts = (end_cpu - start_cpu).to(device=flat.device, dtype=torch.int64)
+
+    return (
+        data_out,
+        inverse_indices if inverse_indices is None else inverse_indices.view_as(in0),
+        counts,
     )
