@@ -29,11 +29,6 @@ _FALLBACK_KEYSET = torch._C.DispatchKeySet(
     torch._C.DispatchKey.CompositeExplicitAutograd
 )
 
-_VENDOR_CAST_PAIRS = {
-    (torch.int32, torch.float16),
-    (torch.int32, torch.bfloat16),
-}
-
 copy_config = CodeGenConfig(
     512,
     (65536, 65536, 65536),
@@ -116,33 +111,6 @@ def _allocate_preserve_format(x: torch.Tensor, empty_kwargs: dict) -> torch.Tens
     return torch.empty_strided(x.size(), suggested_strides, **empty_kwargs)
 
 
-def _vendor_to_copy_out(
-    x: torch.Tensor,
-    target_dtype: torch.dtype,
-    target_device: torch.device,
-    non_blocking: bool,
-    memory_format: torch.memory_format,
-) -> torch.Tensor:
-    empty_kwargs = {"dtype": target_dtype, "device": target_device}
-    if memory_format is torch.preserve_format:
-        out = _allocate_preserve_format(x, empty_kwargs)
-    else:
-        out = torch.empty_like(x, memory_format=memory_format, **empty_kwargs)
-
-    # ``_to_copy.out`` is CompositeExplicitAutograd and decomposes through
-    # ``_to_copy.default`` before writing its result.  Calling it while the
-    # default overload is replaced by FlagGems therefore recurses back into
-    # this function.  Redispatch copy_ at the composite key instead: this skips
-    # the active FlagGems CUDA registration and reaches XDNN's dtype-converting
-    # copy kernel directly.
-    return torch.ops.aten.copy_.default.redispatch(
-        _FALLBACK_KEYSET,
-        out,
-        x,
-        non_blocking,
-    )
-
-
 # func: _to_copy(Tensor self, *, ScalarType? dtype=None, Layout? layout=None, Device? device=None,
 #   bool? pin_memory=None, bool non_blocking=False, MemoryFormat? memory_format=None) -> Tensor
 def to_copy(
@@ -209,21 +177,19 @@ def to_copy(
             memory_format=target_memory_format,
         )
 
-    # These supported XDNN casts are either substantially faster than a
-    # multi-kernel workaround or cannot be lowered reliably by Triton-XPU
-    # (large int32 -> fp16/bf16 vectors abort during LLVM conversion).
-    # XDNN's dtype-converting copy kernel is unavailable for single-element
-    # tensors, regardless of whether their shape is ``()`` or ``(1,)``
-    # (cudaErrorInvalidDeviceFunction).  The Triton specialization is small
-    # enough to lower reliably, so reserve this workaround for larger tensors.
-    if x.numel() > 1 and (x.dtype, target_dtype) in _VENDOR_CAST_PAIRS:
-        return _vendor_to_copy_out(
-            x,
-            target_dtype,
-            target_device,
-            non_blocking,
-            target_memory_format,
+    # Direct int32 -> fp16/bf16 casts can abort during XPU LLVM lowering, while
+    # XDNN's dtype-converting copy kernel is unavailable on some runtimes
+    # (cudaErrorInvalidDeviceFunction).  Split the cast into two supported
+    # Triton kernels instead.
+    if x.dtype == torch.int32 and target_dtype in (
+        torch.float16,
+        torch.bfloat16,
+    ):
+        intermediate = _allocate_preserve_format(
+            x, {"dtype": torch.float32, "device": x.device}
         )
+        _to_copy_func(x, out0=intermediate)
+        x = intermediate
 
     # Direct casts from either 16-bit representation to BF16 are broken in the
     # current toolchain: fp16 -> bf16 is rejected by xpu3-elfconv, while
