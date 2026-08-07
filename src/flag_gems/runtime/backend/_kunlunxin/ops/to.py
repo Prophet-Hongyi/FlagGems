@@ -212,11 +212,11 @@ def to_copy(
     # These supported XDNN casts are either substantially faster than a
     # multi-kernel workaround or cannot be lowered reliably by Triton-XPU
     # (large int32 -> fp16/bf16 vectors abort during LLVM conversion).
-    # XDNN's dtype-converting copy kernel is unavailable for zero-dimensional
-    # tensors (cudaErrorInvalidDeviceFunction).  The Triton scalar
-    # specialization is small enough to lower reliably, so reserve this
-    # workaround for non-scalar tensors.
-    if x.ndim != 0 and (x.dtype, target_dtype) in _VENDOR_CAST_PAIRS:
+    # XDNN's dtype-converting copy kernel is unavailable for single-element
+    # tensors, regardless of whether their shape is ``()`` or ``(1,)``
+    # (cudaErrorInvalidDeviceFunction).  The Triton specialization is small
+    # enough to lower reliably, so reserve this workaround for larger tensors.
+    if x.numel() > 1 and (x.dtype, target_dtype) in _VENDOR_CAST_PAIRS:
         return _vendor_to_copy_out(
             x,
             target_dtype,
