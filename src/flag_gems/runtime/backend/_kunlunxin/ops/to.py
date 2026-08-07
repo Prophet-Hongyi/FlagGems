@@ -30,7 +30,6 @@ _FALLBACK_KEYSET = torch._C.DispatchKeySet(
 )
 
 _VENDOR_CAST_PAIRS = {
-    (torch.float16, torch.bfloat16),
     (torch.bfloat16, torch.float16),
     (torch.int32, torch.float16),
     (torch.int32, torch.bfloat16),
