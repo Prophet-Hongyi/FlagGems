@@ -21,7 +21,6 @@ import torch
 import flag_gems
 
 from . import accuracy_utils as utils
-from . import conftest as cfg
 
 
 @pytest.mark.add
@@ -51,7 +50,7 @@ def test_add(shape, alpha, dtype):
     reason="Issues #3897: TX81 does not support complex32 dtype",
 )
 @pytest.mark.skipif(
-    flag_gems.vendor_name == "kunlunxin" and not cfg.TO_CPU,
+    flag_gems.vendor_name == "kunlunxin",
     reason="Kunlunxin PyTorch baseline does not implement complex add",
 )
 @pytest.mark.parametrize("shape", utils.POINTWISE_SHAPES)

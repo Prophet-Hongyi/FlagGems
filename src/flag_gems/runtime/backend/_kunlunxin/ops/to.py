@@ -110,11 +110,10 @@ def _allocate_preserve_format(x: torch.Tensor, empty_kwargs: dict) -> torch.Tens
     if torch.ops.aten.is_non_overlapping_and_dense(x):
         return torch.empty_strided(x.size(), x.stride(), **empty_kwargs)
 
-    # PyTorch only preserves the exact strides of non-overlapping dense inputs.
-    # A non-dense view (for example a stepped transpose) is compacted in the
-    # logical, contiguous dimension order rather than in the input's physical
-    # dimension order.
-    return torch.empty_like(x, memory_format=torch.contiguous_format, **empty_kwargs)
+    # For non-dense views, let PyTorch compact the storage while preserving its
+    # suggested dimension order (for example, a stepped transpose remains
+    # transpose-like instead of becoming row-major contiguous).
+    return torch.empty_like(x, memory_format=torch.preserve_format, **empty_kwargs)
 
 
 def _vendor_to_copy_out(
@@ -173,6 +172,25 @@ def to_copy(
     target_dtype = _resolve_dtype(x, dtype)
     target_device = _resolve_device(x, device)
     target_memory_format = _normalize_memory_format(memory_format)
+
+    # The generic empty_like registration makes a non-dense view contiguous,
+    # losing PyTorch's suggested dimension order for preserve_format.  Let the
+    # native implementation allocate and copy this narrow layout case.
+    if (
+        target_memory_format is torch.preserve_format
+        and not torch.ops.aten.is_non_overlapping_and_dense(x)
+    ):
+        return torch.ops.aten._to_copy.default.redispatch(
+            _FALLBACK_KEYSET,
+            x,
+            dtype=target_dtype,
+            layout=layout,
+            device=target_device,
+            pin_memory=pin_memory,
+            non_blocking=non_blocking,
+            memory_format=target_memory_format,
+        )
+
     # The XPU interleave pass corrupts either side of a BF16 conversion unless
     # explicitly disabled.  This applies when BF16 is the destination as well
     # as when it is the source (for example int16 -> bfloat16).

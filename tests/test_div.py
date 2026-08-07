@@ -561,7 +561,6 @@ GENERIC_DIV_MODE_DTYPES = [
         dtype,
         marks=pytest.mark.skipif(
             flag_gems.vendor_name == "kunlunxin"
-            and cfg.TO_CPU
             and dtype in (torch.float16, torch.bfloat16),
             reason=(
                 "these tests call the generic flag_gems.ops.div_mode directly, "

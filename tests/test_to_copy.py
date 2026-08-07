@@ -109,6 +109,15 @@ def test_to_copy_dtype_cast(shape, target_dtype):
     [torch.preserve_format, torch.contiguous_format],
 )
 def test_to_copy_preserve_strides(memory_format):
+    if (
+        flag_gems.vendor_name == "kunlunxin"
+        and cfg.TO_CPU
+        and memory_format is torch.preserve_format
+    ):
+        pytest.skip(
+            "Kunlunxin and CPU baselines choose different suggested layouts "
+            "for non-dense preserve_format inputs"
+        )
     base = torch.randn((8, 16), dtype=torch.float32, device=flag_gems.device)
     x = base.transpose(0, 1)[::2]
     ref_x = utils.to_reference(x)
