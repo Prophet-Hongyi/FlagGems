@@ -18,6 +18,7 @@ from ._functional_sym_constrain_range_for_size import (
     _functional_sym_constrain_range_for_size,
 )
 from ._is_all_true import _is_all_true
+from ._scaled_dot_product_flash_attention import _scaled_dot_product_flash_attention
 from ._thnn_fused_lstm_cell_backward_impl import _thnn_fused_lstm_cell_backward_impl
 from .abs import abs, abs_
 from .absolute import absolute
@@ -338,6 +339,7 @@ __all__ = [
     "_functional_sym_constrain_range_for_size",
     "_euclidean_dist",
     "_is_all_true",
+    "_scaled_dot_product_flash_attention",
     "_thnn_fused_lstm_cell_backward_impl",
     "_conv_depthwise2d",
     "_safe_softmax",
