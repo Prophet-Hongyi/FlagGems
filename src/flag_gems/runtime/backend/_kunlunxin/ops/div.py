@@ -19,6 +19,7 @@ import triton
 import triton.language as tl
 from _kunlunxin.utils.codegen_config_utils import CodeGenConfig
 
+from flag_gems.runtime import torch_device_fn
 from flag_gems.utils import tl_extra_shim
 
 from ..utils.pointwise_dynamic import pointwise_dynamic
@@ -145,14 +146,79 @@ def div_complex_real_scalar_kernel(ar, ai, denominator):
     return ar.to(tl.float32) / denominator, ai.to(tl.float32) / denominator
 
 
+@triton.jit
+def _split_complex_kernel(parts, real, imag, n_elements, BLOCK: tl.constexpr):
+    offsets = tl.program_id(0) * BLOCK + tl.arange(0, BLOCK)
+    mask = offsets < n_elements
+    base = offsets * 2
+    tl.store(real + offsets, tl.load(parts + base, mask=mask), mask=mask)
+    tl.store(imag + offsets, tl.load(parts + base + 1, mask=mask), mask=mask)
+
+
+@triton.jit
+def _split_strided_complex_kernel(
+    parts,
+    real,
+    imag,
+    shape,
+    strides,
+    n_elements,
+    ndim: tl.constexpr,
+    BLOCK: tl.constexpr,
+):
+    offsets = tl.program_id(0) * BLOCK + tl.arange(0, BLOCK)
+    mask = offsets < n_elements
+    logical_offset = offsets.to(tl.int64)
+    storage_offset = tl.zeros((BLOCK,), dtype=tl.int64)
+    for dim in range(ndim - 1, -1, -1):
+        dim_size = tl.load(shape + dim)
+        coordinate = logical_offset % dim_size
+        logical_offset //= dim_size
+        storage_offset += coordinate * tl.load(strides + dim)
+    tl.store(real + offsets, tl.load(parts + storage_offset, mask=mask), mask=mask)
+    tl.store(
+        imag + offsets, tl.load(parts + storage_offset + 1, mask=mask), mask=mask
+    )
+
+
+def _split_complex_components(value, dtype):
+    resolved = value.resolve_conj()
+    parts = torch.view_as_real(resolved)
+    real = torch.empty(value.shape, dtype=dtype, device=value.device)
+    imag = torch.empty_like(real)
+    n_elements = value.numel()
+    if n_elements == 0:
+        return real, imag
+    block = 1024
+    grid = (triton.cdiv(n_elements, block),)
+    with torch_device_fn.device(value.device):
+        if parts.is_contiguous():
+            _split_complex_kernel[grid](
+                parts, real, imag, n_elements, BLOCK=block, num_warps=8
+            )
+        else:
+            shape = torch.tensor(value.shape, dtype=torch.int64, device=value.device)
+            strides = torch.tensor(
+                parts.stride()[:-1], dtype=torch.int64, device=value.device
+            )
+            _split_strided_complex_kernel[grid](
+                parts,
+                real,
+                imag,
+                shape,
+                strides,
+                n_elements,
+                ndim=value.ndim,
+                BLOCK=block,
+                num_warps=8,
+            )
+    return real, imag
+
+
 def _complex_components(value, dtype, device):
     if isinstance(value, torch.Tensor):
         if value.is_complex():
-            parts = torch.view_as_real(value.resolve_conj())
-            return (
-                parts[..., 0].to(dtype).contiguous(),
-                parts[..., 1].to(dtype).contiguous(),
-            )
+            return _split_complex_components(value, dtype)
         real = value.to(device=device, dtype=dtype)
         return real, torch.zeros_like(real)
 
