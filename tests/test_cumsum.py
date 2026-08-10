@@ -40,7 +40,6 @@ _EMPTY_CUMSUM_UNFIXED_VENDORS = {
     "arm",
     "ascend",
     "cambricon",
-    "kunlunxin",
     "sunrise",
     "enflame",
     "tsingmicro",

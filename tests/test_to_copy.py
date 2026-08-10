@@ -109,17 +109,13 @@ def test_to_copy_dtype_cast(shape, target_dtype):
     [torch.preserve_format, torch.contiguous_format],
 )
 def test_to_copy_preserve_strides(memory_format):
-    if (
-        flag_gems.vendor_name == "kunlunxin"
-        and cfg.TO_CPU
-        and memory_format is torch.preserve_format
-    ):
-        pytest.skip(
-            "Kunlunxin and CPU baselines choose different suggested layouts "
-            "for non-dense preserve_format inputs"
-        )
     base = torch.randn((8, 16), dtype=torch.float32, device=flag_gems.device)
     x = base.transpose(0, 1)[::2]
+    expected_stride = torch.ops.aten._to_copy(
+        x,
+        dtype=x.dtype,
+        memory_format=memory_format,
+    ).stride()
     ref_x = utils.to_reference(x)
     ref_out = torch.ops.aten._to_copy(
         ref_x,
@@ -134,7 +130,7 @@ def test_to_copy_preserve_strides(memory_format):
         )
     utils.gems_assert_equal(res_out, ref_out)
     if memory_format is torch.preserve_format:
-        assert res_out.stride() == ref_out.stride()
+        assert res_out.stride() == expected_stride
     else:
         assert res_out.is_contiguous()
 

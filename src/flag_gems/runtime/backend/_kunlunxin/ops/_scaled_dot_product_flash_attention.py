@@ -19,6 +19,10 @@ import torch
 
 logger = logging.getLogger("flag_gems.ops._scaled_dot_product_flash_attention")
 
+_FALLBACK_KEYSET = torch._C.DispatchKeySet(
+    torch._C.DispatchKey.CompositeImplicitAutograd
+)
+
 
 def _scaled_dot_product_flash_attention(
     query,
@@ -30,14 +34,12 @@ def _scaled_dot_product_flash_attention(
     *,
     scale=None,
 ):
-    """Kunlunxin fallback for PyTorch's opaque FlashAttention entry point.
+    """Compute SDPA with safe Kunlunxin primitives.
 
-    The generic wrapper closes over the generic FlashAttention implementation at
-    import time, so replacing ``flash_attention_forward`` through the backend
-    registrar does not redirect this operator.  The generic kernel also contains
-    a select predicate unsupported by the XPU compiler.  Compute the forward pass
-    from regular tensor operations here and expose the backend function under the
-    opaque operator's name so the registrar selects it directly.
+    Both FlashAttention implementations hang for some non-square sequence
+    lengths, and the FlagGems softmax kernel faults when the reduced dimension
+    is not aligned. Keep the more accurate FlagGems matrix multiplications, but
+    bypass the softmax override with the stable vendor implementation.
     """
     logger.debug("GEMS _SCALED_DOT_PRODUCT_FLASH_ATTENTION")
     assert dropout_p == 0.0, "Kunlunxin fallback only supports dropout_p=0.0"
@@ -50,9 +52,6 @@ def _scaled_dot_product_flash_attention(
     scores = torch.matmul(query.float(), key.float().transpose(-2, -1))
     scores = scores * softmax_scale
     if is_causal:
-        # Building the mask from two aranges lowers the comparison to an
-        # unsupported unsigned ``cmpf`` on XPU.  An upper-triangular floating
-        # bias has the same semantics and uses Kunlunxin's backend triu kernel.
         causal_bias = torch.full(
             (q_seq_len, kv_seq_len),
             float("-inf"),
@@ -62,7 +61,10 @@ def _scaled_dot_product_flash_attention(
         scores = scores + torch.triu(causal_bias, diagonal=1)
 
     logsumexp = torch.logsumexp(scores, dim=-1)
-    output = torch.matmul(torch.softmax(scores, dim=-1), value.float()).to(query.dtype)
+    probabilities = torch.ops.aten._softmax.default.redispatch(
+        _FALLBACK_KEYSET, scores, -1, False
+    )
+    output = torch.matmul(probabilities, value.float()).to(query.dtype)
 
     philox_seed = torch.empty((), dtype=torch.int64, device=query.device)
     philox_offset = torch.empty((), dtype=torch.int64, device=query.device)
