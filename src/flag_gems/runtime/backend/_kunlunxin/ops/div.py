@@ -176,9 +176,7 @@ def _split_strided_complex_kernel(
         logical_offset //= dim_size
         storage_offset += coordinate * tl.load(strides + dim)
     tl.store(real + offsets, tl.load(parts + storage_offset, mask=mask), mask=mask)
-    tl.store(
-        imag + offsets, tl.load(parts + storage_offset + 1, mask=mask), mask=mask
-    )
+    tl.store(imag + offsets, tl.load(parts + storage_offset + 1, mask=mask), mask=mask)
 
 
 def _split_complex_components(value, dtype):
