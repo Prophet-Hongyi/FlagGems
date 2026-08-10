@@ -25,22 +25,6 @@ from . import conftest as cfg
 
 device = flag_gems.device
 
-FLOOR_DIV_INT_DTYPES = [
-    pytest.param(
-        dtype,
-        marks=pytest.mark.skipif(
-            flag_gems.vendor_name == "kunlunxin" and not cfg.TO_CPU,
-            reason=(
-                "Kunlunxin PyTorch baseline does not implement scalar-first "
-                "integer floor_divide"
-            ),
-        ),
-        id=str(dtype),
-    )
-    for dtype in utils.INT_DTYPES
-]
-
-
 def replace_zeros(inp):
     return torch.where(inp == 0, 1, inp)
 
@@ -146,7 +130,7 @@ def test_floor_divide_float_(shape, dtype):
 @pytest.mark.floor_divide_tensor
 @pytest.mark.skipif(flag_gems.vendor_name == "aipu", reason="Issue #3025")
 @pytest.mark.parametrize("shape", utils.POINTWISE_SHAPES)
-@pytest.mark.parametrize("dtype", FLOOR_DIV_INT_DTYPES)
+@pytest.mark.parametrize("dtype", utils.INT_DTYPES)
 @pytest.mark.skipif(
     flag_gems.vendor_name == "tsingmicro", reason="Issue #4131: not working"
 )
@@ -186,9 +170,19 @@ def test_floor_divide_int(shape, dtype):
             res_out = inp1 // d
         utils.gems_assert_equal(res_out, ref_out)
 
-        ref_out = d // ref_inp1
+        # The Kunlunxin PyTorch baseline cannot evaluate scalar // XPU tensor.
+        # Use a CPU reference without skipping the FlagGems XPU implementation.
+        scalar_ref_inp = ref_inp1
+        if flag_gems.vendor_name == "kunlunxin":
+            scalar_ref_inp = inp1.cpu()
+        ref_out = d // scalar_ref_inp
         with flag_gems.use_gems():
             res_out = d // inp1
+        if (
+            flag_gems.vendor_name == "kunlunxin"
+            and res_out.device != ref_out.device
+        ):
+            res_out = res_out.to(ref_out.device)
         utils.gems_assert_equal(res_out, ref_out)
 
 

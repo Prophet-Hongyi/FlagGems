@@ -53,8 +53,6 @@ def _to_copy_dtype_pairs():
         if src_dtype != dst_dtype
     )
 
-    # XDNN cannot execute these two reference operations.  Put them first so
-    # the final result recorded for the shared marker comes from a real run.
     unsupported_baselines = {
         (torch.bfloat16, torch.int16),
         (torch.int16, torch.bfloat16),

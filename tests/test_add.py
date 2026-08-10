@@ -21,7 +21,6 @@ import torch
 import flag_gems
 
 from . import accuracy_utils as utils
-from . import conftest as cfg
 
 
 @pytest.mark.add
@@ -50,10 +49,6 @@ def test_add(shape, alpha, dtype):
     flag_gems.vendor_name == "tsingmicro",
     reason="Issues #3897: TX81 does not support complex32 dtype",
 )
-@pytest.mark.skipif(
-    flag_gems.vendor_name == "kunlunxin" and not cfg.TO_CPU,
-    reason="Kunlunxin PyTorch baseline does not implement complex add",
-)
 @pytest.mark.parametrize("shape", utils.POINTWISE_SHAPES)
 @pytest.mark.parametrize("complex_dtype", utils.COMPLEX_DTYPES)
 @pytest.mark.parametrize(
@@ -79,15 +74,28 @@ def test_add_complex(shape, complex_dtype, other_type):
     else:
         raise ValueError(f"Unknown other_type: {other_type}")
 
-    ref_inp1 = utils.to_reference(inp1, True)
+    # Kunlunxin's native PyTorch complex add is unavailable, but that should
+    # not suppress coverage of the FlagGems kernel. Build only the reference
+    # on CPU and keep the operator under test on XPU.
+    force_cpu_reference = flag_gems.vendor_name == "kunlunxin"
+    ref_inp1 = utils.to_reference(
+        inp1.cpu() if force_cpu_reference else inp1, True
+    )
     ref_inp2 = (
-        utils.to_reference(inp2, True) if isinstance(inp2, torch.Tensor) else inp2
+        utils.to_reference(
+            inp2.cpu() if force_cpu_reference else inp2,
+            True,
+        )
+        if isinstance(inp2, torch.Tensor)
+        else inp2
     )
 
     ref_out = torch.add(ref_inp1, ref_inp2)
     with flag_gems.use_gems():
         res_out = torch.add(inp1, inp2)
 
+    if force_cpu_reference and res_out.device != ref_out.device:
+        res_out = res_out.to(ref_out.device)
     utils.gems_assert_close(res_out, ref_out, complex_dtype)
 
 

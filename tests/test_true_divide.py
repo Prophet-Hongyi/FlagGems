@@ -18,24 +18,6 @@ import torch
 import flag_gems
 
 from . import accuracy_utils as utils
-from . import conftest as cfg
-
-TRUE_DIV_SCALAR_TENSOR_DTYPES = [
-    pytest.param(
-        dtype,
-        marks=pytest.mark.skipif(
-            flag_gems.vendor_name == "kunlunxin"
-            and not cfg.TO_CPU
-            and dtype in (torch.float16, torch.bfloat16),
-            reason=(
-                "Kunlunxin PyTorch baseline does not implement a Python "
-                "scalar divided by a low-precision tensor"
-            ),
-        ),
-        id=str(dtype),
-    )
-    for dtype in utils.FLOAT_DTYPES
-]
 
 
 @pytest.mark.div_tensor
@@ -124,14 +106,23 @@ def test_true_divide_tensor_scalar_(shape, scalar, dtype):
 @pytest.mark.div_scalar
 @pytest.mark.parametrize("shape", utils.POINTWISE_SHAPES)
 @pytest.mark.parametrize("scalar", utils.SCALARS)
-@pytest.mark.parametrize("dtype", TRUE_DIV_SCALAR_TENSOR_DTYPES)
+@pytest.mark.parametrize("dtype", utils.FLOAT_DTYPES)
 def test_true_divide_scalar_tensor(shape, scalar, dtype):
     inp1 = scalar
     inp2 = torch.randn(shape, dtype=dtype, device=flag_gems.device)
-    ref_inp2 = utils.to_reference(inp2, False)
+    force_cpu_reference = (
+        flag_gems.vendor_name == "kunlunxin"
+        and dtype in (torch.float16, torch.bfloat16)
+    )
+    ref_inp2 = utils.to_reference(
+        inp2.cpu() if force_cpu_reference else inp2,
+        False,
+    )
 
     ref_out = torch.true_divide(inp1, ref_inp2)
     with flag_gems.use_gems():
         res_out = torch.true_divide(inp1, inp2)
 
+    if force_cpu_reference and res_out.device != ref_out.device:
+        res_out = res_out.to(ref_out.device)
     utils.gems_assert_close(res_out, ref_out, dtype, equal_nan=True)
