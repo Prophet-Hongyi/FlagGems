@@ -20,7 +20,6 @@ import torch
 import triton
 import triton.language as tl
 from _kunlunxin.utils.codegen_config_utils import CodeGenConfig
-from torch._prims_common import compute_elementwise_output_strides
 
 from flag_gems.runtime import torch_device_fn
 
@@ -107,11 +106,11 @@ def _allocate_preserve_format(x: torch.Tensor, empty_kwargs: dict) -> torch.Tens
     if torch.ops.aten.is_non_overlapping_and_dense(x):
         return torch.empty_strided(x.size(), x.stride(), **empty_kwargs)
 
-    # For non-dense views, compact storage in PyTorch's suggested dimension
-    # order (for example, a stepped transpose remains transpose-like).  Calling
-    # empty_like here loses that order through the generic FlagGems registration.
-    suggested_strides = compute_elementwise_output_strides(x)
-    return torch.empty_strided(x.size(), suggested_strides, **empty_kwargs)
+    # A non-dense view cannot preserve its holes in a new allocation.  PyTorch's
+    # device-copy reference materializes such a view as a contiguous tensor, so
+    # use the canonical contiguous layout instead of retaining the source's
+    # dimension order.
+    return torch.empty(x.size(), **empty_kwargs)
 
 
 @triton.jit
