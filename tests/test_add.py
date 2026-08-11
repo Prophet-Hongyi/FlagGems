@@ -78,9 +78,7 @@ def test_add_complex(shape, complex_dtype, other_type):
     # not suppress coverage of the FlagGems kernel. Build only the reference
     # on CPU and keep the operator under test on XPU.
     force_cpu_reference = flag_gems.vendor_name == "kunlunxin"
-    ref_inp1 = utils.to_reference(
-        inp1.cpu() if force_cpu_reference else inp1, True
-    )
+    ref_inp1 = utils.to_reference(inp1.cpu() if force_cpu_reference else inp1, True)
     ref_inp2 = (
         utils.to_reference(
             inp2.cpu() if force_cpu_reference else inp2,

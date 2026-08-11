@@ -121,13 +121,7 @@ def div_complex_real_tensor_kernel(ar, ai, denominator):
     denominator = denominator.to(tl.float32)
     real = ar / denominator
     imag = ai / denominator
-
-    # Match the vectorized CPU complex-tensor reference for an exact zero real
-    # denominator (complex NaN in both channels).
-    zero = tl.abs(denominator)
-    nan = zero / zero
-    is_zero = denominator == 0
-    return tl.where(is_zero, nan, real), tl.where(is_zero, nan, imag)
+    return real, imag
 
 
 @pointwise_dynamic(

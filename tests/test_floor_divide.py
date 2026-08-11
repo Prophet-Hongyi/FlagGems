@@ -25,6 +25,7 @@ from . import conftest as cfg
 
 device = flag_gems.device
 
+
 def replace_zeros(inp):
     return torch.where(inp == 0, 1, inp)
 
@@ -150,7 +151,9 @@ def test_floor_divide_int(shape, dtype):
         device="cpu",
     ).to(flag_gems.device)
 
-    if cfg.TO_CPU:
+    # Kunlunxin uses a CPU reference for scalar-first division below. CPU
+    # integer floor_divide raises on zero denominators.
+    if cfg.TO_CPU or flag_gems.vendor_name == "kunlunxin":
         inp1 = replace_zeros(inp1)
         inp2 = replace_zeros(inp2)
 
@@ -178,10 +181,7 @@ def test_floor_divide_int(shape, dtype):
         ref_out = d // scalar_ref_inp
         with flag_gems.use_gems():
             res_out = d // inp1
-        if (
-            flag_gems.vendor_name == "kunlunxin"
-            and res_out.device != ref_out.device
-        ):
+        if flag_gems.vendor_name == "kunlunxin" and res_out.device != ref_out.device:
             res_out = res_out.to(ref_out.device)
         utils.gems_assert_equal(res_out, ref_out)
 

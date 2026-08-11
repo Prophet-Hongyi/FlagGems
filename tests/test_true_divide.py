@@ -110,9 +110,9 @@ def test_true_divide_tensor_scalar_(shape, scalar, dtype):
 def test_true_divide_scalar_tensor(shape, scalar, dtype):
     inp1 = scalar
     inp2 = torch.randn(shape, dtype=dtype, device=flag_gems.device)
-    force_cpu_reference = (
-        flag_gems.vendor_name == "kunlunxin"
-        and dtype in (torch.float16, torch.bfloat16)
+    force_cpu_reference = flag_gems.vendor_name == "kunlunxin" and dtype in (
+        torch.float16,
+        torch.bfloat16,
     )
     ref_inp2 = utils.to_reference(
         inp2.cpu() if force_cpu_reference else inp2,

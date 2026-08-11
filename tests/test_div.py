@@ -23,9 +23,9 @@ import flag_gems
 from . import accuracy_utils as utils
 
 
-def _reference_input(inp, upcast=False):
+def _reference_input(inp, upcast=False, *, force_cpu=False):
     """Avoid Kunlunxin native baseline gaps without skipping FlagGems."""
-    if flag_gems.vendor_name == "kunlunxin":
+    if flag_gems.vendor_name == "kunlunxin" and force_cpu:
         inp = inp.cpu()
     return utils.to_reference(inp, upcast)
 
@@ -92,6 +92,7 @@ DIV_MODE_FLOAT_CASES = (
     + [("trunc", torch.float32)]
 )
 
+
 # div.Tensor_mode with rounding_mode keyword
 @pytest.mark.div_tensor_mode
 @pytest.mark.parametrize("shape", utils.POINTWISE_SHAPES)
@@ -118,8 +119,9 @@ def test_div_tensor_mode_int(shape, rounding_mode, dtype):
         flag_gems.device
     )
     inp2 = _make_nonzero_int_tensor(shape, dtype)
-    ref_inp1 = _reference_input(inp1, False)
-    ref_inp2 = _reference_input(inp2, False)
+    force_cpu_reference = dtype == torch.int16
+    ref_inp1 = _reference_input(inp1, False, force_cpu=force_cpu_reference)
+    ref_inp2 = _reference_input(inp2, False, force_cpu=force_cpu_reference)
 
     ref_out = torch.div(ref_inp1, ref_inp2, rounding_mode=rounding_mode)
     with flag_gems.use_gems():
@@ -155,8 +157,9 @@ def test_div_tensor_mode_int_(shape, rounding_mode, dtype):
         flag_gems.device
     )
     inp2 = _make_nonzero_int_tensor(shape, dtype)
-    ref_inp1 = _reference_input(inp1.clone(), False)
-    ref_inp2 = _reference_input(inp2, False)
+    force_cpu_reference = dtype == torch.int16
+    ref_inp1 = _reference_input(inp1.clone(), False, force_cpu=force_cpu_reference)
+    ref_inp2 = _reference_input(inp2, False, force_cpu=force_cpu_reference)
 
     ref_out = ref_inp1.div_(ref_inp2, rounding_mode=rounding_mode)
     with flag_gems.use_gems():
@@ -191,7 +194,7 @@ def test_div_scalar_mode_int(shape, rounding_mode, dtype):
         flag_gems.device
     )
     scalar = -3
-    ref_inp = _reference_input(inp, False)
+    ref_inp = _reference_input(inp, False, force_cpu=dtype == torch.int16)
 
     ref_out = torch.div(ref_inp, scalar, rounding_mode=rounding_mode)
     with flag_gems.use_gems():
@@ -226,7 +229,7 @@ def test_div_scalar_mode_int_(shape, rounding_mode, dtype):
         flag_gems.device
     )
     scalar = -3
-    ref_inp = _reference_input(inp.clone(), False)
+    ref_inp = _reference_input(inp.clone(), False, force_cpu=dtype == torch.int16)
 
     ref_out = ref_inp.div_(scalar, rounding_mode=rounding_mode)
     with flag_gems.use_gems():
@@ -303,7 +306,11 @@ def test_div_scalar_tensor(shape, scalar, dtype):
 
     inp1 = scalar
     inp2 = torch.randn(shape, dtype=dtype, device=flag_gems.device)
-    ref_inp2 = _reference_input(inp2, False)
+    ref_inp2 = _reference_input(
+        inp2,
+        False,
+        force_cpu=dtype in (torch.float16, torch.bfloat16),
+    )
 
     ref_out = torch.div(inp1, ref_inp2)
     with flag_gems.use_gems():
@@ -355,8 +362,8 @@ def test_div_complex_complex(shape, complex_dtype):
     inp1 = torch.randn(shape, dtype=complex_dtype, device=flag_gems.device)
     inp2 = torch.randn(shape, dtype=complex_dtype, device=flag_gems.device)
 
-    ref_inp1 = _reference_input(inp1, True)
-    ref_inp2 = _reference_input(inp2, True)
+    ref_inp1 = _reference_input(inp1, True, force_cpu=True)
+    ref_inp2 = _reference_input(inp2, True, force_cpu=True)
 
     ref_out = torch.div(ref_inp1, ref_inp2)
     with flag_gems.use_gems():
@@ -398,6 +405,10 @@ def test_div_complex_float_tensor(shape, complex_dtype):
         raise ValueError(f"Unsupported complex_dtype: {complex_dtype}")
 
     inp2 = torch.randn(shape, dtype=float_dtype, device=flag_gems.device)
+    if flag_gems.vendor_name == "kunlunxin":
+        # Keep the zero-divisor regression deterministic; float16 randn only
+        # hits an exact zero sporadically on large shapes.
+        inp2.reshape(-1)[0] = 0
 
     # mthreads native torch.div returns incorrect results for complex / float,
     # so compute ref on CPU to get correct baseline.
@@ -405,9 +416,18 @@ def test_div_complex_float_tensor(shape, complex_dtype):
     if flag_gems.vendor_name == "mthreads":
         ref_out = torch.div(inp1.to("cpu"), inp2.to("cpu")).to(dtype=complex_dtype)
     else:
-        ref_inp1 = _reference_input(inp1, True)
-        ref_inp2 = _reference_input(inp2, True)
-        ref_out = torch.div(ref_inp1, ref_inp2)
+        ref_inp1 = _reference_input(inp1, True, force_cpu=True)
+        ref_inp2 = _reference_input(inp2, True, force_cpu=True)
+        if flag_gems.vendor_name == "kunlunxin":
+            # CPU complex/real division has shape-dependent zero-divisor
+            # behavior in its vectorized and scalar paths.  Dividing the two
+            # components explicitly gives the stable mixed-type semantics.
+            ref_out = torch.complex(
+                torch.div(ref_inp1.real, ref_inp2),
+                torch.div(ref_inp1.imag, ref_inp2),
+            )
+        else:
+            ref_out = torch.div(ref_inp1, ref_inp2)
 
     with flag_gems.use_gems():
         res_out = torch.div(inp1, inp2)
@@ -443,8 +463,8 @@ def test_div_tensor_int(shape, complex_dtype):
     if flag_gems.vendor_name == "mthreads":
         ref_out = torch.div(inp1.to("cpu"), inp2.to("cpu")).to(dtype=complex_dtype)
     else:
-        ref_inp1 = _reference_input(inp1, True)
-        ref_inp2 = _reference_input(inp2, True)
+        ref_inp1 = _reference_input(inp1, True, force_cpu=True)
+        ref_inp2 = _reference_input(inp2, True, force_cpu=True)
         ref_out = torch.div(ref_inp1, ref_inp2)
 
     with flag_gems.use_gems():
@@ -473,7 +493,7 @@ def test_div_complex_int_scalar(shape, complex_dtype):
     inp1 = torch.randn(shape, dtype=complex_dtype, device=flag_gems.device)
     inp2 = 3
 
-    ref_inp1 = _reference_input(inp1, True)
+    ref_inp1 = _reference_input(inp1, True, force_cpu=True)
     ref_inp2 = inp2
 
     ref_out = torch.div(ref_inp1, ref_inp2)
@@ -534,7 +554,11 @@ def test_div_out_tensor_scalar(shape, scalar, dtype):
 @pytest.mark.parametrize("dtype", utils.FLOAT_DTYPES)
 def test_div_out_scalar_tensor(shape, scalar, dtype):
     inp = torch.randn(shape, dtype=dtype, device=flag_gems.device)
-    ref_inp = _reference_input(inp, False)
+    ref_inp = _reference_input(
+        inp,
+        False,
+        force_cpu=dtype in (torch.float16, torch.bfloat16),
+    )
 
     ref_out = torch.empty_like(ref_inp)
     torch.div(scalar, ref_inp, out=ref_out)
@@ -629,12 +653,7 @@ def test_div_mode_scalar(shape, scalar, rounding_mode, dtype):
             and dtype in (torch.float16, torch.bfloat16)
         )
     ):
-        scalar_device = (
-            ref_inp.device
-            if flag_gems.vendor_name in ("cambricon", "kunlunxin")
-            else flag_gems.device
-        )
-        scalar_tensor = torch.tensor(scalar, dtype=dtype, device=scalar_device)
+        scalar_tensor = torch.tensor(scalar, dtype=dtype, device=ref_inp.device)
         ref_out = torch.ops.aten.div.Tensor_mode(
             ref_inp, scalar_tensor, rounding_mode=rounding_mode
         )
@@ -739,12 +758,7 @@ def test_div_mode_scalar_(shape, scalar, rounding_mode, dtype):
             and dtype in (torch.float16, torch.bfloat16)
         )
     ):
-        scalar_device = (
-            ref_inp.device
-            if flag_gems.vendor_name in ("cambricon", "kunlunxin")
-            else flag_gems.device
-        )
-        scalar_tensor = torch.tensor(scalar, dtype=dtype, device=scalar_device)
+        scalar_tensor = torch.tensor(scalar, dtype=dtype, device=ref_inp.device)
         ref_out = torch.ops.aten.div.Tensor_mode(
             ref_inp, scalar_tensor, rounding_mode=rounding_mode
         )

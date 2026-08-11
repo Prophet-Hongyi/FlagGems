@@ -21,18 +21,16 @@ import flag_gems
 
 from . import accuracy_utils as utils
 
-POLAR_DTYPES = [torch.float32, torch.float64]
-if flag_gems.vendor_name == "kunlunxin":
-    POLAR_DTYPES = [
-        torch.float32,
-        pytest.param(
-            torch.float64,
-            marks=pytest.mark.skipif(
-                not utils.fp64_is_supported,
-                reason="float64/complex128 is not supported on this device",
-            ),
+POLAR_DTYPES = [
+    torch.float32,
+    pytest.param(
+        torch.float64,
+        marks=pytest.mark.skipif(
+            not utils.fp64_is_supported,
+            reason="float64/complex128 is not supported on this device",
         ),
-    ]
+    ),
+]
 
 
 # Issue #2840
