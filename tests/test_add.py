@@ -74,26 +74,15 @@ def test_add_complex(shape, complex_dtype, other_type):
     else:
         raise ValueError(f"Unknown other_type: {other_type}")
 
-    # Kunlunxin's native PyTorch complex add is unavailable, but that should
-    # not suppress coverage of the FlagGems kernel. Build only the reference
-    # on CPU and keep the operator under test on XPU.
-    force_cpu_reference = flag_gems.vendor_name == "kunlunxin"
-    ref_inp1 = utils.to_reference(inp1.cpu() if force_cpu_reference else inp1, True)
+    ref_inp1 = utils.to_reference(inp1, True)
     ref_inp2 = (
-        utils.to_reference(
-            inp2.cpu() if force_cpu_reference else inp2,
-            True,
-        )
-        if isinstance(inp2, torch.Tensor)
-        else inp2
+        utils.to_reference(inp2, True) if isinstance(inp2, torch.Tensor) else inp2
     )
 
     ref_out = torch.add(ref_inp1, ref_inp2)
     with flag_gems.use_gems():
         res_out = torch.add(inp1, inp2)
 
-    if force_cpu_reference and res_out.device != ref_out.device:
-        res_out = res_out.to(ref_out.device)
     utils.gems_assert_close(res_out, ref_out, complex_dtype)
 
 

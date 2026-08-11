@@ -21,22 +21,11 @@ import flag_gems
 
 from . import accuracy_utils as utils
 
-POLAR_DTYPES = [
-    torch.float32,
-    pytest.param(
-        torch.float64,
-        marks=pytest.mark.skipif(
-            not utils.fp64_is_supported,
-            reason="float64/complex128 is not supported on this device",
-        ),
-    ),
-]
-
 
 # Issue #2840
 @pytest.mark.polar
 @pytest.mark.parametrize("shape", utils.POINTWISE_SHAPES)
-@pytest.mark.parametrize("dtype", POLAR_DTYPES)
+@pytest.mark.parametrize("dtype", [torch.float32, torch.float64])
 def test_polar(shape, dtype):
     if flag_gems.vendor_name == "cambricon" and dtype == torch.float64:
         pytest.skip("Issue #5253: Not supported")

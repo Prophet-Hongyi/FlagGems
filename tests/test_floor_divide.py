@@ -151,9 +151,7 @@ def test_floor_divide_int(shape, dtype):
         device="cpu",
     ).to(flag_gems.device)
 
-    # Kunlunxin uses a CPU reference for scalar-first division below. CPU
-    # integer floor_divide raises on zero denominators.
-    if cfg.TO_CPU or flag_gems.vendor_name == "kunlunxin":
+    if cfg.TO_CPU:
         inp1 = replace_zeros(inp1)
         inp2 = replace_zeros(inp2)
 
@@ -173,16 +171,9 @@ def test_floor_divide_int(shape, dtype):
             res_out = inp1 // d
         utils.gems_assert_equal(res_out, ref_out)
 
-        # The Kunlunxin PyTorch baseline cannot evaluate scalar // XPU tensor.
-        # Use a CPU reference without skipping the FlagGems XPU implementation.
-        scalar_ref_inp = ref_inp1
-        if flag_gems.vendor_name == "kunlunxin":
-            scalar_ref_inp = inp1.cpu()
-        ref_out = d // scalar_ref_inp
+        ref_out = d // ref_inp1
         with flag_gems.use_gems():
             res_out = d // inp1
-        if flag_gems.vendor_name == "kunlunxin" and res_out.device != ref_out.device:
-            res_out = res_out.to(ref_out.device)
         utils.gems_assert_equal(res_out, ref_out)
 
 

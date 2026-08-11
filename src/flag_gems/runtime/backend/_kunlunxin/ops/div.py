@@ -121,7 +121,9 @@ def div_complex_real_tensor_kernel(ar, ai, denominator):
     denominator = denominator.to(tl.float32)
     real = ar / denominator
     imag = ai / denominator
-    return real, imag
+    is_zero = denominator == 0
+    nan = float("nan")
+    return tl.where(is_zero, nan, real), tl.where(is_zero, nan, imag)
 
 
 @pointwise_dynamic(

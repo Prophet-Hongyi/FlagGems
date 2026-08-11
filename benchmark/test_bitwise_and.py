@@ -15,8 +15,6 @@
 import pytest
 import torch
 
-import flag_gems
-
 from . import base, consts, utils
 
 
@@ -86,18 +84,10 @@ def scalar_tensor_input_fn(shape, cur_dtype, device):
 
 @pytest.mark.bitwise_and_scalar_tensor
 def test_bitwise_and_scalar_tensor():
-    benchmark_kwargs = {}
-    torch_op = torch.bitwise_and
-    if flag_gems.vendor_name == "kunlunxin":
-        # The native Scalar_Tensor overload cannot materialize the Python
-        # scalar. AND is commutative, so use Tensor_Scalar for its baseline.
-        torch_op = lambda scalar, tensor: torch.bitwise_and(tensor, scalar)
-        benchmark_kwargs["gems_op"] = flag_gems.bitwise_and_scalar_tensor
     bench = base.GenericBenchmark(
         op_name="bitwise_and_scalar_tensor",
-        torch_op=torch_op,
+        torch_op=torch.bitwise_and,
         input_fn=scalar_tensor_input_fn,
         dtypes=consts.INT_DTYPES + consts.BOOL_DTYPES,
-        **benchmark_kwargs,
     )
     bench.run()
