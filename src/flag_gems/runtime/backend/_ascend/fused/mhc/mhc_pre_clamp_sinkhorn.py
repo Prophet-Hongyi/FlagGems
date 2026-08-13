@@ -1,436 +1,411 @@
-"""Optimized Triton implementation of mhc_pre_sinkhorn based on Ascend C logic.
+"""TLE (Triton Language Extensions) implementation of mhc_pre_clamp_sinkhorn.
 
-Key optimizations from Ascend C kernel:
-1. AIV/AIC cooperative execution mapped to Triton kernels:
-     Kernel A (AIV-style): RMSNorm across (hcMult*D), produce inv_rms + x_scaled.
-     Kernel B (AIC-style): Tiled GEMM x_scaled @ phi.T using tl.dot (cube path).
-     Kernel C (AIV-style): Pre/post/sinkhorn/y_scale from mixes in registers.
-2. Grid-stride loop: every kernel is launched with num_programs = core_count;
-   each program iterates over its share of tokens (or GEMM tiles) in a loop.
-3. No torch.matmul – the GEMM is implemented with a Triton tiled kernel.
-4. Register-level Sinkhorn: all 16 matrix cells live in registers for hcMult=4.
+1:1 port of the AscendC operator at
+``/data/liuhy/ops-transformer/mhc/mhc_pre_clamp_sinkhorn`` (arch35 kernels in
+``op_kernel/arch35/mhc_pre_clamp_sinkhorn_base_arch35.h``) written in Triton
+using the TLE DSA surface documented under
+``/data/liuhy/flir/flagtree/documents/tle``.
 
-Ascend C stages mirrored:
-  Stage1 (MhcPreSinkhornStage1):
-    AIV: RMSNorm(x) → inv_rms; cast BF16→FP32 and scale → x_scaled
-    AIC: matmul(x_scaled, phi.T) → mixes  (hcBeforeNorm)
-  Stage2 (MhcPreSinkhornStage2):
-    AIV: pre/post sigmoid, clamp+softmax+Sinkhorn, y_scale
+Semantics (both AscendC and this file)::
+
+    x'      = x * inv_rms,   inv_rms = rsqrt(mean(x^2) + norm_eps)   # RMSNorm over hcMult*D
+    mixes   = x' @ phi^T                                            # (T, hcMix)
+    H^pre   = sigmoid(mixes[:, :N]   * alpha[0] + base[:N])   + hc_eps
+    H^post  = 2 * sigmoid(mixes[:, N:2N] * alpha[1] + base[N:2N])
+    logits  = mixes[:, 2N:] * alpha[2] + base[2N:]   -> (T, N, N)
+    [clamp] logits -> clamp(logits, clamp_min, clamp_max)
+    M       = softmax(logits, dim=-1) + hc_eps
+    M      /= (M.sum(dim=-2, keepdim) + hc_eps)                    # col-norm (iter 0)
+    for i in 1..iter_times-1:                                       # Sinkhorn
+        M /= (M.sum(dim=-1, keepdim) + hc_eps)                     # row-norm
+        M /= (M.sum(dim=-2, keepdim) + hc_eps)                     # col-norm
+    h_in    = sum_n(x[t,n,:] * H^pre[t,n])                          # (T, D)
+
+AscendC layout -> TLE mapping
+-----------------------------
+    ``CopyIn`` (DataCopyPad GM->UB, 1D / 2D with srcStride)
+        ``tle.dsa.alloc([..], dtype, UB)`` + ``tle.dsa.copy(src_ptr, ub, [tail])``.
+    UB->UB vector ops (``Cast``/``Muls``/``Add``/``Sigmoid``/``Adds``/``Exp``/
+    ``ReduceMax``/``ReduceSum``/``Div``/``Sub``)
+        ``tle.dsa.to_tensor(ub)`` -> ``tl`` expression -> ``tle.dsa.to_buffer(.., UB)``.
+    Cube-side ``mm1_`` (x_scaled @ phi^T)
+        ``torch.mm`` on device (the cube core path; not reimplemented in TLE).
+    ``CopyOut`` (DataCopyPad UB->GM)
+        ``tle.dsa.to_buffer(tensor, UB)`` + ``tle.dsa.copy(ub, dst_ptr, [tail])``.
+
+Stage 1 (RMSNorm, ``VFProcessCastAndInvRmsPart1``)
+    Two-pass fp32: pass 1 accumulates sum(x*x) and writes the cast x to UB;
+    pass 2 multiplies by inv_rms. We mirror with a single TLE kernel that
+    loops ``hcMult*D`` in ``BLOCK_H`` chunks, accumulating in an fp32 scalar,
+    then writes x_scaled back in a second pass.
+
+Stage 2 (heads + Sinkhorn, ``VFProcessPre``/``VFProcessPost``/
+``VFProcessCombFragRLessVLUseFourUnfold``)
+    One program per token. The 24 ``mixes`` and 24 ``base`` are staged in UB
+    via a single 2D DSA copy, then turned into tensors (registers). The 16
+    comb-logits stay in registers; clamp, row-softmax and ``iter_times`` rounds
+    of Sinkhorn all run in registers -- the AscendC ``FourUnfold`` path keeps
+    the 4 columns of the 4x4 matrix in 4 register tensors for the whole loop,
+    which is exactly what the scalar unroll below expresses. ``iter_times`` is
+    expanded with ``tl.static_range`` to match the AscendC
+    ``for (int64_t iter = 1; iter < iterTimes; iter++)``.
+
+Stage 3 (ProcessY, ``VFProcessY``)
+    2D grid ``(T, ceil(D / BLOCK_D))``: each program reads ``pre[t, :4]`` once,
+    then streams ``x[t, n, :]`` d-chunks from GM through UB into fp32 registers
+    and accumulates ``hin = sum_n(pre[n] * x[n])`` before casting back to x's
+    dtype and writing to GM.
 """
+
+from __future__ import annotations
+
+import logging
 
 import torch
 import triton
 import triton.language as tl
-import torch_npu
-import triton.runtime.driver as driver
+
+logger = logging.getLogger(__name__)
+
+try:
+    import triton.experimental.tle as tle
+    _HAS_DSA = hasattr(tle, "dsa") and hasattr(tle.dsa, "alloc")
+except (ImportError, AttributeError):
+    tle = None
+    _HAS_DSA = False
 
 
-def get_device_core_counts():
-    """Return (num_vectorcore, num_aicore) for the current device."""
-    device = torch_npu.npu.current_device()
-    props = driver.active.utils.get_device_properties(device)
-    return props["num_vectorcore"], props["num_aicore"]
-
-
-# ---------------------------------------------------------------------------
-# Triton GEMM: x_scaled (T, K) @ phi^T (K, hcMix) -> mixes (T, hcMix)
-# Replaces torch.mm to satisfy the no-torch.matmul requirement.
-# Tile layout mirrors Ascend C HcCubeCompute: tiles over M (T) dimension,
-# full N (hcMix=24) fits in a single BLOCK_N=32 tile.
-# ---------------------------------------------------------------------------
+# ===========================================================================
+# Stage 1: RMSNorm + scale  (maps VFProcessCastAndInvRmsPart1)
+#
+# AscendC: per token, loop hcMult*D in VL_FP32(=64) chunks; pass 1 casts
+# x->fp32, stores the cast to xCastLocal, and reduces sum(x*x) into a scalar;
+# then inv_rms = rsqrt(sum * (1/d) + eps). We keep the same two-pass shape but
+# use a single DSA-staged UB tile per chunk.
+# ===========================================================================
 @triton.jit
-def _matmul_xphi_kernel(
-    x_ptr,  # (M, K) fp32 – x_scaled
-    phi_ptr,  # (N_out, K) fp32 – phi stored as (hcMix, K), i.e. phi[row, :] = one basis vector
-    out_ptr,  # (M, N_out) fp32 – mixes
-    M,
-    N_out,
-    K,
-    stride_xm,
-    stride_xk,
-    stride_pm,
-    stride_pk,
-    stride_om,
-    stride_on,
-    BLOCK_M: tl.constexpr,
-    BLOCK_N: tl.constexpr,
-    BLOCK_K: tl.constexpr,
+def _rms_scale_kernel_tle(
+    x_ptr,  # (T, hcMult*D) input dtype
+    x_scaled_ptr,  # (T, hcMult*D) fp32 output
+    inv_rms_ptr,  # (T,) fp32
+    HC_D: tl.constexpr,
+    D_INV: tl.constexpr,  # 1/HC_D
+    NORM_EPS: tl.constexpr,
+    BLOCK_H: tl.constexpr,
 ):
-    """Grid-stride tiled GEMM: out = x @ phi.T.
+    pid = tl.program_id(0)
+    base = pid * HC_D
 
-    Maps to Ascend C Stage1 AIC path (HcCubeCompute::ProcessMatmulXPhi).
-    Each program claims tile_ids in a grid-stride loop so that launching with
-    num_programs = aicore_num perfectly saturates the cube cores.
+    x_dt = x_ptr.dtype.element_ty
+
+    # ---- pass 1: sum(x*x) in fp32, stage each chunk through UB ----
+    # NOTE: a plain Python float literal (0.0) is used for the scalar fp32
+    # accumulator instead of ``tl.zeros([], dtype=tl.float32)``; the latter
+    # triggers a triton-ascend compiler segfault once 3+ scalar-tensor
+    # accumulators are live in the same program (see mhc_post_backward.py).
+    sq = 0.0
+    x_ub = tle.dsa.alloc([BLOCK_H], dtype=x_dt, mem_addr_space=tle.dsa.ascend.UB)
+    for h_start in range(0, HC_D, BLOCK_H):
+        offs = h_start + tl.arange(0, BLOCK_H)
+        mask = offs < HC_D
+        tail = tl.minimum(HC_D - h_start, BLOCK_H)
+        with tle.dsa.hint(inter_no_alias=True):
+            tle.dsa.copy(x_ptr + base + offs, x_ub, [tail])
+        v = tle.dsa.to_tensor(x_ub).to(tl.float32)
+        # mask-out the tail in fp32 so the padded UB lanes do not pollute sq
+        v = tl.where(mask, v, 0.0)
+        sq += tl.sum(v * v, axis=0)
+
+    inv = tl.math.rsqrt(sq * D_INV + NORM_EPS)
+    tl.store(inv_rms_ptr + pid, inv)
+
+    # ---- pass 2: x_scaled = x * inv_rms ----
+    for h_start in range(0, HC_D, BLOCK_H):
+        offs = h_start + tl.arange(0, BLOCK_H)
+        mask = offs < HC_D
+        tail = tl.minimum(HC_D - h_start, BLOCK_H)
+        with tle.dsa.hint(inter_no_alias=True):
+            tle.dsa.copy(x_ptr + base + offs, x_ub, [tail])
+        v = tle.dsa.to_tensor(x_ub).to(tl.float32)
+        v = tl.where(mask, v, 0.0)
+        out = v * inv
+        out_buf = tle.dsa.to_buffer(out, tle.dsa.ascend.UB)
+        with tle.dsa.hint(inter_no_alias=True):
+            tle.dsa.copy(out_buf, x_scaled_ptr + base + offs, [tail])
+
+
+# ===========================================================================
+# Stage 2: pre / post / combLogits + clamp + softmax + Sinkhorn
+#   (maps VFProcessPre / VFProcessPost / VFProcessCombFragRLessVLUseFourUnfold)
+#
+# One program per token. The 24 mixes + 24 base are staged in UB then moved to
+# registers (tl.tensor scalars). The 16 comb-logits live in registers for the
+# whole clamp -> row-softmax -> (iter_times-1) x (row-norm, col-norm) loop,
+# exactly like the AscendC FourUnfold path that keeps mix1..mix4 in registers
+# across the iteration loop.
+# ===========================================================================
+@triton.jit
+def _heads_sinkhorn_kernel_tle(mixes_ptr,  # (T, 24) fp32
+                               alpha_ptr,  # (3,)   fp32
+                               base_ptr,  # (24,)  fp32
+                               pre_ptr,  # (T, 4)        fp32  OUT
+                               post_ptr,  # (T, 4)        fp32  OUT
+                               comb_ptr,  # (T, 4, 4)     fp32  OUT
+                               logits_ptr,  # (T, 4, 4)     fp32  OUT (pre-clamp logits, for bwd)
+                               HC_EPS: tl.constexpr, CLAMP_MIN: tl.constexpr, CLAMP_MAX: tl.constexpr,
+                               APPLY_CLAMP: tl.constexpr, ITERS: tl.constexpr, SAVE_INTERMEDIATES: tl.constexpr,
+                               NUM_TOKENS: tl.constexpr,  # tokens per program (pipeline depth)
+                               ):
+    """Pipeline version: each program processes NUM_TOKENS tokens sequentially.
+
+    Uses tle.dsa.pipeline(num_stages=2) to overlap MTE2 DMA (loading next
+    token's mixes from GM->UB) with Vector compute (sigmoid + Sinkhorn on
+    current token). Mirrors the mhc_post pipeline pattern.
+
+    Grid: (cdiv(T, NUM_TOKENS),)
     """
     pid = tl.program_id(0)
-    num_programs = tl.num_programs(0)
+    token_start = pid * NUM_TOKENS
 
-    num_tiles_m = tl.cdiv(M, BLOCK_M)
-    num_tiles_n = tl.cdiv(N_out, BLOCK_N)
-    total_tiles = num_tiles_m * num_tiles_n
+    # ---- Load constants: alpha (3 scalars), base (24 values) ----
+    # base is shared across all tokens; load once via DSA bulk copy into UB.
+    base_ub = tle.dsa.alloc([32], dtype=tl.float32, mem_addr_space=tle.dsa.ascend.UB)
+    with tle.dsa.hint(inter_no_alias=True):
+        tle.dsa.copy(base_ptr + tl.arange(0, 32), base_ub, [24])
+    base_vec = tle.dsa.to_tensor(base_ub)  # (32,) fp32, only [0:24] valid
 
-    # Grid-stride loop over output tiles
-    for tile_id in range(pid, total_tiles, num_programs):
-        tile_m = tile_id // num_tiles_n
-        tile_n = tile_id % num_tiles_n
+    # Extract base sub-vectors via extract_slice (contiguous UB slices)
+    base_pre = tl.reshape(tle.dsa.extract_slice(base_vec, (0, ), (4, ), (1, )), [4])
+    base_po = tl.reshape(tle.dsa.extract_slice(base_vec, (4, ), (4, ), (1, )), [4])
+    base_l0 = tl.reshape(tle.dsa.extract_slice(base_vec, (8, ), (4, ), (1, )), [4])
+    base_l1 = tl.reshape(tle.dsa.extract_slice(base_vec, (12, ), (4, ), (1, )), [4])
+    base_l2 = tl.reshape(tle.dsa.extract_slice(base_vec, (16, ), (4, ), (1, )), [4])
+    base_l3 = tl.reshape(tle.dsa.extract_slice(base_vec, (20, ), (4, ), (1, )), [4])
 
-        m_off = tile_m * BLOCK_M + tl.arange(0, BLOCK_M)
-        n_off = tile_n * BLOCK_N + tl.arange(0, BLOCK_N)
-        m_mask = m_off < M
-        n_mask = n_off < N_out
+    a0 = tl.load(alpha_ptr + 0)
+    a1 = tl.load(alpha_ptr + 1)
+    a2 = tl.load(alpha_ptr + 2)
 
-        acc = tl.zeros((BLOCK_M, BLOCK_N), dtype=tl.float32)
+    # ---- Allocate double-buffered UB for mixes[24] per token ----
+    # tle.dsa.pipeline with num_stages=2: while computing token N, DMA loads token N+1.
+    mix_ub = tle.dsa.alloc([32], dtype=tl.float32, mem_addr_space=tle.dsa.ascend.UB)
 
-        # Reduction loop over K
-        for k_start in range(0, K, BLOCK_K):
-            k_off = k_start + tl.arange(0, BLOCK_K)
-            k_mask = k_off < K
+    # ---- Software-pipelined token loop ----
+    for t_local in tle.dsa.pipeline(0, NUM_TOKENS, 1, num_stages=2):
+        t_idx = token_start + t_local
+        mb = t_idx * 24
 
-            # Load A tile: (BLOCK_M, BLOCK_K) from x_scaled
-            a_tile = tl.load(
-                x_ptr + m_off[:, None] * stride_xm + k_off[None, :] * stride_xk,
-                mask=m_mask[:, None] & k_mask[None, :],
-                other=0.0,
-            )
+        # -- DMA stage: copy mixes[t_idx, :24] from GM to UB --
+        tle.dsa.copy(mixes_ptr + mb + tl.arange(0, 32), mix_ub, [24])
 
-            # Load B tile: phi[n_off, k_off] → (BLOCK_N, BLOCK_K), transposed to (BLOCK_K, BLOCK_N)
-            b_tile = tl.load(
-                phi_ptr + n_off[:, None] * stride_pm + k_off[None, :] * stride_pk,
-                mask=n_mask[:, None] & k_mask[None, :],
-                other=0.0,
-            )
+        # -- Compute stage: extract mixes sub-vectors from UB --
+        mix_vec = tle.dsa.to_tensor(mix_ub)  # (32,) fp32
+        mix_pre = tl.reshape(tle.dsa.extract_slice(mix_vec, (0, ), (4, ), (1, )), [4])
+        mix_po = tl.reshape(tle.dsa.extract_slice(mix_vec, (4, ), (4, ), (1, )), [4])
+        mix_l0 = tl.reshape(tle.dsa.extract_slice(mix_vec, (8, ), (4, ), (1, )), [4])
+        mix_l1 = tl.reshape(tle.dsa.extract_slice(mix_vec, (12, ), (4, ), (1, )), [4])
+        mix_l2 = tl.reshape(tle.dsa.extract_slice(mix_vec, (16, ), (4, ), (1, )), [4])
+        mix_l3 = tl.reshape(tle.dsa.extract_slice(mix_vec, (20, ), (4, ), (1, )), [4])
 
-            # tl.dot(A, B.T) – cube core path on Ascend
-            acc = tl.dot(a_tile, tl.trans(b_tile), acc)
+        # ---- pre head: sigmoid(mix*a0 + base) + hc_eps ---- vectorized (4,)
+        pre_vec = tl.sigmoid(mix_pre * a0 + base_pre) + HC_EPS
 
-        # Store output tile
-        tl.store(
-            out_ptr + m_off[:, None] * stride_om + n_off[None, :] * stride_on,
-            acc,
-            mask=m_mask[:, None] & n_mask[None, :],
-        )
+        # ---- post head: 2 * sigmoid(mix*a1 + base) ---- vectorized (4,)
+        post_vec = 2.0 * tl.sigmoid(mix_po * a1 + base_po)
 
+        # ---- combLogits: mix*a2 + base ---- vectorized per row (4,)
+        r0 = mix_l0 * a2 + base_l0
+        r1 = mix_l1 * a2 + base_l1
+        r2 = mix_l2 * a2 + base_l2
+        r3 = mix_l3 * a2 + base_l3
 
-# ---------------------------------------------------------------------------
-# Stage1 AIV: RMSNorm kernel
-# ---------------------------------------------------------------------------
-@triton.autotune(
-    configs=[
-        triton.Config({"BLOCK_SIZE": 256}, num_stages=1),
-        triton.Config({"BLOCK_SIZE": 512}, num_stages=1),
-        triton.Config({"BLOCK_SIZE": 1024}, num_stages=1),
-    ],
-    key=["HC_D"],
-)
-@triton.jit
-def _compute_rms_norm_and_scale_kernel(
-    x_ptr,  # (T, HC_D) input
-    x_scaled_ptr,  # (T, HC_D) fp32 output
-    inv_rms_ptr,  # (T,) fp32 output
-    T,  # runtime int – grid-stride upper bound
-    HC_D: tl.constexpr,
-    D_INV: tl.constexpr,
-    NORM_EPS: tl.constexpr,
-    BLOCK_SIZE: tl.constexpr,
-):
-    """Grid-stride RMSNorm kernel: compute inv_rms and scaled output."""
-    num_programs = tl.num_programs(0)
-    token_idx = tl.program_id(0)
+        # ---- save pre-clamp logits (vectorized store) ----
+        if SAVE_INTERMEDIATES:
+            lb = t_idx * 16
+            offs4 = tl.arange(0, 4)
+            tl.store(logits_ptr + lb + offs4, r0)
+            tl.store(logits_ptr + lb + 4 + offs4, r1)
+            tl.store(logits_ptr + lb + 8 + offs4, r2)
+            tl.store(logits_ptr + lb + 12 + offs4, r3)
 
-    for token_id in range(token_idx, T, num_programs):
-        base_offset = token_id * HC_D
+        # ---- optional clamp ---- vectorized per row (4,)
+        if APPLY_CLAMP:
+            r0 = tl.minimum(tl.maximum(r0, CLAMP_MIN), CLAMP_MAX)
+            r1 = tl.minimum(tl.maximum(r1, CLAMP_MIN), CLAMP_MAX)
+            r2 = tl.minimum(tl.maximum(r2, CLAMP_MIN), CLAMP_MAX)
+            r3 = tl.minimum(tl.maximum(r3, CLAMP_MIN), CLAMP_MAX)
 
-        # Accumulate sum of squares over HC_D in chunks
-        sum_squares = 0.0
-        for chunk_start in range(0, HC_D, BLOCK_SIZE):
-            offsets = chunk_start + tl.arange(0, BLOCK_SIZE)
-            mask = offsets < HC_D
-            values = tl.load(x_ptr + base_offset + offsets, mask=mask, other=0.0).to(tl.float32)
-            sum_squares += tl.sum(values * values, axis=0)
+        # ---- row-softmax: max -> sub -> exp -> sum -> div ---- vectorized (4,)
+        m0 = tl.max(r0, axis=0)
+        m1 = tl.max(r1, axis=0)
+        m2 = tl.max(r2, axis=0)
+        m3 = tl.max(r3, axis=0)
+        e0 = tl.exp(r0 - m0)
+        e1 = tl.exp(r1 - m1)
+        e2 = tl.exp(r2 - m2)
+        e3 = tl.exp(r3 - m3)
+        s0 = tl.sum(e0, axis=0)
+        s1 = tl.sum(e1, axis=0)
+        s2 = tl.sum(e2, axis=0)
+        s3 = tl.sum(e3, axis=0)
+        r0 = e0 / s0
+        r1 = e1 / s1
+        r2 = e2 / s2
+        r3 = e3 / s3
 
-        # inv_rms = 1 / sqrt(mean(x^2) + eps)
-        inv_rms = tl.math.rsqrt(sum_squares * D_INV + NORM_EPS)
-        tl.store(inv_rms_ptr + token_id, inv_rms)
+        # ---- iter 0 col-norm: M = softmax + hc_eps; M /= (colsum + hc_eps) ----
+        r0 = r0 + HC_EPS
+        r1 = r1 + HC_EPS
+        r2 = r2 + HC_EPS
+        r3 = r3 + HC_EPS
+        col_sum = r0 + r1 + r2 + r3 + HC_EPS
+        r0 = r0 / col_sum
+        r1 = r1 / col_sum
+        r2 = r2 / col_sum
+        r3 = r3 / col_sum
 
-        # Write fp32-scaled x to workspace
-        for chunk_start in range(0, HC_D, BLOCK_SIZE):
-            offsets = chunk_start + tl.arange(0, BLOCK_SIZE)
-            mask = offsets < HC_D
-            values = tl.load(x_ptr + base_offset + offsets, mask=mask, other=0.0).to(tl.float32)
-            tl.store(x_scaled_ptr + base_offset + offsets, values * inv_rms, mask=mask)
-
-
-@triton.jit
-def _compute_heads_and_sinkhorn_kernel(
-    mixes_ptr,  # (T, 24) fp32
-    alpha_ptr,  # (3,) fp32
-    base_ptr,  # (24,) fp32
-    pre_ptr,  # (T, 4) fp32 output
-    post_ptr,  # (T, 4) fp32 output
-    comb_ptr,  # (T, 16) fp32 output
-    num_tokens,  # runtime int
-    HC_EPS: tl.constexpr,
-    CLAMP_MIN: tl.constexpr,
-    CLAMP_MAX: tl.constexpr,
-    ITERS: tl.constexpr,
-):
-    """Grid-stride Sinkhorn kernel with vectorized operations."""
-    num_programs = tl.num_programs(0)
-    program_id = tl.program_id(0)
-
-    # Load alpha scalars (shared across all tokens)
-    # Note: Cannot use vectorized load + indexing due to Triton Ascend limitation
-    alpha_0 = tl.load(alpha_ptr + 0)
-    alpha_1 = tl.load(alpha_ptr + 1)
-    alpha_2 = tl.load(alpha_ptr + 2)
-
-    for token_id in range(program_id, num_tokens, num_programs):
-        mix_offset = token_id * 24
-
-        # Pre head: 4 sigmoids (vectorized load/store)
-        pre_offsets = tl.arange(0, 4)
-        pre_mixes = tl.load(mixes_ptr + mix_offset + pre_offsets)
-        pre_bases = tl.load(base_ptr + pre_offsets)
-        pre_out = tl.sigmoid(pre_mixes * alpha_0 + pre_bases) + HC_EPS
-        tl.store(pre_ptr + token_id * 4 + pre_offsets, pre_out)
-
-        # Post head: 4 sigmoids * 2 (vectorized load/store)
-        post_offsets = tl.arange(0, 4)
-        post_mixes = tl.load(mixes_ptr + mix_offset + 4 + post_offsets)
-        post_bases = tl.load(base_ptr + 4 + post_offsets)
-        post_out = 2.0 * tl.sigmoid(post_mixes * alpha_1 + post_bases)
-        tl.store(post_ptr + token_id * 4 + post_offsets, post_out)
-
-        # CombLogits: load 4x4 matrix elements individually
-        # NOTE: Cannot use vectorized load + indexing (e.g., vec[i]) due to Triton Ascend limitation.
-        # The compiler raises "unsupported tensor index" error for any vector indexing.
-        # This element-wise approach is the most efficient method available.
-        l00 = tl.load(mixes_ptr + mix_offset + 8 + 0) * alpha_2 + tl.load(base_ptr + 8 + 0)
-        l01 = tl.load(mixes_ptr + mix_offset + 8 + 1) * alpha_2 + tl.load(base_ptr + 8 + 1)
-        l02 = tl.load(mixes_ptr + mix_offset + 8 + 2) * alpha_2 + tl.load(base_ptr + 8 + 2)
-        l03 = tl.load(mixes_ptr + mix_offset + 8 + 3) * alpha_2 + tl.load(base_ptr + 8 + 3)
-        l10 = tl.load(mixes_ptr + mix_offset + 8 + 4) * alpha_2 + tl.load(base_ptr + 8 + 4)
-        l11 = tl.load(mixes_ptr + mix_offset + 8 + 5) * alpha_2 + tl.load(base_ptr + 8 + 5)
-        l12 = tl.load(mixes_ptr + mix_offset + 8 + 6) * alpha_2 + tl.load(base_ptr + 8 + 6)
-        l13 = tl.load(mixes_ptr + mix_offset + 8 + 7) * alpha_2 + tl.load(base_ptr + 8 + 7)
-        l20 = tl.load(mixes_ptr + mix_offset + 8 + 8) * alpha_2 + tl.load(base_ptr + 8 + 8)
-        l21 = tl.load(mixes_ptr + mix_offset + 8 + 9) * alpha_2 + tl.load(base_ptr + 8 + 9)
-        l22 = tl.load(mixes_ptr + mix_offset + 8 + 10) * alpha_2 + tl.load(base_ptr + 8 + 10)
-        l23 = tl.load(mixes_ptr + mix_offset + 8 + 11) * alpha_2 + tl.load(base_ptr + 8 + 11)
-        l30 = tl.load(mixes_ptr + mix_offset + 8 + 12) * alpha_2 + tl.load(base_ptr + 8 + 12)
-        l31 = tl.load(mixes_ptr + mix_offset + 8 + 13) * alpha_2 + tl.load(base_ptr + 8 + 13)
-        l32 = tl.load(mixes_ptr + mix_offset + 8 + 14) * alpha_2 + tl.load(base_ptr + 8 + 14)
-        l33 = tl.load(mixes_ptr + mix_offset + 8 + 15) * alpha_2 + tl.load(base_ptr + 8 + 15)
-
-        # Clamp logits (conditional based on CLAMP_MIN and CLAMP_MAX)
-        # Only apply clamp if either min or max is non-zero
-        apply_clamp = (CLAMP_MIN != 0.0) or (CLAMP_MAX != 0.0)
-        if apply_clamp:
-            l00 = tl.minimum(tl.maximum(l00, CLAMP_MIN), CLAMP_MAX)
-            l01 = tl.minimum(tl.maximum(l01, CLAMP_MIN), CLAMP_MAX)
-            l02 = tl.minimum(tl.maximum(l02, CLAMP_MIN), CLAMP_MAX)
-            l03 = tl.minimum(tl.maximum(l03, CLAMP_MIN), CLAMP_MAX)
-            l10 = tl.minimum(tl.maximum(l10, CLAMP_MIN), CLAMP_MAX)
-            l11 = tl.minimum(tl.maximum(l11, CLAMP_MIN), CLAMP_MAX)
-            l12 = tl.minimum(tl.maximum(l12, CLAMP_MIN), CLAMP_MAX)
-            l13 = tl.minimum(tl.maximum(l13, CLAMP_MIN), CLAMP_MAX)
-            l20 = tl.minimum(tl.maximum(l20, CLAMP_MIN), CLAMP_MAX)
-            l21 = tl.minimum(tl.maximum(l21, CLAMP_MIN), CLAMP_MAX)
-            l22 = tl.minimum(tl.maximum(l22, CLAMP_MIN), CLAMP_MAX)
-            l23 = tl.minimum(tl.maximum(l23, CLAMP_MIN), CLAMP_MAX)
-            l30 = tl.minimum(tl.maximum(l30, CLAMP_MIN), CLAMP_MAX)
-            l31 = tl.minimum(tl.maximum(l31, CLAMP_MIN), CLAMP_MAX)
-            l32 = tl.minimum(tl.maximum(l32, CLAMP_MIN), CLAMP_MAX)
-            l33 = tl.minimum(tl.maximum(l33, CLAMP_MIN), CLAMP_MAX)
-
-        # Row-softmax
-        row_max_0 = tl.maximum(tl.maximum(l00, l01), tl.maximum(l02, l03))
-        row_max_1 = tl.maximum(tl.maximum(l10, l11), tl.maximum(l12, l13))
-        row_max_2 = tl.maximum(tl.maximum(l20, l21), tl.maximum(l22, l23))
-        row_max_3 = tl.maximum(tl.maximum(l30, l31), tl.maximum(l32, l33))
-
-        e00 = tl.exp(l00 - row_max_0)
-        e01 = tl.exp(l01 - row_max_0)
-        e02 = tl.exp(l02 - row_max_0)
-        e03 = tl.exp(l03 - row_max_0)
-        e10 = tl.exp(l10 - row_max_1)
-        e11 = tl.exp(l11 - row_max_1)
-        e12 = tl.exp(l12 - row_max_1)
-        e13 = tl.exp(l13 - row_max_1)
-        e20 = tl.exp(l20 - row_max_2)
-        e21 = tl.exp(l21 - row_max_2)
-        e22 = tl.exp(l22 - row_max_2)
-        e23 = tl.exp(l23 - row_max_2)
-        e30 = tl.exp(l30 - row_max_3)
-        e31 = tl.exp(l31 - row_max_3)
-        e32 = tl.exp(l32 - row_max_3)
-        e33 = tl.exp(l33 - row_max_3)
-
-        row_sum_inv_0 = 1.0 / (e00 + e01 + e02 + e03)
-        row_sum_inv_1 = 1.0 / (e10 + e11 + e12 + e13)
-        row_sum_inv_2 = 1.0 / (e20 + e21 + e22 + e23)
-        row_sum_inv_3 = 1.0 / (e30 + e31 + e32 + e33)
-
-        v00 = e00 * row_sum_inv_0
-        v01 = e01 * row_sum_inv_0
-        v02 = e02 * row_sum_inv_0
-        v03 = e03 * row_sum_inv_0
-        v10 = e10 * row_sum_inv_1
-        v11 = e11 * row_sum_inv_1
-        v12 = e12 * row_sum_inv_1
-        v13 = e13 * row_sum_inv_1
-        v20 = e20 * row_sum_inv_2
-        v21 = e21 * row_sum_inv_2
-        v22 = e22 * row_sum_inv_2
-        v23 = e23 * row_sum_inv_2
-        v30 = e30 * row_sum_inv_3
-        v31 = e31 * row_sum_inv_3
-        v32 = e32 * row_sum_inv_3
-        v33 = e33 * row_sum_inv_3
-
-        # Add eps + col-normalize
-        v00 += HC_EPS
-        v01 += HC_EPS
-        v02 += HC_EPS
-        v03 += HC_EPS
-        v10 += HC_EPS
-        v11 += HC_EPS
-        v12 += HC_EPS
-        v13 += HC_EPS
-        v20 += HC_EPS
-        v21 += HC_EPS
-        v22 += HC_EPS
-        v23 += HC_EPS
-        v30 += HC_EPS
-        v31 += HC_EPS
-        v32 += HC_EPS
-        v33 += HC_EPS
-
-        col_sum_inv_0 = 1.0 / (v00 + v10 + v20 + v30 + HC_EPS)
-        col_sum_inv_1 = 1.0 / (v01 + v11 + v21 + v31 + HC_EPS)
-        col_sum_inv_2 = 1.0 / (v02 + v12 + v22 + v32 + HC_EPS)
-        col_sum_inv_3 = 1.0 / (v03 + v13 + v23 + v33 + HC_EPS)
-
-        v00 *= col_sum_inv_0
-        v01 *= col_sum_inv_1
-        v02 *= col_sum_inv_2
-        v03 *= col_sum_inv_3
-        v10 *= col_sum_inv_0
-        v11 *= col_sum_inv_1
-        v12 *= col_sum_inv_2
-        v13 *= col_sum_inv_3
-        v20 *= col_sum_inv_0
-        v21 *= col_sum_inv_1
-        v22 *= col_sum_inv_2
-        v23 *= col_sum_inv_3
-        v30 *= col_sum_inv_0
-        v31 *= col_sum_inv_1
-        v32 *= col_sum_inv_2
-        v33 *= col_sum_inv_3
-
-        # Sinkhorn iterations
+        # ---- remaining (ITERS-1) Sinkhorn iterations ----
         for _ in tl.static_range(ITERS - 1):
-            row_inv_0 = 1.0 / (v00 + v01 + v02 + v03 + HC_EPS)
-            row_inv_1 = 1.0 / (v10 + v11 + v12 + v13 + HC_EPS)
-            row_inv_2 = 1.0 / (v20 + v21 + v22 + v23 + HC_EPS)
-            row_inv_3 = 1.0 / (v30 + v31 + v32 + v33 + HC_EPS)
+            rs0 = tl.sum(r0, axis=0) + HC_EPS
+            rs1 = tl.sum(r1, axis=0) + HC_EPS
+            rs2 = tl.sum(r2, axis=0) + HC_EPS
+            rs3 = tl.sum(r3, axis=0) + HC_EPS
+            r0 = r0 / rs0
+            r1 = r1 / rs1
+            r2 = r2 / rs2
+            r3 = r3 / rs3
+            cs = r0 + r1 + r2 + r3 + HC_EPS
+            r0 = r0 / cs
+            r1 = r1 / cs
+            r2 = r2 / cs
+            r3 = r3 / cs
 
-            v00 *= row_inv_0
-            v01 *= row_inv_0
-            v02 *= row_inv_0
-            v03 *= row_inv_0
-            v10 *= row_inv_1
-            v11 *= row_inv_1
-            v12 *= row_inv_1
-            v13 *= row_inv_1
-            v20 *= row_inv_2
-            v21 *= row_inv_2
-            v22 *= row_inv_2
-            v23 *= row_inv_2
-            v30 *= row_inv_3
-            v31 *= row_inv_3
-            v32 *= row_inv_3
-            v33 *= row_inv_3
-
-            col_inv_0 = 1.0 / (v00 + v10 + v20 + v30 + HC_EPS)
-            col_inv_1 = 1.0 / (v01 + v11 + v21 + v31 + HC_EPS)
-            col_inv_2 = 1.0 / (v02 + v12 + v22 + v32 + HC_EPS)
-            col_inv_3 = 1.0 / (v03 + v13 + v23 + v33 + HC_EPS)
-
-            v00 *= col_inv_0
-            v01 *= col_inv_1
-            v02 *= col_inv_2
-            v03 *= col_inv_3
-            v10 *= col_inv_0
-            v11 *= col_inv_1
-            v12 *= col_inv_2
-            v13 *= col_inv_3
-            v20 *= col_inv_0
-            v21 *= col_inv_1
-            v22 *= col_inv_2
-            v23 *= col_inv_3
-            v30 *= col_inv_0
-            v31 *= col_inv_1
-            v32 *= col_inv_2
-            v33 *= col_inv_3
-
-        # Store comb_frag
-        comb_offset = token_id * 16
-        tl.store(comb_ptr + comb_offset + 0, v00)
-        tl.store(comb_ptr + comb_offset + 1, v01)
-        tl.store(comb_ptr + comb_offset + 2, v02)
-        tl.store(comb_ptr + comb_offset + 3, v03)
-        tl.store(comb_ptr + comb_offset + 4, v10)
-        tl.store(comb_ptr + comb_offset + 5, v11)
-        tl.store(comb_ptr + comb_offset + 6, v12)
-        tl.store(comb_ptr + comb_offset + 7, v13)
-        tl.store(comb_ptr + comb_offset + 8, v20)
-        tl.store(comb_ptr + comb_offset + 9, v21)
-        tl.store(comb_ptr + comb_offset + 10, v22)
-        tl.store(comb_ptr + comb_offset + 11, v23)
-        tl.store(comb_ptr + comb_offset + 12, v30)
-        tl.store(comb_ptr + comb_offset + 13, v31)
-        tl.store(comb_ptr + comb_offset + 14, v32)
-        tl.store(comb_ptr + comb_offset + 15, v33)
+        # ---- store results via vectorized store ----
+        offs4 = tl.arange(0, 4)
+        pb = t_idx * 4
+        tl.store(pre_ptr + pb + offs4, pre_vec)
+        tl.store(post_ptr + pb + offs4, post_vec)
+        cb = t_idx * 16
+        tl.store(comb_ptr + cb + offs4, r0)
+        tl.store(comb_ptr + cb + 4 + offs4, r1)
+        tl.store(comb_ptr + cb + 8 + offs4, r2)
+        tl.store(comb_ptr + cb + 12 + offs4, r3)
 
 
+# ===========================================================================
+# Stage 3: y = sum_n(x[n] * pre[n])  (maps VFProcessY)
+#
+# 2D grid (T, cdiv(D, BLOCK_D)). Each program loads pre[t,:4] once (scalars),
+# then streams the 4 x[D]-rows for this token through UB in BLOCK_D chunks,
+# casts to fp32, accumulates hin = sum_n(pre[n]*x[n]) and writes back in x's
+# dtype. Mirrors VFProcessY's per-token, per-d-chunk LoadInputDataWithBrc +
+# Mul + Add + StoreOutputData loop.
+# ===========================================================================
 @triton.jit
-def _compute_weighted_sum_kernel(
-    x_ptr,  # (T, 4, D) input
-    pre_ptr,  # (T, 4) fp32
-    y_ptr,  # (T, D) output
-    num_tokens: tl.constexpr,
-    head_dim: tl.constexpr,
-    BLOCK_SIZE: tl.constexpr,
+def _y_scale_kernel_tle(
+    x_ptr,  # (T, 4, D) input dtype
+    pre_ptr,  # (T, 4)    fp32
+    y_ptr,  # (T, D)    input dtype
+    D: tl.constexpr,
+    BLOCK_D: tl.constexpr,
 ):
-    """Grid-stride weighted sum kernel: y[t,d] = sum_n(x[t,n,d] * pre[t,n])."""
-    num_programs = tl.num_programs(0)
-    program_id = tl.program_id(0)
+    pid_t = tl.program_id(0)
+    pid_d = tl.program_id(1)
 
-    for token_id in range(program_id, num_tokens, num_programs):
-        # Load pre weights (4 values individually)
-        weight_0 = tl.load(pre_ptr + token_id * 4 + 0)
-        weight_1 = tl.load(pre_ptr + token_id * 4 + 1)
-        weight_2 = tl.load(pre_ptr + token_id * 4 + 2)
-        weight_3 = tl.load(pre_ptr + token_id * 4 + 3)
+    d_off = pid_d * BLOCK_D + tl.arange(0, BLOCK_D)
+    d_mask = d_off < D
+    tail_d = tl.minimum(D - pid_d * BLOCK_D, BLOCK_D)
 
-        x_base_offset = token_id * 4 * head_dim
-        output_dtype = y_ptr.dtype.element_ty
+    # pre[t, :4] scalars (AscendC loads these once per token via brc)
+    p0 = tl.load(pre_ptr + pid_t * 4 + 0)
+    p1 = tl.load(pre_ptr + pid_t * 4 + 1)
+    p2 = tl.load(pre_ptr + pid_t * 4 + 2)
+    p3 = tl.load(pre_ptr + pid_t * 4 + 3)
 
-        # Grid-stride over head dimension
-        for dim_start in range(0, head_dim, BLOCK_SIZE):
-            dim_offsets = dim_start + tl.arange(0, BLOCK_SIZE)
-            dim_mask = dim_offsets < head_dim
+    x_dt = x_ptr.dtype.element_ty
+    xb = pid_t * 4 * D
 
-            # Load x values for all 4 heads (vectorized)
-            x0 = tl.load(x_ptr + x_base_offset + 0 * head_dim + dim_offsets, mask=dim_mask, other=0.0).to(tl.float32)
-            x1 = tl.load(x_ptr + x_base_offset + 1 * head_dim + dim_offsets, mask=dim_mask, other=0.0).to(tl.float32)
-            x2 = tl.load(x_ptr + x_base_offset + 2 * head_dim + dim_offsets, mask=dim_mask, other=0.0).to(tl.float32)
-            x3 = tl.load(x_ptr + x_base_offset + 3 * head_dim + dim_offsets, mask=dim_mask, other=0.0).to(tl.float32)
+    # stage the 4 rows of this d-chunk into one (4, BLOCK_D) UB tile, mirroring
+    # the AscendC 2D DataCopyPad with blockCount=4, srcStride=(D-dNum)*sizeof(T)
+    n_idx = tl.arange(0, 4)
+    src_2d = x_ptr + xb + n_idx[:, None] * D + d_off[None, :]
+    x_ub = tle.dsa.alloc([4, BLOCK_D], dtype=x_dt, mem_addr_space=tle.dsa.ascend.UB)
+    with tle.dsa.hint(inter_no_alias=True):
+        tle.dsa.copy(src_2d, x_ub, [4, tail_d])
 
-            # Weighted sum
-            result = x0 * weight_0 + x1 * weight_1 + x2 * weight_2 + x3 * weight_3
-            tl.store(y_ptr + token_id * head_dim + dim_offsets, result.to(output_dtype), mask=dim_mask)
+    x2d = tle.dsa.to_tensor(x_ub).to(tl.float32)
+    # extract the 4 rows; mask tail lanes to 0 so they don't affect the sum
+    x0 = tl.reshape(tle.dsa.extract_slice(x2d, (0, 0), (1, BLOCK_D), (1, 1)), [BLOCK_D])
+    x1 = tl.reshape(tle.dsa.extract_slice(x2d, (1, 0), (1, BLOCK_D), (1, 1)), [BLOCK_D])
+    x2 = tl.reshape(tle.dsa.extract_slice(x2d, (2, 0), (1, BLOCK_D), (1, 1)), [BLOCK_D])
+    x3 = tl.reshape(tle.dsa.extract_slice(x2d, (3, 0), (1, BLOCK_D), (1, 1)), [BLOCK_D])
+    x0 = tl.where(d_mask, x0, 0.0)
+    x1 = tl.where(d_mask, x1, 0.0)
+    x2 = tl.where(d_mask, x2, 0.0)
+    x3 = tl.where(d_mask, x3, 0.0)
+
+    hin = x0 * p0 + x1 * p1 + x2 * p2 + x3 * p3
+    out_buf = tle.dsa.to_buffer(hin.to(x_dt), tle.dsa.ascend.UB)
+    y_off = pid_t * D + d_off
+    with tle.dsa.hint(inter_no_alias=True):
+        tle.dsa.copy(out_buf, y_ptr + y_off, [tail_d])
+
+
+# ===========================================================================
+# Row-store fallback variant of stage 3.
+#
+# The pure-DSA kernel above is the literal 1:1 mapping of VFProcessY, but the
+# triton-ascend compiler on this branch mis-orders the (4, BLOCK_D) tile built
+# from extract_slice chains (same class of issue documented in mhc_post.py).
+# This variant keeps the identical scalar-register data flow (pre hoisted per
+# token, fp32 accumulators, single fp32->T cast on store) but issues the four
+# head loads/stores through the regular masked path. Numerics are identical;
+# only the copy-out DMA differs.
+# ===========================================================================
+@triton.jit
+def _y_scale_kernel_tle_rows(
+    x_ptr,  # (T, 4, D) input dtype
+    pre_ptr,  # (T, 4)    fp32
+    y_ptr,  # (T, D)    input dtype
+    D: tl.constexpr,
+    BLOCK_D: tl.constexpr,
+):
+    pid_t = tl.program_id(0)
+    pid_d = tl.program_id(1)
+
+    d_off = pid_d * BLOCK_D + tl.arange(0, BLOCK_D)
+    d_mask = d_off < D
+
+    p0 = tl.load(pre_ptr + pid_t * 4 + 0)
+    p1 = tl.load(pre_ptr + pid_t * 4 + 1)
+    p2 = tl.load(pre_ptr + pid_t * 4 + 2)
+    p3 = tl.load(pre_ptr + pid_t * 4 + 3)
+
+    xb = pid_t * 4 * D
+    x0 = tl.load(x_ptr + xb + 0 * D + d_off, mask=d_mask, other=0.0).to(tl.float32)
+    x1 = tl.load(x_ptr + xb + 1 * D + d_off, mask=d_mask, other=0.0).to(tl.float32)
+    x2 = tl.load(x_ptr + xb + 2 * D + d_off, mask=d_mask, other=0.0).to(tl.float32)
+    x3 = tl.load(x_ptr + xb + 3 * D + d_off, mask=d_mask, other=0.0).to(tl.float32)
+
+    hin = x0 * p0 + x1 * p1 + x2 * p2 + x3 * p3
+    dt = y_ptr.dtype.element_ty
+    tl.store(y_ptr + pid_t * D + d_off, hin.to(dt), mask=d_mask)
+
+
+# ---------------------------------------------------------------------------
+# Public API
+# ---------------------------------------------------------------------------
+def _flatten(x):
+    """Return (xf_TND, y_out_shape) where y_out_shape is the shape of the
+    reduced-N `hin` output (aclnn semantic): (B, S, D) for 4D input or
+    (T, D) for 3D input."""
+    if x.dim() == 4:
+        B, S, N, D = x.shape
+        return x.reshape(B * S, N, D).contiguous(), (B, S, D)
+    if x.dim() == 3:
+        T, N, D = x.shape
+        return x.contiguous(), (T, D)
+    raise ValueError(f"unsupported x.dim()={x.dim()}")
 
 
 def mhc_pre_clamp_sinkhorn(
@@ -445,134 +420,177 @@ def mhc_pre_clamp_sinkhorn(
     iter_times: int = 20,
     need_backward: bool = False,
 ):
-    """Optimized MHC pre+clamp+Sinkhorn with grid-stride multi-core execution.
+    """Fused MHC pre + clamp + Sinkhorn forward (aclnn semantic).
 
-    Mirrors the Ascend C two-stage pipeline:
-      Stage1 (AIV): RMSNorm → inv_rms + x_scaled  (grid = num_vectorcore)
-      Stage1 (AIC): Triton tiled GEMM x_scaled @ phi.T → mixes  (grid = num_aicore)
-      Stage2 (AIV): sigmoid/sinkhorn/y_scale from mixes  (grid = num_vectorcore)
-
-    No torch.matmul – the GEMM is implemented with _matmul_xphi_kernel.
+    Returns a dict with:
+        y (hin)     : (B, S, D) or (T, D)  same dtype as x
+                      hin[t, d] = sum_n( x[t, n, d] * pre[t, n] )
+        post_out    : (T, hcMult)   fp32   post_out = 2 * sigmoid(...)
+        comb_frag   : (T, hcMult, hcMult) fp32
+    If need_backward=True, also:
+        inv_rms     : (T,)  fp32
+        x_scaled    : (T, hcMult*D) fp32
+        mixes       : (T, hcMix) fp32
+        h_res_logits: (T, hcMult, hcMult) fp32  (pre-clamp logits)
+        pre         : (T, hcMult) fp32
     """
-    # Flatten to (num_tokens, num_heads, head_dim)
-    if x.dim() == 4:
-        batch_size, seq_len, num_heads, head_dim = x.shape
-        x_flat = x.reshape(batch_size * seq_len, num_heads, head_dim).contiguous()
-        y_shape = (batch_size, seq_len, head_dim)
-    elif x.dim() == 3:
-        x_flat = x.contiguous()
-        y_shape = (x_flat.shape[0], x_flat.shape[2])
-    else:
-        raise ValueError(f"Unsupported x.dim()={x.dim()}")
+    if not _HAS_DSA:
+        raise RuntimeError("This mhc_pre_clamp_sinkhorn implementation requires the TLE DSA "
+                           "surface (triton.experimental.tle.dsa.*).")
 
-    num_tokens, num_heads, head_dim = x_flat.shape
-    assert num_heads == 4, "hc_mult=4 only"
-    hc_mix = num_heads * (num_heads + 2)  # 24
-    hc_d = num_heads * head_dim  # K for GEMM
+    xf, shape = _flatten(x)
+    T, N, D = xf.shape
+    assert N == 4, "hc_mult=4 fast path only (matches AscendC hcMult=4)."
+    hc_mix = N * (N + 2)
+    hc_d = N * D
+    assert phi.shape == (hc_mix, hc_d), f"phi shape {phi.shape} != {(hc_mix, hc_d)}"
+    assert alpha.numel() == 3
+    assert base.numel() == hc_mix
 
-    # Query device core counts to set grid sizes
-    num_vectorcore, num_aicore = get_device_core_counts()
+    x_scaled = torch.empty(T, hc_d, dtype=torch.float32, device=xf.device)
+    inv_rms = torch.empty(T, dtype=torch.float32, device=xf.device)
 
-    # -----------------------------------------------------------------------
-    # Stage 1 – Part A: RMSNorm (vector cores)
-    # Grid-stride over tokens with num_vectorcore programs.
-    # -----------------------------------------------------------------------
-    inv_rms = torch.empty(num_tokens, dtype=torch.float32, device=x_flat.device)
-    x_scaled = torch.empty(num_tokens, hc_d, dtype=torch.float32, device=x_flat.device)
-
-    _compute_rms_norm_and_scale_kernel[(num_vectorcore, )](
-        x_flat.reshape(num_tokens, hc_d),
+    # Stage 1: RMSNorm + scale. BLOCK_H picked so the UB tile stays small and
+    # T * (hc_d / BLOCK_H) stays well under the 65535 coreDim cap.
+    BLOCK_H = min(1024, triton.next_power_of_2(hc_d))
+    while T * triton.cdiv(hc_d, BLOCK_H) > 65535 and BLOCK_H < hc_d:
+        BLOCK_H *= 2
+    BLOCK_H = min(BLOCK_H, triton.next_power_of_2(hc_d))
+    _rms_scale_kernel_tle[(T, )](
+        xf.view(T, hc_d),
         x_scaled,
         inv_rms,
-        T=num_tokens,
         HC_D=hc_d,
         D_INV=1.0 / hc_d,
         NORM_EPS=norm_eps,
+        BLOCK_H=BLOCK_H,
     )
 
-    # -----------------------------------------------------------------------
-    # Stage 1 – Part B: GEMM  (AI cores – cube cores via tl.dot)
-    # mixes = x_scaled @ phi.T  shape: (num_tokens, hcMix)
-    # Grid-stride over (M, N) tiles with num_aicore programs.
-    # Tile sizes: BLOCK_M=32, BLOCK_N=32 (covers hcMix=24), BLOCK_K=128.
-    # -----------------------------------------------------------------------
+    # Cube-side GEMM: mixes = x_scaled @ phi^T. AscendC runs this on the cube
+    # core (mm1_.Init/Process); torch.mm dispatches to the same MMAD path.
     phi_f = phi.to(torch.float32)
     mixes = torch.mm(x_scaled, phi_f.t())  # (T, hcMix)
-    '''
-    mixes = torch.empty(num_tokens, hc_mix, dtype=torch.float32, device=x_flat.device)
 
-    BLOCK_M, BLOCK_N, BLOCK_K = 32, 32, 128
-    _matmul_xphi_kernel[(num_aicore, )](
-        x_scaled,
-        phi_f,
+    pre = torch.empty(T, N, dtype=torch.float32, device=xf.device)
+    post_out = torch.empty(T, N, dtype=torch.float32, device=xf.device)
+    comb_frag = torch.empty(T, N, N, dtype=torch.float32, device=xf.device)
+    h_res_logits = (torch.empty(T, N, N, dtype=torch.float32, device=xf.device) if need_backward else torch.empty(
+        0, device=xf.device))
+
+    apply_clamp = 1 if (clamp_min != 0.0 or clamp_max != 0.0) else 0
+    # Pipeline kernel: each program processes NUM_TOKENS tokens with DMA/compute
+    # overlap via tle.dsa.pipeline(num_stages=2). Pick NUM_TOKENS to balance
+    # pipeline depth vs grid parallelism.
+    NUM_TOKENS_PER_PROG = min(8, T)
+    grid_heads = (triton.cdiv(T, NUM_TOKENS_PER_PROG), )
+    _heads_sinkhorn_kernel_tle[grid_heads](
         mixes,
-        num_tokens,
-        hc_mix,
-        hc_d,
-        x_scaled.stride(0),
-        x_scaled.stride(1),
-        phi_f.stride(0),
-        phi_f.stride(1),
-        mixes.stride(0),
-        mixes.stride(1),
-        BLOCK_M=BLOCK_M,
-        BLOCK_N=BLOCK_N,
-        BLOCK_K=BLOCK_K,
-        num_stages=1,
-    )
-    '''
-
-    # -----------------------------------------------------------------------
-    # Stage 2 – Sinkhorn heads (vector cores)
-    # Grid-stride over tokens with num_vectorcore programs.
-    # -----------------------------------------------------------------------
-    pre = torch.empty(num_tokens, num_heads, dtype=torch.float32, device=x_flat.device)
-    post_out = torch.empty(num_tokens, num_heads, dtype=torch.float32, device=x_flat.device)
-    comb_frag = torch.empty(num_tokens, num_heads, num_heads, dtype=torch.float32, device=x_flat.device)
-
-    _compute_heads_and_sinkhorn_kernel[(num_vectorcore, )](
-        mixes,
-        alpha.float(),
-        base.float(),
+        alpha.to(torch.float32),
+        base.to(torch.float32),
         pre,
         post_out,
-        comb_frag.reshape(num_tokens, 16),
-        num_tokens=num_tokens,
+        comb_frag,
+        h_res_logits,
         HC_EPS=hc_eps,
         CLAMP_MIN=float(clamp_min),
         CLAMP_MAX=float(clamp_max),
-        ITERS=iter_times,
-        num_stages=1,
+        APPLY_CLAMP=apply_clamp,
+        ITERS=int(iter_times),
+        SAVE_INTERMEDIATES=1 if need_backward else 0,
+        NUM_TOKENS=NUM_TOKENS_PER_PROG,
     )
 
-    # -----------------------------------------------------------------------
-    # Stage 2 – Y-scale (vector cores)
-    # y[t, d] = sum_n(x[t, n, d] * pre[t, n])
-    # Grid-stride over tokens with num_vectorcore programs.
-    # -----------------------------------------------------------------------
-    y = torch.empty(num_tokens, head_dim, dtype=x_flat.dtype, device=x_flat.device)
-    _compute_weighted_sum_kernel[(num_vectorcore, )](
-        x_flat,
-        pre,
-        y,
-        num_tokens=num_tokens,
-        head_dim=head_dim,
-        BLOCK_SIZE=256,
-        num_stages=1,
-    )
+    y = torch.empty(T, D, dtype=xf.dtype, device=xf.device)
+    BLOCK_D = min(1024, triton.next_power_of_2(D))
+    while T * triton.cdiv(D, BLOCK_D) > 65535 and BLOCK_D < D:
+        BLOCK_D *= 2
+    BLOCK_D = min(BLOCK_D, triton.next_power_of_2(D))
+    grid_y = (T, triton.cdiv(D, BLOCK_D))
+    # See NOTE ON KERNEL SELECTION in mhc_post.py: the pure-DSA kernel
+    # (_y_scale_kernel_tle) is the literal 1:1 mapping of VFProcessY, but the
+    # triton-ascend compiler mis-orders the (4, BLOCK_D) tile built from
+    # extract_slice chains. We run the row-store variant, which keeps the same
+    # scalar-register data flow but issues the four head loads/stores through
+    # the regular masked path. Numerics identical; only the DMA differs.
+    _y_scale_kernel_tle_rows[grid_y](xf, pre, y, D=D, BLOCK_D=BLOCK_D)
 
     result = {
-        "y": y.reshape(y_shape),
+        "y": y.reshape(shape),
         "post_out": post_out,
         "comb_frag": comb_frag,
     }
-
     if need_backward:
         result.update(
             inv_rms=inv_rms,
             x_scaled=x_scaled,
             mixes=mixes,
+            h_res_logits=h_res_logits,
             pre=pre,
         )
-
     return result
+
+
+def mhc_pre_clamp_sinkhorn_ref(
+    x,
+    phi,
+    alpha,
+    base,
+    norm_eps=1e-6,
+    hc_eps=1e-6,
+    clamp_min=0.0,
+    clamp_max=0.0,
+    iter_times=20,
+):
+    """PyTorch reference implementation (aclnn semantic).
+
+    hin[t, d] = sum_n( x[t, n, d] * pre[t, n] )   -> shape (B, S, D)
+    post_out  = 2 * sigmoid(...)                  per aclnn spec.
+    """
+    orig_dtype = x.dtype
+    xf, shape = _flatten(x)
+    T, N, D = xf.shape
+    x_flat = xf.reshape(T, N * D).float()
+
+    ms = x_flat.pow(2).mean(dim=-1, keepdim=True)
+    inv = torch.rsqrt(ms + norm_eps)
+    x_scaled = x_flat * inv
+    mixes = x_scaled @ phi.float().t()
+
+    a = alpha.float()
+    b = base.float()
+    pre = torch.sigmoid(mixes[:, :N] * a[0] + b[:N]) + hc_eps
+    post_out = 2.0 * torch.sigmoid(mixes[:, N:2 * N] * a[1] + b[N:2 * N])
+    logits = (mixes[:, 2 * N:] * a[2] + b[2 * N:]).reshape(T, N, N)
+    if clamp_min != 0.0 or clamp_max != 0.0:
+        logits_c = torch.clamp(logits, clamp_min, clamp_max)
+    else:
+        logits_c = logits
+    row_max = logits_c.max(dim=-1, keepdim=True).values
+    M = (logits_c - row_max).exp()
+    M = M / M.sum(dim=-1, keepdim=True) + hc_eps
+    M = M / (M.sum(dim=-2, keepdim=True) + hc_eps)
+    for _ in range(iter_times - 1):
+        M = M / (M.sum(dim=-1, keepdim=True) + hc_eps)
+        M = M / (M.sum(dim=-2, keepdim=True) + hc_eps)
+
+    # hin = sum_n (x * pre) -> (T, D)
+    y = (xf.float() * pre.unsqueeze(-1)).sum(dim=-2).to(orig_dtype)
+    return {
+        "y": y.reshape(shape),
+        "post_out": post_out,
+        "comb_frag": M,
+        "inv_rms": inv.squeeze(-1),
+        "mixes": mixes,
+        "h_res_logits": logits,
+        "pre": pre,
+    }
+
+
+__all__ = [
+    "mhc_pre_clamp_sinkhorn",
+    "mhc_pre_clamp_sinkhorn_ref",
+    "_rms_scale_kernel_tle",
+    "_heads_sinkhorn_kernel_tle",
+    "_y_scale_kernel_tle",
+    "_y_scale_kernel_tle_rows",
+]
