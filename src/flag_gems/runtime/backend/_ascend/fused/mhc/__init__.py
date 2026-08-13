@@ -23,7 +23,6 @@ from flag_gems.runtime.backend._ascend.fused.mhc.mhc_post_backward import (
     mhc_post_backward,
     mhc_post_backward_ref,
 )
-from flag_gems.runtime.backend._ascend.fused.mhc.mhc_pre import mhc_pre, mhc_pre_ref
 from flag_gems.runtime.backend._ascend.fused.mhc.mhc_pre_clamp_sinkhorn import (
     mhc_pre_clamp_sinkhorn,
 )
@@ -37,8 +36,6 @@ __all__ = [
     "mhc_post_ref",
     "mhc_post_backward",
     "mhc_post_backward_ref",
-    "mhc_pre",
-    "mhc_pre_ref",
     "mhc_pre_clamp_sinkhorn",
     "mhc_pre_clamp_sinkhorn_backward",
     "mhc_pre_clamp_sinkhorn_backward_ref",
