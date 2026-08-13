@@ -1,31 +1,48 @@
-# Copyright 2026 FlagOS Contributors
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
+"""TLE (Triton Language Extensions) implementation of mhc_post.
 
-"""
-Ascend implementation of mHC Post operator.
+1:1 port of the AscendC operator at
+``/data/liuhy/ops-transformer/mhc/mhc_post`` (``op_kernel/mhc_post.h``)
+written in Triton using the TLE DSA surface documented under
+``/data/liuhy/flir/flagtree/documents/tle``.
 
-Computes:
-    out[n, i, h] = post_layer_mix[n, i] * x[n, h]
-                 + sum_j(comb_res_mix[n, j, i] * residual[n, j, h])
+Semantics (both AscendC and this file)::
 
-Public API matches flag_gems.fused.mhc.mhc_post.
+    output[t, i, d] = sum_j h_res[t, j, i] * x[t, j, d]
+                    + h_post[t, i]     * h_out[t, d]
 
-Ascend optimizations:
-- num_stages=1 configs only: NPU does not benefit from multi-stage software
-  pipelining; extra stages waste register space.
-- HC=4 fast path: all 20 scalars loaded into registers once per h-tile,
-  enabling 4 accumulators computed with full ILP.
+AscendC layout -> TLE mapping
+-----------------------------
+    ``CopyInHOut``  (DataCopyPad 1x dNum*sizeof(T))
+        ``hout_ub = tle.dsa.alloc([BLOCK_D], x_dtype, UB)``  +
+        ``tle.dsa.copy(h_out_ptr + off, hout_ub, [tail_d])``.
+
+    ``CopyInX`` with ``USE_PERMANENT_X == 1``
+        One ``DataCopyPad`` with ``blockCount = n`` /
+        ``srcStride = (D - dNum) * sizeof(T)`` -- the whole
+        (n, dNum) x-tile is staged in UB once per d-chunk.
+        TLE: a single 2D ``tle.dsa.alloc([4, BLOCK_D], ..., UB)`` +
+        ``tle.dsa.copy(src_2d, x_ub, [4, tail_d])``.
+
+    ``ComputeCopyOutAllX``
+        ``Cast``        -> ``tle.dsa.to_tensor(x_ub).to(tl.float32)``
+        ``Muls``        -> ``out_f32 = hout_f32 * h_post[i]``
+        ``Axpy``        -> ``out_f32 += x_f32[j] * h_res[j, i]``
+                           (one fused multiply-add in tensor land)
+        ``Cast RINT``   -> ``out_f32.to(x_dtype)``
+        ``CopyOutTile`` -> ``tle.dsa.copy(out_ub, out_ptr + off, [tail_d])``
+                           via ``tle.dsa.to_buffer(out_tile, UB)``.
+
+    Scalar ``h_res`` / ``h_post`` GM reads (``GetValue`` inside the
+    AscendC inner loop) become per-token scalar ``tl.load`` hoisted
+    outside the D loop -- the AscendC arch35 "permanent-x" fast path
+    keeps x in UB precisely so these 20 scalars amortize across all
+    d-chunks; we keep the same data flow.
+
+Grid
+----
+``(T, cdiv(D, BLOCK_D))``: each program owns one token's D-chunk, same
+work distribution as ``tilingData_->normalCoreProcessNum`` slicing
+``(bs, d-chunk)`` pairs across cores.
 """
 
 from __future__ import annotations
@@ -39,202 +56,487 @@ import triton.language as tl
 logger = logging.getLogger(__name__)
 
 
-# ---------------------------------------------------------------------------
-# HC=4 fast-path kernel
-# ---------------------------------------------------------------------------
+try:
+    import triton.experimental.tle as tle
+    _HAS_DSA = hasattr(tle, "dsa") and hasattr(tle.dsa, "alloc")
+except (ImportError, AttributeError):
+    tle = None
+    _HAS_DSA = False
 
-@triton.autotune(
-    configs=[
-        triton.Config({"BLOCK_H": 128}, num_warps=4, num_stages=1),
-        triton.Config({"BLOCK_H": 256}, num_warps=4, num_stages=1),
-        triton.Config({"BLOCK_H": 256}, num_warps=8, num_stages=1),
-        triton.Config({"BLOCK_H": 512}, num_warps=4, num_stages=1),
-        triton.Config({"BLOCK_H": 512}, num_warps=8, num_stages=1),
-        triton.Config({"BLOCK_H": 1024}, num_warps=4, num_stages=1),
-        triton.Config({"BLOCK_H": 1024}, num_warps=8, num_stages=1),
-    ],
-    key=["H"],
-)
+
+# ===========================================================================
+# HC_MULT=4 kernel -- maps MhcPostKernel<..., USE_PERMANENT_X=1>::Process.
+# Pipeline version: 1D grid over T, iterates D-chunks internally with
+# tle.dsa.pipeline(num_stages=2) for MTE2/Vector overlap via double-buffer.
+# Uses tle.dsa.to_buffer + tle.dsa.copy for output (matching AscendC CopyOut).
+# ===========================================================================
 @triton.jit
-def _mhc_post_kernel_hc4(
-    a_ptr,    # comb_res_mix : (N, 4, 4), float32  — a[n, j, i]
-    b_ptr,    # residual     : (N, 4, H), bfloat16
-    c_ptr,    # post_layer_mix: (N, 4),   float32
-    d_ptr,    # x            : (N, H),    bfloat16
-    out_ptr,  # output       : (N, 4, H), bfloat16
-    H: tl.constexpr,
-    BLOCK_H: tl.constexpr,
+def _mhc_post_kernel_tle(
+    x_ptr,        # (T, 4, D) bf16/fp16
+    h_res_ptr,    # (T, 4, 4) fp32   layout: h_res[t, j, i]
+    h_out_ptr,    # (T, D)    bf16/fp16
+    h_post_ptr,   # (T, 4)    fp32
+    out_ptr,      # (T, 4, D) bf16/fp16
+    D: tl.constexpr,
+    BLOCK_D: tl.constexpr,
+    NUM_D_BLOCKS: tl.constexpr,
 ):
-    """Grid: (N, cdiv(H, BLOCK_H)). One program per token × h-tile × all 4 streams."""
-    pid_n = tl.program_id(0)
-    pid_h = tl.program_id(1)
+    pid_t = tl.program_id(0)
 
-    h_off = pid_h * BLOCK_H + tl.arange(0, BLOCK_H)
-    h_mask = h_off < H
+    x_base = pid_t * 4 * D
+    hout_base = pid_t * D
+    hres_base = pid_t * 16
+    hpost_base = pid_t * 4
 
-    a_base   = pid_n * 16
-    c_base   = pid_n * 4
-    b_base   = pid_n * 4 * H
-    d_base   = pid_n * H
-    out_base = pid_n * 4 * H
+    x_dt = x_ptr.dtype.element_ty
 
-    c0 = tl.load(c_ptr + c_base + 0).to(tl.float32)
-    c1 = tl.load(c_ptr + c_base + 1).to(tl.float32)
-    c2 = tl.load(c_ptr + c_base + 2).to(tl.float32)
-    c3 = tl.load(c_ptr + c_base + 3).to(tl.float32)
+    # ---- Bulk DMA: load coefficients (constant across D-chunks) ---------------
+    hpost_ub = tle.dsa.alloc([4], dtype=tl.float32, mem_addr_space=tle.dsa.ascend.UB)
+    hres_ub = tle.dsa.alloc([16], dtype=tl.float32, mem_addr_space=tle.dsa.ascend.UB)
 
-    a00 = tl.load(a_ptr + a_base + 0).to(tl.float32)
-    a01 = tl.load(a_ptr + a_base + 1).to(tl.float32)
-    a02 = tl.load(a_ptr + a_base + 2).to(tl.float32)
-    a03 = tl.load(a_ptr + a_base + 3).to(tl.float32)
-    a10 = tl.load(a_ptr + a_base + 4).to(tl.float32)
-    a11 = tl.load(a_ptr + a_base + 5).to(tl.float32)
-    a12 = tl.load(a_ptr + a_base + 6).to(tl.float32)
-    a13 = tl.load(a_ptr + a_base + 7).to(tl.float32)
-    a20 = tl.load(a_ptr + a_base + 8).to(tl.float32)
-    a21 = tl.load(a_ptr + a_base + 9).to(tl.float32)
-    a22 = tl.load(a_ptr + a_base + 10).to(tl.float32)
-    a23 = tl.load(a_ptr + a_base + 11).to(tl.float32)
-    a30 = tl.load(a_ptr + a_base + 12).to(tl.float32)
-    a31 = tl.load(a_ptr + a_base + 13).to(tl.float32)
-    a32 = tl.load(a_ptr + a_base + 14).to(tl.float32)
-    a33 = tl.load(a_ptr + a_base + 15).to(tl.float32)
+    with tle.dsa.hint(inter_no_alias=True):
+        tle.dsa.copy(h_post_ptr + hpost_base + tl.arange(0, 4), hpost_ub, [4])
+        tle.dsa.copy(h_res_ptr + hres_base + tl.arange(0, 16), hres_ub, [16])
 
-    d_vals = tl.load(d_ptr + d_base + h_off, mask=h_mask, other=0.0).to(tl.float32)
-    b0 = tl.load(b_ptr + b_base + 0 * H + h_off, mask=h_mask, other=0.0).to(tl.float32)
-    b1 = tl.load(b_ptr + b_base + 1 * H + h_off, mask=h_mask, other=0.0).to(tl.float32)
-    b2 = tl.load(b_ptr + b_base + 2 * H + h_off, mask=h_mask, other=0.0).to(tl.float32)
-    b3 = tl.load(b_ptr + b_base + 3 * H + h_off, mask=h_mask, other=0.0).to(tl.float32)
+    # ---- Extract coefficient vectors (reused across all D-chunks) -------------
+    hp = tle.dsa.to_tensor(hpost_ub)  # [4] f32
 
-    acc0 = c0 * d_vals + a00 * b0 + a10 * b1 + a20 * b2 + a30 * b3
-    acc1 = c1 * d_vals + a01 * b0 + a11 * b1 + a21 * b2 + a31 * b3
-    acc2 = c2 * d_vals + a02 * b0 + a12 * b1 + a22 * b2 + a32 * b3
-    acc3 = c3 * d_vals + a03 * b0 + a13 * b1 + a23 * b2 + a33 * b3
+    hr_vec = tle.dsa.to_tensor(hres_ub)  # [16] f32
+    hr0 = tl.reshape(tle.dsa.extract_slice(hr_vec, (0,), (4,), (1,)), [4])
+    hr1 = tl.reshape(tle.dsa.extract_slice(hr_vec, (4,), (4,), (1,)), [4])
+    hr2 = tl.reshape(tle.dsa.extract_slice(hr_vec, (8,), (4,), (1,)), [4])
+    hr3 = tl.reshape(tle.dsa.extract_slice(hr_vec, (12,), (4,), (1,)), [4])
 
-    tl.store(out_ptr + out_base + 0 * H + h_off, acc0.to(tl.bfloat16), mask=h_mask)
-    tl.store(out_ptr + out_base + 1 * H + h_off, acc1.to(tl.bfloat16), mask=h_mask)
-    tl.store(out_ptr + out_base + 2 * H + h_off, acc2.to(tl.bfloat16), mask=h_mask)
-    tl.store(out_ptr + out_base + 3 * H + h_off, acc3.to(tl.bfloat16), mask=h_mask)
+    # ---- Allocate double-buffered UB for x[4,BLOCK_D] and h_out[BLOCK_D] ------
+    ho_ub = tle.dsa.alloc([BLOCK_D], dtype=x_dt, mem_addr_space=tle.dsa.ascend.UB)
+    x_ub = tle.dsa.alloc([4, BLOCK_D], dtype=x_dt, mem_addr_space=tle.dsa.ascend.UB)
+
+    # ---- Software-pipelined D-chunk loop --------------------------------------
+    for d_chunk in tle.dsa.pipeline(0, NUM_D_BLOCKS, 1, num_stages=2):
+        d_start = d_chunk * BLOCK_D
+        d_off = d_start + tl.arange(0, BLOCK_D)
+        d_mask = d_off < D
+        tail_d = tl.minimum(BLOCK_D, D - d_start)
+
+        # -- DMA stage: copy x[4,BLOCK_D] and h_out[BLOCK_D] from GM to UB ---
+        n_idx = tl.arange(0, 4)
+        src_2d = x_ptr + x_base + n_idx[:, None] * D + d_off[None, :]
+        tle.dsa.copy(src_2d, x_ub, [4, tail_d])
+        tle.dsa.copy(h_out_ptr + hout_base + d_off, ho_ub, [tail_d])
+
+        # -- Compute stage: parallel FMA across 4 heads -----------------------
+        ho = tle.dsa.to_tensor(ho_ub).to(tl.float32)   # [BLOCK_D]
+        x2d = tle.dsa.to_tensor(x_ub).to(tl.float32)   # [4, BLOCK_D]
+        x0 = tl.reshape(tle.dsa.extract_slice(x2d, (0, 0), (1, BLOCK_D), (1, 1)), [BLOCK_D])
+        x1 = tl.reshape(tle.dsa.extract_slice(x2d, (1, 0), (1, BLOCK_D), (1, 1)), [BLOCK_D])
+        x2 = tl.reshape(tle.dsa.extract_slice(x2d, (2, 0), (1, BLOCK_D), (1, 1)), [BLOCK_D])
+        x3 = tl.reshape(tle.dsa.extract_slice(x2d, (3, 0), (1, BLOCK_D), (1, 1)), [BLOCK_D])
+
+        with tle.dsa.hint(inter_no_alias=True):
+            Y = tl.expand_dims(hp, 1) * tl.expand_dims(ho, 0)       # [4, BLOCK_D]
+            Y += tl.expand_dims(hr0, 1) * tl.expand_dims(x0, 0)
+            Y += tl.expand_dims(hr1, 1) * tl.expand_dims(x1, 0)
+            Y += tl.expand_dims(hr2, 1) * tl.expand_dims(x2, 0)
+            Y += tl.expand_dims(hr3, 1) * tl.expand_dims(x3, 0)
+
+        # -- Store: to_buffer + dsa.copy (matching AscendC CopyOutTile) -------
+        y0 = tl.reshape(tle.dsa.extract_slice(Y, (0, 0), (1, BLOCK_D), (1, 1)), [BLOCK_D])
+        y1 = tl.reshape(tle.dsa.extract_slice(Y, (1, 0), (1, BLOCK_D), (1, 1)), [BLOCK_D])
+        y2 = tl.reshape(tle.dsa.extract_slice(Y, (2, 0), (1, BLOCK_D), (1, 1)), [BLOCK_D])
+        y3 = tl.reshape(tle.dsa.extract_slice(Y, (3, 0), (1, BLOCK_D), (1, 1)), [BLOCK_D])
+
+        y0b = tle.dsa.to_buffer(y0.to(x_dt), tle.dsa.ascend.UB)
+        y1b = tle.dsa.to_buffer(y1.to(x_dt), tle.dsa.ascend.UB)
+        y2b = tle.dsa.to_buffer(y2.to(x_dt), tle.dsa.ascend.UB)
+        y3b = tle.dsa.to_buffer(y3.to(x_dt), tle.dsa.ascend.UB)
+        with tle.dsa.hint(inter_no_alias=True):
+            tle.dsa.copy(y0b, out_ptr + x_base + 0 * D + d_off, [tail_d])
+            tle.dsa.copy(y1b, out_ptr + x_base + 1 * D + d_off, [tail_d])
+            tle.dsa.copy(y2b, out_ptr + x_base + 2 * D + d_off, [tail_d])
+            tle.dsa.copy(y3b, out_ptr + x_base + 3 * D + d_off, [tail_d])
 
 
-# ---------------------------------------------------------------------------
-# Generic kernel (arbitrary HC)
-# ---------------------------------------------------------------------------
-
-@triton.autotune(
-    configs=[
-        triton.Config({"BLOCK_H": 128}, num_warps=4, num_stages=1),
-        triton.Config({"BLOCK_H": 256}, num_warps=4, num_stages=1),
-        triton.Config({"BLOCK_H": 256}, num_warps=8, num_stages=1),
-        triton.Config({"BLOCK_H": 512}, num_warps=4, num_stages=1),
-        triton.Config({"BLOCK_H": 512}, num_warps=8, num_stages=1),
-    ],
-    key=["H", "HC"],
-)
+# ===========================================================================
+# Row-major-safe variant: builds the (4, BLOCK_D) output tile with
+# tl.join on the *leading* axis so memory order matches (n, D).
+# Kept separate so the compiler only sees one layout path per kernel.
+# ===========================================================================
 @triton.jit
-def _mhc_post_kernel_generic(
-    a_ptr,    # comb_res_mix : (N, HC, HC), float32
-    b_ptr,    # residual     : (N, HC, H),  bfloat16
-    c_ptr,    # post_layer_mix: (N, HC),    float32
-    d_ptr,    # x            : (N, H),      bfloat16
-    out_ptr,  # output       : (N, HC, H),  bfloat16
-    H: tl.constexpr,
-    HC: tl.constexpr,
-    BLOCK_H: tl.constexpr,
+def _mhc_post_kernel_tle_rows(
+    x_ptr,        # (T, 4, D) bf16/fp16
+    h_res_ptr,    # (T, 4, 4) fp32
+    h_out_ptr,    # (T, D)    bf16/fp16
+    h_post_ptr,   # (T, 4)    fp32
+    out_ptr,      # (T, 4, D) bf16/fp16
+    D: tl.constexpr,
+    BLOCK_D: tl.constexpr,
 ):
-    """Grid: (N, HC, cdiv(H, BLOCK_H)). One program per token × stream i × h-tile."""
-    pid_n = tl.program_id(0)
-    pid_i = tl.program_id(1)
-    pid_h = tl.program_id(2)
+    pid_t = tl.program_id(0)
+    pid_d = tl.program_id(1)
 
-    h_off = pid_h * BLOCK_H + tl.arange(0, BLOCK_H)
-    h_mask = h_off < H
+    d_off = pid_d * BLOCK_D + tl.arange(0, BLOCK_D)
+    d_mask = d_off < D
+    tail_d = tl.minimum(BLOCK_D, D - pid_d * BLOCK_D)
 
-    a_base   = pid_n * HC * HC
-    b_base   = pid_n * HC * H
-    c_base   = pid_n * HC
-    d_base   = pid_n * H
-    out_base = pid_n * HC * H + pid_i * H
+    x_base = pid_t * 4 * D
+    hout_base = pid_t * D
+    hres_base = pid_t * 16
+    hpost_base = pid_t * 4
 
-    d_vals = tl.load(d_ptr + d_base + h_off, mask=h_mask, other=0.0).to(tl.float32)
-    c_i    = tl.load(c_ptr + c_base + pid_i).to(tl.float32)
+    x_dt = x_ptr.dtype.element_ty
 
-    acc = c_i * d_vals
-    for j in tl.static_range(0, HC):
-        a_ji = tl.load(a_ptr + a_base + j * HC + pid_i).to(tl.float32)
-        b_j  = tl.load(b_ptr + b_base + j * H + h_off, mask=h_mask, other=0.0).to(
-            tl.float32
-        )
-        acc += a_ji * b_j
+    # ---- Bulk DMA: merge all tl.load into large tensor DSA copies -----------
+    # h_post[t, :] -> UB [4] fp32 (exact size, no tail issue)
+    hpost_ub = tle.dsa.alloc([4], dtype=tl.float32, mem_addr_space=tle.dsa.ascend.UB)
+    # h_res[t, :, :] -> UB [16] fp32 (exact size, no tail issue)
+    hres_ub = tle.dsa.alloc([16], dtype=tl.float32, mem_addr_space=tle.dsa.ascend.UB)
 
-    tl.store(out_ptr + out_base + h_off, acc.to(tl.bfloat16), mask=h_mask)
+    with tle.dsa.hint(inter_no_alias=True):
+        tle.dsa.copy(h_post_ptr + hpost_base + tl.arange(0, 4), hpost_ub, [4])
+        tle.dsa.copy(h_res_ptr + hres_base + tl.arange(0, 16), hres_ub, [16])
+
+    # ---- Extract coefficient vectors from UB ----------------------------------
+    # h_post: [4] f32 — broadcast coeff for h_out
+    hp = tle.dsa.to_tensor(hpost_ub)  # [4] f32
+
+    # h_res flat [16] layout: [r00,r01,r02,r03, r10,r11,r12,r13, r20,..., r30,...]
+    # Row j of h_res[j,i] contains the coefficients of x[j] for all 4 output heads.
+    # Extract contiguous [4] slices — one per input x row:
+    hr_vec = tle.dsa.to_tensor(hres_ub)  # [16] f32
+    hr0 = tl.reshape(tle.dsa.extract_slice(hr_vec, (0,), (4,), (1,)), [4])   # [r00,r01,r02,r03]
+    hr1 = tl.reshape(tle.dsa.extract_slice(hr_vec, (4,), (4,), (1,)), [4])   # [r10,r11,r12,r13]
+    hr2 = tl.reshape(tle.dsa.extract_slice(hr_vec, (8,), (4,), (1,)), [4])   # [r20,r21,r22,r23]
+    hr3 = tl.reshape(tle.dsa.extract_slice(hr_vec, (12,), (4,), (1,)), [4])  # [r30,r31,r32,r33]
+
+    # ---- Load x, h_out with mask (handles non-power-of-2 D correctly) ---------
+    ho = tl.load(h_out_ptr + hout_base + d_off, mask=d_mask, other=0.0).to(tl.float32)
+    x0 = tl.load(x_ptr + x_base + 0 * D + d_off, mask=d_mask, other=0.0).to(tl.float32)
+    x1 = tl.load(x_ptr + x_base + 1 * D + d_off, mask=d_mask, other=0.0).to(tl.float32)
+    x2 = tl.load(x_ptr + x_base + 2 * D + d_off, mask=d_mask, other=0.0).to(tl.float32)
+    x3 = tl.load(x_ptr + x_base + 3 * D + d_off, mask=d_mask, other=0.0).to(tl.float32)
+
+    # ---- Parallel vector multiply + accumulate --------------------------------
+    # Broadcast coeff[4,1] * data[1,BLOCK_D] → [4,BLOCK_D], accumulate 5 terms.
+    # Each term computes contributions of one input vector to ALL 4 output heads
+    # simultaneously, instead of computing each head independently.
+    #   Y[i, d] = hp[i] * ho[d] + hr0[i] * x0[d] + hr1[i] * x1[d]
+    #           + hr2[i] * x2[d] + hr3[i] * x3[d]
+    Y = tl.expand_dims(hp, 1) * tl.expand_dims(ho, 0)       # [4, BLOCK_D]
+    Y += tl.expand_dims(hr0, 1) * tl.expand_dims(x0, 0)     # + [4, BLOCK_D]
+    Y += tl.expand_dims(hr1, 1) * tl.expand_dims(x1, 0)     # + [4, BLOCK_D]
+    Y += tl.expand_dims(hr2, 1) * tl.expand_dims(x2, 0)     # + [4, BLOCK_D]
+    Y += tl.expand_dims(hr3, 1) * tl.expand_dims(x3, 0)     # + [4, BLOCK_D]
+
+    # Extract output rows
+    y0 = tl.reshape(tle.dsa.extract_slice(Y, (0, 0), (1, BLOCK_D), (1, 1)), [BLOCK_D])
+    y1 = tl.reshape(tle.dsa.extract_slice(Y, (1, 0), (1, BLOCK_D), (1, 1)), [BLOCK_D])
+    y2 = tl.reshape(tle.dsa.extract_slice(Y, (2, 0), (1, BLOCK_D), (1, 1)), [BLOCK_D])
+    y3 = tl.reshape(tle.dsa.extract_slice(Y, (3, 0), (1, BLOCK_D), (1, 1)), [BLOCK_D])
+
+    # ---- Cast f32 -> T + store with mask ---------------------------------------
+    tl.store(out_ptr + x_base + 0 * D + d_off, y0.to(x_dt), mask=d_mask)
+    tl.store(out_ptr + x_base + 1 * D + d_off, y1.to(x_dt), mask=d_mask)
+    tl.store(out_ptr + x_base + 2 * D + d_off, y2.to(x_dt), mask=d_mask)
+    tl.store(out_ptr + x_base + 3 * D + d_off, y3.to(x_dt), mask=d_mask)
+
+
+# ===========================================================================
+# Pipeline variant: iterates over D-chunks inside the kernel with
+# tle.dsa.pipeline for software-pipelined double-buffer overlap between
+# MTE2 (load) and Vector (compute).  Grid is 1D: (T,).
+# ===========================================================================
+@triton.jit
+def _mhc_post_kernel_tle_rows_pipeline(
+    x_ptr,        # (T, 4, D) bf16/fp16
+    h_res_ptr,    # (T, 4, 4) fp32
+    h_out_ptr,    # (T, D)    bf16/fp16
+    h_post_ptr,   # (T, 4)    fp32
+    out_ptr,      # (T, 4, D) bf16/fp16
+    D: tl.constexpr,
+    BLOCK_D: tl.constexpr,
+    NUM_D_BLOCKS: tl.constexpr,
+):
+    pid_t = tl.program_id(0)
+
+    x_base = pid_t * 4 * D
+    hout_base = pid_t * D
+    hres_base = pid_t * 16
+    hpost_base = pid_t * 4
+
+    x_dt = x_ptr.dtype.element_ty
+
+    # ---- Bulk DMA: load coefficients (constant across D-chunks) ---------------
+    # h_post[t, :] -> UB [4] fp32 (exact size, no tail issue)
+    hpost_ub = tle.dsa.alloc([4], dtype=tl.float32, mem_addr_space=tle.dsa.ascend.UB)
+    # h_res[t, :, :] -> UB [16] fp32 (exact size, no tail issue)
+    hres_ub = tle.dsa.alloc([16], dtype=tl.float32, mem_addr_space=tle.dsa.ascend.UB)
+
+    with tle.dsa.hint(inter_no_alias=True):
+        tle.dsa.copy(h_post_ptr + hpost_base + tl.arange(0, 4), hpost_ub, [4])
+        tle.dsa.copy(h_res_ptr + hres_base + tl.arange(0, 16), hres_ub, [16])
+
+    # ---- Extract coefficient vectors (reused across all D-chunks) -------------
+    hp = tle.dsa.to_tensor(hpost_ub)  # [4] f32
+
+    hr_vec = tle.dsa.to_tensor(hres_ub)  # [16] f32
+    hr0 = tl.reshape(tle.dsa.extract_slice(hr_vec, (0,), (4,), (1,)), [4])
+    hr1 = tl.reshape(tle.dsa.extract_slice(hr_vec, (4,), (4,), (1,)), [4])
+    hr2 = tl.reshape(tle.dsa.extract_slice(hr_vec, (8,), (4,), (1,)), [4])
+    hr3 = tl.reshape(tle.dsa.extract_slice(hr_vec, (12,), (4,), (1,)), [4])
+
+    # ---- Allocate double-buffered UB for x[4,BLOCK_D] and h_out[BLOCK_D] ------
+    # tle.dsa.pipeline with num_stages=2 enables MTE2/V overlap via double buffer.
+    ho_ub = tle.dsa.alloc([BLOCK_D], dtype=x_dt, mem_addr_space=tle.dsa.ascend.UB)
+    x_ub = tle.dsa.alloc([4, BLOCK_D], dtype=x_dt, mem_addr_space=tle.dsa.ascend.UB)
+
+    # ---- Software-pipelined D-chunk loop --------------------------------------
+    # tle.dsa.pipeline(start, end, step, num_stages=2) generates double-buffered
+    # DMA/compute overlap: while computing on chunk N, loads chunk N+1.
+    for d_chunk in tle.dsa.pipeline(0, NUM_D_BLOCKS, 1, num_stages=2):
+        d_start = d_chunk * BLOCK_D
+        d_off = d_start + tl.arange(0, BLOCK_D)
+        d_mask = d_off < D
+        tail_d = tl.minimum(BLOCK_D, D - d_start)
+
+        # -- DMA stage: copy x[4,BLOCK_D] and h_out[BLOCK_D] from GM to UB ---
+        n_idx = tl.arange(0, 4)
+        src_2d = x_ptr + x_base + n_idx[:, None] * D + d_off[None, :]
+        tle.dsa.copy(src_2d, x_ub, [4, tail_d])
+        tle.dsa.copy(h_out_ptr + hout_base + d_off, ho_ub, [tail_d])
+
+        # -- Compute stage: parallel FMA across 4 heads -----------------------
+        ho = tle.dsa.to_tensor(ho_ub).to(tl.float32)   # [BLOCK_D]
+        x2d = tle.dsa.to_tensor(x_ub).to(tl.float32)   # [4, BLOCK_D]
+        x0 = tl.reshape(tle.dsa.extract_slice(x2d, (0, 0), (1, BLOCK_D), (1, 1)), [BLOCK_D])
+        x1 = tl.reshape(tle.dsa.extract_slice(x2d, (1, 0), (1, BLOCK_D), (1, 1)), [BLOCK_D])
+        x2 = tl.reshape(tle.dsa.extract_slice(x2d, (2, 0), (1, BLOCK_D), (1, 1)), [BLOCK_D])
+        x3 = tl.reshape(tle.dsa.extract_slice(x2d, (3, 0), (1, BLOCK_D), (1, 1)), [BLOCK_D])
+
+        # Compute all 5 terms separately, then sum once
+        term0 = tl.expand_dims(hp, 1) * tl.expand_dims(ho, 0)       # [4, BLOCK_D]
+        term1 = tl.expand_dims(hr0, 1) * tl.expand_dims(x0, 0)      # [4, BLOCK_D]
+        term2 = tl.expand_dims(hr1, 1) * tl.expand_dims(x1, 0)      # [4, BLOCK_D]
+        term3 = tl.expand_dims(hr2, 1) * tl.expand_dims(x2, 0)      # [4, BLOCK_D]
+        term4 = tl.expand_dims(hr3, 1) * tl.expand_dims(x3, 0)      # [4, BLOCK_D]
+        Y = term0 + term1 + term2 + term3 + term4                   # [4, BLOCK_D]
+
+        # -- Extract rows and store back to GM --------------------------------
+        y0 = tl.reshape(tle.dsa.extract_slice(Y, (0, 0), (1, BLOCK_D), (1, 1)), [BLOCK_D])
+        y1 = tl.reshape(tle.dsa.extract_slice(Y, (1, 0), (1, BLOCK_D), (1, 1)), [BLOCK_D])
+        y2 = tl.reshape(tle.dsa.extract_slice(Y, (2, 0), (1, BLOCK_D), (1, 1)), [BLOCK_D])
+        y3 = tl.reshape(tle.dsa.extract_slice(Y, (3, 0), (1, BLOCK_D), (1, 1)), [BLOCK_D])
+
+        tl.store(out_ptr + x_base + 0 * D + d_off, y0.to(x_dt), mask=d_mask)
+        tl.store(out_ptr + x_base + 1 * D + d_off, y1.to(x_dt), mask=d_mask)
+        tl.store(out_ptr + x_base + 2 * D + d_off, y2.to(x_dt), mask=d_mask)
+        tl.store(out_ptr + x_base + 3 * D + d_off, y3.to(x_dt), mask=d_mask)
+
+
+# ===========================================================================
+# Concat + reduce variant: stack terms and use explicit summation.
+# ===========================================================================
+@triton.jit
+def _mhc_post_kernel_tle_concat_reduce(
+    x_ptr,        # (T, 4, D) bf16/fp16
+    h_res_ptr,    # (T, 4, 4) fp32
+    h_out_ptr,    # (T, D)    bf16/fp16
+    h_post_ptr,   # (T, 4)    fp32
+    out_ptr,      # (T, 4, D) bf16/fp16
+    D: tl.constexpr,
+    BLOCK_D: tl.constexpr,
+    NUM_D_BLOCKS: tl.constexpr,
+):
+    """Alternative implementation that computes all 5 terms separately then sums.
+
+    Compute in FP32 for intermediate results, cast to output dtype once at the end.
+    This matches the original pipeline version's precision but with better scheduling.
+    """
+    pid_t = tl.program_id(0)
+
+    x_base = pid_t * 4 * D
+    hout_base = pid_t * D
+    hres_base = pid_t * 16
+    hpost_base = pid_t * 4
+
+    x_dt = x_ptr.dtype.element_ty
+
+    # ---- Bulk DMA: load coefficients (constant across D-chunks) ---------------
+    hpost_ub = tle.dsa.alloc([4], dtype=tl.float32, mem_addr_space=tle.dsa.ascend.UB)
+    hres_ub = tle.dsa.alloc([16], dtype=tl.float32, mem_addr_space=tle.dsa.ascend.UB)
+
+    with tle.dsa.hint(inter_no_alias=True):
+        tle.dsa.copy(h_post_ptr + hpost_base + tl.arange(0, 4), hpost_ub, [4])
+        tle.dsa.copy(h_res_ptr + hres_base + tl.arange(0, 16), hres_ub, [16])
+
+    # ---- Extract coefficient vectors (keep in FP32) --------------------------------------
+    hp = tle.dsa.to_tensor(hpost_ub)  # [4] f32
+    hr_vec = tle.dsa.to_tensor(hres_ub)  # [16] f32
+    hr0 = tl.reshape(tle.dsa.extract_slice(hr_vec, (0,), (4,), (1,)), [4])
+    hr1 = tl.reshape(tle.dsa.extract_slice(hr_vec, (4,), (4,), (1,)), [4])
+    hr2 = tl.reshape(tle.dsa.extract_slice(hr_vec, (8,), (4,), (1,)), [4])
+    hr3 = tl.reshape(tle.dsa.extract_slice(hr_vec, (12,), (4,), (1,)), [4])
+
+    # ---- Allocate double-buffered UB ----------------------------------------
+    ho_ub = tle.dsa.alloc([BLOCK_D], dtype=x_dt, mem_addr_space=tle.dsa.ascend.UB)
+    x_ub = tle.dsa.alloc([4, BLOCK_D], dtype=x_dt, mem_addr_space=tle.dsa.ascend.UB)
+
+    # ---- Software-pipelined D-chunk loop --------------------------------------
+    for d_chunk in tle.dsa.pipeline(0, NUM_D_BLOCKS, 1, num_stages=2):
+        d_start = d_chunk * BLOCK_D
+        d_off = d_start + tl.arange(0, BLOCK_D)
+        d_mask = d_off < D
+        tail_d = tl.minimum(BLOCK_D, D - d_start)
+
+        # -- DMA stage: load data ---
+        n_idx = tl.arange(0, 4)
+        src_2d = x_ptr + x_base + n_idx[:, None] * D + d_off[None, :]
+        tle.dsa.copy(src_2d, x_ub, [4, tail_d])
+        tle.dsa.copy(h_out_ptr + hout_base + d_off, ho_ub, [tail_d])
+
+        # -- Compute: compute 5 separate outer products [4, BLOCK_D] each in FP32 ---
+        ho = tle.dsa.to_tensor(ho_ub).to(tl.float32)   # [BLOCK_D]
+        x2d = tle.dsa.to_tensor(x_ub).to(tl.float32)   # [4, BLOCK_D]
+        x0 = tl.reshape(tle.dsa.extract_slice(x2d, (0, 0), (1, BLOCK_D), (1, 1)), [BLOCK_D])
+        x1 = tl.reshape(tle.dsa.extract_slice(x2d, (1, 0), (1, BLOCK_D), (1, 1)), [BLOCK_D])
+        x2 = tl.reshape(tle.dsa.extract_slice(x2d, (2, 0), (1, BLOCK_D), (1, 1)), [BLOCK_D])
+        x3 = tl.reshape(tle.dsa.extract_slice(x2d, (3, 0), (1, BLOCK_D), (1, 1)), [BLOCK_D])
+
+        # Compute 5 terms, each is [4, BLOCK_D] in FP32
+        term0 = tl.expand_dims(hp, 1) * tl.expand_dims(ho, 0)       # [4, BLOCK_D]
+        term1 = tl.expand_dims(hr0, 1) * tl.expand_dims(x0, 0)      # [4, BLOCK_D]
+        term2 = tl.expand_dims(hr1, 1) * tl.expand_dims(x1, 0)      # [4, BLOCK_D]
+        term3 = tl.expand_dims(hr2, 1) * tl.expand_dims(x2, 0)      # [4, BLOCK_D]
+        term4 = tl.expand_dims(hr3, 1) * tl.expand_dims(x3, 0)      # [4, BLOCK_D]
+
+        # Sum all terms in FP32
+        Y = term0 + term1 + term2 + term3 + term4  # [4, BLOCK_D]
+
+        # -- Extract rows, cast once, and store ---
+        y0 = tl.reshape(tle.dsa.extract_slice(Y, (0, 0), (1, BLOCK_D), (1, 1)), [BLOCK_D])
+        y1 = tl.reshape(tle.dsa.extract_slice(Y, (1, 0), (1, BLOCK_D), (1, 1)), [BLOCK_D])
+        y2 = tl.reshape(tle.dsa.extract_slice(Y, (2, 0), (1, BLOCK_D), (1, 1)), [BLOCK_D])
+        y3 = tl.reshape(tle.dsa.extract_slice(Y, (3, 0), (1, BLOCK_D), (1, 1)), [BLOCK_D])
+
+        tl.store(out_ptr + x_base + 0 * D + d_off, y0.to(x_dt), mask=d_mask)
+        tl.store(out_ptr + x_base + 1 * D + d_off, y1.to(x_dt), mask=d_mask)
+        tl.store(out_ptr + x_base + 2 * D + d_off, y2.to(x_dt), mask=d_mask)
+        tl.store(out_ptr + x_base + 3 * D + d_off, y3.to(x_dt), mask=d_mask)
 
 
 # ---------------------------------------------------------------------------
 # Public API
 # ---------------------------------------------------------------------------
+def _flatten_bsn(x, h_res, h_out, h_post):
+    """Return (x, h_res, h_out, h_post, restore_shape) in (T, n, D) layout."""
+    if x.dim() == 4:
+        B, S, N, D = x.shape
+        T = B * S
+        x = x.reshape(T, N, D).contiguous()
+        h_res = h_res.reshape(T, N, N).contiguous()
+        h_out = h_out.reshape(T, D).contiguous()
+        h_post = h_post.reshape(T, N).contiguous()
+        return x, h_res, h_out, h_post, (B, S, N, D)
+    if x.dim() == 3:
+        T, N, D = x.shape
+        return (
+            x.contiguous(),
+            h_res.reshape(T, N, N).contiguous(),
+            h_out.reshape(T, D).contiguous(),
+            h_post.reshape(T, N).contiguous(),
+            (T, N, D),
+        )
+    raise ValueError(f"unsupported x.dim()={x.dim()}, expect 3 or 4")
+
 
 def mhc_post(
     x: torch.Tensor,
-    residual: torch.Tensor,
-    post_layer_mix: torch.Tensor,
-    comb_res_mix: torch.Tensor,
+    h_res: torch.Tensor,
+    h_out: torch.Tensor,
+    h_post: torch.Tensor,
+    use_pipeline: bool = True,
+    use_concat_reduce: bool = False,
 ) -> torch.Tensor:
-    """
-    mHC post-processing operator (Ascend implementation).
+    """Fused mhc_post forward. See module docstring for semantics.
 
     Args:
-        x: (N, H), bfloat16 — layer output
-        residual: (N, hc_mult, H), bfloat16 — multi-head residual
-        post_layer_mix: (N, hc_mult, 1) or (N, hc_mult), float32 — per-stream scale for x
-        comb_res_mix: (N, hc_mult, hc_mult), float32 — combination matrix
-
-    Returns:
-        out: (N, hc_mult, H), bfloat16
+        use_pipeline: If True (default), use the software-pipelined kernel
+            that overlaps MTE2 DMA with Vector compute via double-buffer.
+            If False, use the non-pipelined 2D-grid variant.
+        use_concat_reduce: If True, use the concat+reduce variant that
+            stacks coefficients and data into larger tensors, then uses
+            element-wise multiply + tl.sum instead of separate outer products.
+            Takes precedence over use_pipeline if both are True.
     """
-    logger.debug(
-        "ASCEND MHC_POST FORWARD, x=%s, residual=%s, post_layer_mix=%s, comb_res_mix=%s",
-        x.shape,
-        residual.shape,
-        post_layer_mix.shape,
-        comb_res_mix.shape,
-    )
+    if not _HAS_DSA:
+        raise RuntimeError(
+            "This mhc_post implementation requires the TLE DSA surface "
+            "(triton.experimental.tle.dsa.*)."
+        )
 
-    N, hc, H = residual.shape
-    assert x.shape == (N, H)
-    assert post_layer_mix.shape in ((N, hc, 1), (N, hc))
-    assert comb_res_mix.shape == (N, hc, hc)
+    xf, hres, hout, hpost, shape = _flatten_bsn(x, h_res, h_out, h_post)
+    T, N, D = xf.shape
+    assert N == 4, "hc_mult=4 fast path only (matches AscendC hcMult=4)."
+    out = torch.empty_like(xf)
 
-    out = torch.empty_like(residual)
+    # AscendC picks dInner from the tiling table; we mirror with a fixed
+    # BLOCK_D that keeps T * cdiv(D, BLOCK_D) under the 65535 coreDim cap.
+    BLOCK_D = min(1024, triton.next_power_of_2(D))
+    while T * triton.cdiv(D, BLOCK_D) > 65535 and BLOCK_D < D:
+        BLOCK_D *= 2
+    BLOCK_D = min(BLOCK_D, triton.next_power_of_2(D))
+    NUM_D_BLOCKS = triton.cdiv(D, BLOCK_D)
 
-    c = post_layer_mix.squeeze(-1).contiguous()  # (N, hc)
-    a = comb_res_mix.contiguous()                # (N, hc, hc)
-    b = residual.contiguous()                    # (N, hc, H)
-    d = x.contiguous()                           # (N, H)
-
-    if hc == 4:
-        def _grid(META):
-            return (N, triton.cdiv(H, META["BLOCK_H"]))
-
-        _mhc_post_kernel_hc4[_grid](a, b, c, d, out, H=H)
+    if use_concat_reduce:
+        # Concat+reduce variant: 1D grid over T
+        grid = (T,)
+        _mhc_post_kernel_tle_concat_reduce[grid](
+            xf, hres.to(torch.float32), hout, hpost.to(torch.float32), out,
+            D=D, BLOCK_D=BLOCK_D, NUM_D_BLOCKS=NUM_D_BLOCKS,
+        )
+    elif use_pipeline:
+        # Pipeline kernel: 1D grid over T, iterates D-chunks internally
+        # with tle.dsa.pipeline(num_stages=2) for MTE2/Vector overlap.
+        grid = (T,)
+        _mhc_post_kernel_tle_rows_pipeline[grid](
+            xf, hres.to(torch.float32), hout, hpost.to(torch.float32), out,
+            D=D, BLOCK_D=BLOCK_D, NUM_D_BLOCKS=NUM_D_BLOCKS,
+        )
     else:
-        def _grid_generic(META):
-            return (N, hc, triton.cdiv(H, META["BLOCK_H"]))
-
-        _mhc_post_kernel_generic[_grid_generic](a, b, c, d, out, H=H, HC=hc)
-
-    return out
+        # Non-pipelined: 2D grid (T, cdiv(D, BLOCK_D))
+        grid = (T, NUM_D_BLOCKS)
+        _mhc_post_kernel_tle_rows[grid](
+            xf, hres.to(torch.float32), hout, hpost.to(torch.float32), out,
+            D=D, BLOCK_D=BLOCK_D,
+        )
+    return out.reshape(shape)
 
 
 def mhc_post_ref(
     x: torch.Tensor,
-    residual: torch.Tensor,
-    post_layer_mix: torch.Tensor,
-    comb_res_mix: torch.Tensor,
+    h_res: torch.Tensor,
+    h_out: torch.Tensor,
+    h_post: torch.Tensor,
 ) -> torch.Tensor:
-    """PyTorch reference implementation."""
-    y = (
-        x.unsqueeze(-2) * post_layer_mix
-        + torch.bmm(comb_res_mix.mT, residual.float())
-    )
-    return y.type_as(x)
+    """PyTorch reference (aclnn semantic).
+
+    output[t,i,d] = sum_j h_res[t,j,i] * x[t,j,d]
+                  + h_post[t,i] * h_out[t,d]
+    """
+    orig_dtype = x.dtype
+    xf, hres, hout, hpost, shape = _flatten_bsn(x, h_res, h_out, h_post)
+    x_f = xf.float()
+    hout_f = hout.float()
+    mix = torch.einsum("tji,tjd->tid", hres.float(), x_f)
+    outer = hpost.float().unsqueeze(-1) * hout_f.unsqueeze(1)
+    y = (mix + outer).to(orig_dtype)
+    return y.reshape(shape)
+
+
+__all__ = [
+    "mhc_post",
+    "mhc_post_ref",
+    "_mhc_post_kernel_tle",
+    "_mhc_post_kernel_tle_rows",
+    "_mhc_post_kernel_tle_rows_pipeline",
+    "_mhc_post_kernel_tle_concat_reduce",
+]

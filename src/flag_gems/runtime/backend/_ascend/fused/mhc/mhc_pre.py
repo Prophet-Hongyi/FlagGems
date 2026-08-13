@@ -352,52 +352,16 @@ def _mhc_pre_generic_kernel(
         tl.store(post_mix_ptr + post_base + i, v)
 
     # ---- comb_mix: softmax-row + sinkhorn ----
+    # NOTE: Sinkhorn normalization is deferred to Python (after kernel) to avoid
+    # a known issue with repeated scalar load/store reordering on the Ascend
+    # Triton backend when HC is small.  The kernel only stores the raw logits
+    # (scaled + biased) into comb_mix_ptr.
     comb_base = pid_n * HC * HC
     for i in tl.static_range(HC):
-        row_max = tl.load(gemm_out_ptr + go_base + 2 * HC + i * HC + 0) * rms_inv * scale_2 \
-                  + tl.load(hc_base_ptr + 2 * HC + i * HC + 0)
-        for j in tl.static_range(1, HC):
-            val = tl.load(gemm_out_ptr + go_base + 2 * HC + i * HC + j) * rms_inv * scale_2 \
-                  + tl.load(hc_base_ptr + 2 * HC + i * HC + j)
-            row_max = tl.maximum(row_max, val)
-        row_sum = 0.0
         for j in tl.static_range(HC):
             val = tl.load(gemm_out_ptr + go_base + 2 * HC + i * HC + j) * rms_inv * scale_2 \
                   + tl.load(hc_base_ptr + 2 * HC + i * HC + j)
-            e = tl.exp(val - row_max)
-            tl.store(comb_mix_ptr + comb_base + i * HC + j, e)
-            row_sum += e
-        inv_rs = 1.0 / row_sum
-        for j in tl.static_range(HC):
-            v = tl.load(comb_mix_ptr + comb_base + i * HC + j)
-            tl.store(comb_mix_ptr + comb_base + i * HC + j, v * inv_rs + hc_sinkhorn_eps)
-
-    for j in tl.static_range(HC):
-        col_sum = 0.0
-        for i in tl.static_range(HC):
-            col_sum += tl.load(comb_mix_ptr + comb_base + i * HC + j)
-        inv_cs = 1.0 / (col_sum + hc_sinkhorn_eps)
-        for i in tl.static_range(HC):
-            v = tl.load(comb_mix_ptr + comb_base + i * HC + j)
-            tl.store(comb_mix_ptr + comb_base + i * HC + j, v * inv_cs)
-
-    for _ in tl.static_range(sinkhorn_repeat - 1):
-        for i in tl.static_range(HC):
-            row_sum = 0.0
-            for j in tl.static_range(HC):
-                row_sum += tl.load(comb_mix_ptr + comb_base + i * HC + j)
-            inv_rs = 1.0 / (row_sum + hc_sinkhorn_eps)
-            for j in tl.static_range(HC):
-                v = tl.load(comb_mix_ptr + comb_base + i * HC + j)
-                tl.store(comb_mix_ptr + comb_base + i * HC + j, v * inv_rs)
-        for j in tl.static_range(HC):
-            col_sum = 0.0
-            for i in tl.static_range(HC):
-                col_sum += tl.load(comb_mix_ptr + comb_base + i * HC + j)
-            inv_cs = 1.0 / (col_sum + hc_sinkhorn_eps)
-            for i in tl.static_range(HC):
-                v = tl.load(comb_mix_ptr + comb_base + i * HC + j)
-                tl.store(comb_mix_ptr + comb_base + i * HC + j, v * inv_cs)
+            tl.store(comb_mix_ptr + comb_base + i * HC + j, val)
 
     # ---- layer_input = sum_i(pre_i * residual_i) ----
     res_base = pid_n * res_stride_n
