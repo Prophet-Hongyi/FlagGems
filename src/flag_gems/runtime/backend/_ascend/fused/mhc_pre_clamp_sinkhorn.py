@@ -990,53 +990,33 @@ def mhc_pre_clamp_sinkhorn_ref(
     ms = x_flat.pow(2).mean(dim=-1, keepdim=True)
     inv = torch.rsqrt(ms + norm_eps)
     x_scaled = x_flat * inv
-    mixes = phi.float() @ x_scaled.t()  # Shape: (hc_mix, T) instead of (T, hc_mix)
+    mixes = x_scaled @ phi.float().t()
 
     a = alpha.float()
     b = base.float()
-    # mixes is (hc_mix, T), compute directly on this layout
-    # pre[n, t] = sigmoid(mixes[n, t] * a[0] + b[n]) + hc_eps
-    pre_nt = torch.sigmoid(mixes[:N, :] * a[0] + b[:N].unsqueeze(1)) + hc_eps  # (N, T)
-
-    # post_out[n, t] = 2 * sigmoid(mixes[N+n, t] * a[1] + b[N+n])
-    post_nt = 2.0 * torch.sigmoid(mixes[N:2*N, :] * a[1] + b[N:2*N].unsqueeze(1))  # (N, T)
-
-    # logits[i*N+j, t] from mixes[2*N + i*N + j, t]
-    logits_kt = mixes[2*N:, :] * a[2] + b[2*N:].unsqueeze(1)  # (N*N, T)
-
+    pre = torch.sigmoid(mixes[:, :N] * a[0] + b[:N]) + hc_eps
+    post_out = 2.0 * torch.sigmoid(mixes[:, N:2*N] * a[1] + b[N:2*N])
+    logits = (mixes[:, 2*N:] * a[2] + b[2*N:]).reshape(T, N, N)
     if clamp_min != 0.0 or clamp_max != 0.0:
-        logits_kt = torch.clamp(logits_kt, clamp_min, clamp_max)
-
-    # Compute row-wise softmax on logits in (N*N, T) layout
-    # logits is organized as [row0_col0, row0_col1, ..., row0_colN-1, row1_col0, ...]
-    # For row i: elements [i*N : (i+1)*N]
-    logits_kt_reshaped = logits_kt.reshape(N, N, T)  # (N_rows, N_cols, T)
-
-    # Row-wise max and softmax, computed per time step
-    row_max = logits_kt_reshaped.max(dim=1, keepdim=True).values  # (N, 1, T)
-    M_kt = (logits_kt_reshaped - row_max).exp()  # (N, N, T)
-    M_kt = M_kt / M_kt.sum(dim=1, keepdim=True) + hc_eps
-
-    # Add HC_EPS and column-normalize (first pass)
-    M_kt = M_kt / (M_kt.sum(dim=0, keepdim=True) + hc_eps)
-
-    # Remaining (iter_times-1) Sinkhorn iterations
+        logits_c = torch.clamp(logits, clamp_min, clamp_max)
+    else:
+        logits_c = logits
+    row_max = logits_c.max(dim=-1, keepdim=True).values
+    M = (logits_c - row_max).exp()
+    M = M / M.sum(dim=-1, keepdim=True) + hc_eps
+    M = M / (M.sum(dim=-2, keepdim=True) + hc_eps)
     for _ in range(iter_times - 1):
-        M_kt = M_kt / (M_kt.sum(dim=1, keepdim=True) + hc_eps)  # row normalize
-        M_kt = M_kt / (M_kt.sum(dim=0, keepdim=True) + hc_eps)  # col normalize
+        M = M / (M.sum(dim=-1, keepdim=True) + hc_eps)
+        M = M / (M.sum(dim=-2, keepdim=True) + hc_eps)
 
     # hin = sum_n (x * pre) -> (T, D)
-    # pre_nt is (N, T), need to compute hin[t,d] = sum_n x[t,n,d] * pre[n,t]
-    # xf.float() is (T, N, D), pre_nt is (N, T)
-    # Broadcast: xf[t,n,d] * pre_nt[n,t] then sum over n
-    y = (xf.float() * pre_nt.unsqueeze(-1).permute(1, 0, 2)).sum(dim=-2).to(orig_dtype)
-
+    y = (xf.float() * pre.unsqueeze(-1)).sum(dim=-2).to(orig_dtype)
     return {
         "y": y.reshape(shape),
-        "post_out": post_nt.t(),  # Convert (N, T) -> (T, N) for output
-        "comb_frag": M_kt.permute(2, 0, 1),  # Convert (N, N, T) -> (T, N, N) for output
+        "post_out": post_out,
+        "comb_frag": M,
         "inv_rms": inv.squeeze(-1),
-        "mixes": mixes.t(),  # Transpose back to (T, hc_mix) for compatibility
-        "h_res_logits": logits_kt.reshape(N, N, T).permute(2, 0, 1),  # (T, N, N)
-        "pre": pre_nt.t(),  # Convert (N, T) -> (T, N) for output
+        "mixes": mixes,
+        "h_res_logits": logits,
+        "pre": pre,
     }
