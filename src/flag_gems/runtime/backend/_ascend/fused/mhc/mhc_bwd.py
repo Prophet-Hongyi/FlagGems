@@ -13,16 +13,15 @@
 # limitations under the License.
 
 """
-Ascend re-export of mhc_bwd / sinkhorn_forward.
+Ascend re-export of mhc_bwd.
 
 No Ascend-specific kernel exists for the backward pass; the reference
 PyTorch/Triton CG-based implementation is used directly.
 """
 
-from flag_gems.fused.mhc.mhc_bwd import mhc_bwd, mhc_bwd_ref, sinkhorn_forward
+from flag_gems.fused.mhc.mhc_bwd import mhc_bwd, mhc_bwd_ref
 
 __all__ = [
     "mhc_bwd",
-    "mhc_bwd_ref",
-    "sinkhorn_forward",
+    "mhc_bwd_ref"
 ]
