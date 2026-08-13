@@ -18,20 +18,12 @@
 # vectorised Sinkhorn).  mhc_bwd falls back to the reference PyTorch/Triton
 # CG-based implementation.
 
-from flag_gems.runtime.backend._ascend.fused.mhc.mhc_bwd import (
-    mhc_bwd,
-    mhc_bwd_ref,
-    sinkhorn_forward,
-)
 from flag_gems.runtime.backend._ascend.fused.mhc.mhc_post import mhc_post, mhc_post_ref
 from flag_gems.runtime.backend._ascend.fused.mhc.mhc_pre import mhc_pre, mhc_pre_ref
 
 __all__ = [
-    "mhc_bwd",
-    "mhc_bwd_ref",
     "mhc_post",
     "mhc_post_ref",
     "mhc_pre",
-    "mhc_pre_ref",
-    "sinkhorn_forward",
+    "mhc_pre_ref"
 ]
