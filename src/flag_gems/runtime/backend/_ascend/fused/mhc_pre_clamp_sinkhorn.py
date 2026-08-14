@@ -81,11 +81,11 @@ def _rms_only_kernel(
 )
 @triton.jit
 def _rms_scale_kernel(
-    x_ptr,          # (T, hcMult, D) input dtype
-    x_scaled_ptr,   # (T, hcMult, D) fp32 output
-    inv_rms_ptr,    # (T,) fp32
+    x_ptr,  # (T, hcMult, D) input dtype
+    x_scaled_ptr,  # (T, hcMult, D) fp32 output
+    inv_rms_ptr,  # (T,) fp32
     HC_D: tl.constexpr,
-    D_INV: tl.constexpr,     # 1/HC_D
+    D_INV: tl.constexpr,  # 1/HC_D
     NORM_EPS: tl.constexpr,
     BLOCK_H: tl.constexpr,
 ):
@@ -108,13 +108,13 @@ def _rms_scale_kernel(
 
 @triton.jit
 def _heads_sinkhorn_kernel_hc4(
-    mixes_ptr,      # (T, 24) fp32
-    alpha_ptr,      # (3,)
-    base_ptr,       # (24,)
-    pre_ptr,        # (T, 4)
-    post_ptr,       # (T, 4)
-    comb_ptr,       # (T, 4, 4)
-    logits_ptr,     # (T, 4, 4)  saved pre-clamp logits (unused when SAVE=0)
+    mixes_ptr,  # (T, 24) fp32
+    alpha_ptr,  # (3,)
+    base_ptr,  # (24,)
+    pre_ptr,  # (T, 4)
+    post_ptr,  # (T, 4)
+    comb_ptr,  # (T, 4, 4)
+    logits_ptr,  # (T, 4, 4)  saved pre-clamp logits (unused when SAVE=0)
     HC_EPS: tl.constexpr,
     CLAMP_MIN: tl.constexpr,
     CLAMP_MAX: tl.constexpr,
@@ -201,33 +201,81 @@ def _heads_sinkhorn_kernel_hc4(
     m1 = tl.maximum(tl.maximum(l10, l11), tl.maximum(l12, l13))
     m2 = tl.maximum(tl.maximum(l20, l21), tl.maximum(l22, l23))
     m3 = tl.maximum(tl.maximum(l30, l31), tl.maximum(l32, l33))
-    e00 = tl.exp(l00 - m0); e01 = tl.exp(l01 - m0); e02 = tl.exp(l02 - m0); e03 = tl.exp(l03 - m0)
-    e10 = tl.exp(l10 - m1); e11 = tl.exp(l11 - m1); e12 = tl.exp(l12 - m1); e13 = tl.exp(l13 - m1)
-    e20 = tl.exp(l20 - m2); e21 = tl.exp(l21 - m2); e22 = tl.exp(l22 - m2); e23 = tl.exp(l23 - m2)
-    e30 = tl.exp(l30 - m3); e31 = tl.exp(l31 - m3); e32 = tl.exp(l32 - m3); e33 = tl.exp(l33 - m3)
+    e00 = tl.exp(l00 - m0)
+    e01 = tl.exp(l01 - m0)
+    e02 = tl.exp(l02 - m0)
+    e03 = tl.exp(l03 - m0)
+    e10 = tl.exp(l10 - m1)
+    e11 = tl.exp(l11 - m1)
+    e12 = tl.exp(l12 - m1)
+    e13 = tl.exp(l13 - m1)
+    e20 = tl.exp(l20 - m2)
+    e21 = tl.exp(l21 - m2)
+    e22 = tl.exp(l22 - m2)
+    e23 = tl.exp(l23 - m2)
+    e30 = tl.exp(l30 - m3)
+    e31 = tl.exp(l31 - m3)
+    e32 = tl.exp(l32 - m3)
+    e33 = tl.exp(l33 - m3)
     inv_r0 = 1.0 / (e00 + e01 + e02 + e03)
     inv_r1 = 1.0 / (e10 + e11 + e12 + e13)
     inv_r2 = 1.0 / (e20 + e21 + e22 + e23)
     inv_r3 = 1.0 / (e30 + e31 + e32 + e33)
     # M[i,j] = e[i,j] * inv_r[i]
-    v00 = e00 * inv_r0; v01 = e01 * inv_r0; v02 = e02 * inv_r0; v03 = e03 * inv_r0
-    v10 = e10 * inv_r1; v11 = e11 * inv_r1; v12 = e12 * inv_r1; v13 = e13 * inv_r1
-    v20 = e20 * inv_r2; v21 = e21 * inv_r2; v22 = e22 * inv_r2; v23 = e23 * inv_r2
-    v30 = e30 * inv_r3; v31 = e31 * inv_r3; v32 = e32 * inv_r3; v33 = e33 * inv_r3
+    v00 = e00 * inv_r0
+    v01 = e01 * inv_r0
+    v02 = e02 * inv_r0
+    v03 = e03 * inv_r0
+    v10 = e10 * inv_r1
+    v11 = e11 * inv_r1
+    v12 = e12 * inv_r1
+    v13 = e13 * inv_r1
+    v20 = e20 * inv_r2
+    v21 = e21 * inv_r2
+    v22 = e22 * inv_r2
+    v23 = e23 * inv_r2
+    v30 = e30 * inv_r3
+    v31 = e31 * inv_r3
+    v32 = e32 * inv_r3
+    v33 = e33 * inv_r3
 
     # Add HC_EPS then col-normalize (first pass)
-    v00 = v00 + HC_EPS; v01 = v01 + HC_EPS; v02 = v02 + HC_EPS; v03 = v03 + HC_EPS
-    v10 = v10 + HC_EPS; v11 = v11 + HC_EPS; v12 = v12 + HC_EPS; v13 = v13 + HC_EPS
-    v20 = v20 + HC_EPS; v21 = v21 + HC_EPS; v22 = v22 + HC_EPS; v23 = v23 + HC_EPS
-    v30 = v30 + HC_EPS; v31 = v31 + HC_EPS; v32 = v32 + HC_EPS; v33 = v33 + HC_EPS
+    v00 = v00 + HC_EPS
+    v01 = v01 + HC_EPS
+    v02 = v02 + HC_EPS
+    v03 = v03 + HC_EPS
+    v10 = v10 + HC_EPS
+    v11 = v11 + HC_EPS
+    v12 = v12 + HC_EPS
+    v13 = v13 + HC_EPS
+    v20 = v20 + HC_EPS
+    v21 = v21 + HC_EPS
+    v22 = v22 + HC_EPS
+    v23 = v23 + HC_EPS
+    v30 = v30 + HC_EPS
+    v31 = v31 + HC_EPS
+    v32 = v32 + HC_EPS
+    v33 = v33 + HC_EPS
     inv_c0 = 1.0 / (v00 + v10 + v20 + v30 + HC_EPS)
     inv_c1 = 1.0 / (v01 + v11 + v21 + v31 + HC_EPS)
     inv_c2 = 1.0 / (v02 + v12 + v22 + v32 + HC_EPS)
     inv_c3 = 1.0 / (v03 + v13 + v23 + v33 + HC_EPS)
-    v00 = v00 * inv_c0; v01 = v01 * inv_c1; v02 = v02 * inv_c2; v03 = v03 * inv_c3
-    v10 = v10 * inv_c0; v11 = v11 * inv_c1; v12 = v12 * inv_c2; v13 = v13 * inv_c3
-    v20 = v20 * inv_c0; v21 = v21 * inv_c1; v22 = v22 * inv_c2; v23 = v23 * inv_c3
-    v30 = v30 * inv_c0; v31 = v31 * inv_c1; v32 = v32 * inv_c2; v33 = v33 * inv_c3
+    v00 = v00 * inv_c0
+    v01 = v01 * inv_c1
+    v02 = v02 * inv_c2
+    v03 = v03 * inv_c3
+    v10 = v10 * inv_c0
+    v11 = v11 * inv_c1
+    v12 = v12 * inv_c2
+    v13 = v13 * inv_c3
+    v20 = v20 * inv_c0
+    v21 = v21 * inv_c1
+    v22 = v22 * inv_c2
+    v23 = v23 * inv_c3
+    v30 = v30 * inv_c0
+    v31 = v31 * inv_c1
+    v32 = v32 * inv_c2
+    v33 = v33 * inv_c3
 
     # Remaining (ITERS-1) iterations: row-norm then col-norm
     for _ in tl.static_range(ITERS - 1):
@@ -235,28 +283,60 @@ def _heads_sinkhorn_kernel_hc4(
         ir1 = 1.0 / (v10 + v11 + v12 + v13 + HC_EPS)
         ir2 = 1.0 / (v20 + v21 + v22 + v23 + HC_EPS)
         ir3 = 1.0 / (v30 + v31 + v32 + v33 + HC_EPS)
-        v00 = v00 * ir0; v01 = v01 * ir0; v02 = v02 * ir0; v03 = v03 * ir0
-        v10 = v10 * ir1; v11 = v11 * ir1; v12 = v12 * ir1; v13 = v13 * ir1
-        v20 = v20 * ir2; v21 = v21 * ir2; v22 = v22 * ir2; v23 = v23 * ir2
-        v30 = v30 * ir3; v31 = v31 * ir3; v32 = v32 * ir3; v33 = v33 * ir3
+        v00 = v00 * ir0
+        v01 = v01 * ir0
+        v02 = v02 * ir0
+        v03 = v03 * ir0
+        v10 = v10 * ir1
+        v11 = v11 * ir1
+        v12 = v12 * ir1
+        v13 = v13 * ir1
+        v20 = v20 * ir2
+        v21 = v21 * ir2
+        v22 = v22 * ir2
+        v23 = v23 * ir2
+        v30 = v30 * ir3
+        v31 = v31 * ir3
+        v32 = v32 * ir3
+        v33 = v33 * ir3
         ic0 = 1.0 / (v00 + v10 + v20 + v30 + HC_EPS)
         ic1 = 1.0 / (v01 + v11 + v21 + v31 + HC_EPS)
         ic2 = 1.0 / (v02 + v12 + v22 + v32 + HC_EPS)
         ic3 = 1.0 / (v03 + v13 + v23 + v33 + HC_EPS)
-        v00 = v00 * ic0; v01 = v01 * ic1; v02 = v02 * ic2; v03 = v03 * ic3
-        v10 = v10 * ic0; v11 = v11 * ic1; v12 = v12 * ic2; v13 = v13 * ic3
-        v20 = v20 * ic0; v21 = v21 * ic1; v22 = v22 * ic2; v23 = v23 * ic3
-        v30 = v30 * ic0; v31 = v31 * ic1; v32 = v32 * ic2; v33 = v33 * ic3
+        v00 = v00 * ic0
+        v01 = v01 * ic1
+        v02 = v02 * ic2
+        v03 = v03 * ic3
+        v10 = v10 * ic0
+        v11 = v11 * ic1
+        v12 = v12 * ic2
+        v13 = v13 * ic3
+        v20 = v20 * ic0
+        v21 = v21 * ic1
+        v22 = v22 * ic2
+        v23 = v23 * ic3
+        v30 = v30 * ic0
+        v31 = v31 * ic1
+        v32 = v32 * ic2
+        v33 = v33 * ic3
 
     cb = pid * 16
-    tl.store(comb_ptr + cb + 0, v00);  tl.store(comb_ptr + cb + 1, v01)
-    tl.store(comb_ptr + cb + 2, v02);  tl.store(comb_ptr + cb + 3, v03)
-    tl.store(comb_ptr + cb + 4, v10);  tl.store(comb_ptr + cb + 5, v11)
-    tl.store(comb_ptr + cb + 6, v12);  tl.store(comb_ptr + cb + 7, v13)
-    tl.store(comb_ptr + cb + 8, v20);  tl.store(comb_ptr + cb + 9, v21)
-    tl.store(comb_ptr + cb + 10, v22); tl.store(comb_ptr + cb + 11, v23)
-    tl.store(comb_ptr + cb + 12, v30); tl.store(comb_ptr + cb + 13, v31)
-    tl.store(comb_ptr + cb + 14, v32); tl.store(comb_ptr + cb + 15, v33)
+    tl.store(comb_ptr + cb + 0, v00)
+    tl.store(comb_ptr + cb + 1, v01)
+    tl.store(comb_ptr + cb + 2, v02)
+    tl.store(comb_ptr + cb + 3, v03)
+    tl.store(comb_ptr + cb + 4, v10)
+    tl.store(comb_ptr + cb + 5, v11)
+    tl.store(comb_ptr + cb + 6, v12)
+    tl.store(comb_ptr + cb + 7, v13)
+    tl.store(comb_ptr + cb + 8, v20)
+    tl.store(comb_ptr + cb + 9, v21)
+    tl.store(comb_ptr + cb + 10, v22)
+    tl.store(comb_ptr + cb + 11, v23)
+    tl.store(comb_ptr + cb + 12, v30)
+    tl.store(comb_ptr + cb + 13, v31)
+    tl.store(comb_ptr + cb + 14, v32)
+    tl.store(comb_ptr + cb + 15, v33)
 
 
 @triton.autotune(
@@ -272,9 +352,9 @@ def _heads_sinkhorn_kernel_hc4(
 )
 @triton.jit
 def _y_scale_kernel_hc4(
-    x_ptr,      # (T, 4, D) input dtype
-    pre_ptr,    # (T, 4)    fp32
-    y_ptr,      # (T, D)    input dtype   hin = sum_n(x[n] * pre[n])
+    x_ptr,  # (T, 4, D) input dtype
+    pre_ptr,  # (T, 4)    fp32
+    y_ptr,  # (T, D)    input dtype   hin = sum_n(x[n] * pre[n])
     D: tl.constexpr,
     BLOCK_D: tl.constexpr,
 ):
@@ -304,154 +384,405 @@ def _y_scale_kernel_hc4(
 # ---------------------------------------------------------------------------
 @triton.jit
 def _sinkhorn_batched_14_hc4(
-    mixes_ptr, alpha_ptr, base_ptr, pre_ptr, post_ptr, comb_ptr,
-    T: tl.constexpr, BLOCK_T: tl.constexpr,
-    HC_EPS: tl.constexpr, CLAMP_MIN: tl.constexpr, CLAMP_MAX: tl.constexpr,
+    mixes_ptr,
+    alpha_ptr,
+    base_ptr,
+    pre_ptr,
+    post_ptr,
+    comb_ptr,
+    T: tl.constexpr,
+    BLOCK_T: tl.constexpr,
+    HC_EPS: tl.constexpr,
+    CLAMP_MIN: tl.constexpr,
+    CLAMP_MAX: tl.constexpr,
 ):
     pid = tl.program_id(0)
-    t_off = pid * BLOCK_T + tl.arange(0, BLOCK_T); t_mask = t_off < T
-    a0 = tl.load(alpha_ptr); a1 = tl.load(alpha_ptr+1); a2 = tl.load(alpha_ptr+2)
+    t_off = pid * BLOCK_T + tl.arange(0, BLOCK_T)
+    t_mask = t_off < T
+    a0 = tl.load(alpha_ptr)
+    a1 = tl.load(alpha_ptr + 1)
+    a2 = tl.load(alpha_ptr + 2)
     mb = t_off * 24
-    p0 = tl.sigmoid(tl.load(mixes_ptr+mb+0,mask=t_mask,other=0.)*a0+tl.load(base_ptr+0))+HC_EPS
-    p1 = tl.sigmoid(tl.load(mixes_ptr+mb+1,mask=t_mask,other=0.)*a0+tl.load(base_ptr+1))+HC_EPS
-    p2 = tl.sigmoid(tl.load(mixes_ptr+mb+2,mask=t_mask,other=0.)*a0+tl.load(base_ptr+2))+HC_EPS
-    p3 = tl.sigmoid(tl.load(mixes_ptr+mb+3,mask=t_mask,other=0.)*a0+tl.load(base_ptr+3))+HC_EPS
-    tl.store(pre_ptr+t_off*4+0,p0,mask=t_mask); tl.store(pre_ptr+t_off*4+1,p1,mask=t_mask)
-    tl.store(pre_ptr+t_off*4+2,p2,mask=t_mask); tl.store(pre_ptr+t_off*4+3,p3,mask=t_mask)
-    tl.store(post_ptr+t_off*4+0,2.*tl.sigmoid(tl.load(mixes_ptr+mb+4,mask=t_mask,other=0.)*a1+tl.load(base_ptr+4)),mask=t_mask)
-    tl.store(post_ptr+t_off*4+1,2.*tl.sigmoid(tl.load(mixes_ptr+mb+5,mask=t_mask,other=0.)*a1+tl.load(base_ptr+5)),mask=t_mask)
-    tl.store(post_ptr+t_off*4+2,2.*tl.sigmoid(tl.load(mixes_ptr+mb+6,mask=t_mask,other=0.)*a1+tl.load(base_ptr+6)),mask=t_mask)
-    tl.store(post_ptr+t_off*4+3,2.*tl.sigmoid(tl.load(mixes_ptr+mb+7,mask=t_mask,other=0.)*a1+tl.load(base_ptr+7)),mask=t_mask)
-    l00=tl.load(mixes_ptr+mb+ 8,mask=t_mask,other=0.)*a2+tl.load(base_ptr+ 8)
-    l01=tl.load(mixes_ptr+mb+ 9,mask=t_mask,other=0.)*a2+tl.load(base_ptr+ 9)
-    l02=tl.load(mixes_ptr+mb+10,mask=t_mask,other=0.)*a2+tl.load(base_ptr+10)
-    l03=tl.load(mixes_ptr+mb+11,mask=t_mask,other=0.)*a2+tl.load(base_ptr+11)
-    l10=tl.load(mixes_ptr+mb+12,mask=t_mask,other=0.)*a2+tl.load(base_ptr+12)
-    l11=tl.load(mixes_ptr+mb+13,mask=t_mask,other=0.)*a2+tl.load(base_ptr+13)
-    l12=tl.load(mixes_ptr+mb+14,mask=t_mask,other=0.)*a2+tl.load(base_ptr+14)
-    l13=tl.load(mixes_ptr+mb+15,mask=t_mask,other=0.)*a2+tl.load(base_ptr+15)
-    l20=tl.load(mixes_ptr+mb+16,mask=t_mask,other=0.)*a2+tl.load(base_ptr+16)
-    l21=tl.load(mixes_ptr+mb+17,mask=t_mask,other=0.)*a2+tl.load(base_ptr+17)
-    l22=tl.load(mixes_ptr+mb+18,mask=t_mask,other=0.)*a2+tl.load(base_ptr+18)
-    l23=tl.load(mixes_ptr+mb+19,mask=t_mask,other=0.)*a2+tl.load(base_ptr+19)
-    l30=tl.load(mixes_ptr+mb+20,mask=t_mask,other=0.)*a2+tl.load(base_ptr+20)
-    l31=tl.load(mixes_ptr+mb+21,mask=t_mask,other=0.)*a2+tl.load(base_ptr+21)
-    l32=tl.load(mixes_ptr+mb+22,mask=t_mask,other=0.)*a2+tl.load(base_ptr+22)
-    l33=tl.load(mixes_ptr+mb+23,mask=t_mask,other=0.)*a2+tl.load(base_ptr+23)
-    l00=tl.minimum(tl.maximum(l00,CLAMP_MIN),CLAMP_MAX); l01=tl.minimum(tl.maximum(l01,CLAMP_MIN),CLAMP_MAX)
-    l02=tl.minimum(tl.maximum(l02,CLAMP_MIN),CLAMP_MAX); l03=tl.minimum(tl.maximum(l03,CLAMP_MIN),CLAMP_MAX)
-    l10=tl.minimum(tl.maximum(l10,CLAMP_MIN),CLAMP_MAX); l11=tl.minimum(tl.maximum(l11,CLAMP_MIN),CLAMP_MAX)
-    l12=tl.minimum(tl.maximum(l12,CLAMP_MIN),CLAMP_MAX); l13=tl.minimum(tl.maximum(l13,CLAMP_MIN),CLAMP_MAX)
-    l20=tl.minimum(tl.maximum(l20,CLAMP_MIN),CLAMP_MAX); l21=tl.minimum(tl.maximum(l21,CLAMP_MIN),CLAMP_MAX)
-    l22=tl.minimum(tl.maximum(l22,CLAMP_MIN),CLAMP_MAX); l23=tl.minimum(tl.maximum(l23,CLAMP_MIN),CLAMP_MAX)
-    l30=tl.minimum(tl.maximum(l30,CLAMP_MIN),CLAMP_MAX); l31=tl.minimum(tl.maximum(l31,CLAMP_MIN),CLAMP_MAX)
-    l32=tl.minimum(tl.maximum(l32,CLAMP_MIN),CLAMP_MAX); l33=tl.minimum(tl.maximum(l33,CLAMP_MIN),CLAMP_MAX)
-    m0=tl.maximum(tl.maximum(l00,l01),tl.maximum(l02,l03))
-    m1=tl.maximum(tl.maximum(l10,l11),tl.maximum(l12,l13))
-    m2=tl.maximum(tl.maximum(l20,l21),tl.maximum(l22,l23))
-    m3=tl.maximum(tl.maximum(l30,l31),tl.maximum(l32,l33))
-    e00=tl.exp(l00-m0);e01=tl.exp(l01-m0);e02=tl.exp(l02-m0);e03=tl.exp(l03-m0)
-    e10=tl.exp(l10-m1);e11=tl.exp(l11-m1);e12=tl.exp(l12-m1);e13=tl.exp(l13-m1)
-    e20=tl.exp(l20-m2);e21=tl.exp(l21-m2);e22=tl.exp(l22-m2);e23=tl.exp(l23-m2)
-    e30=tl.exp(l30-m3);e31=tl.exp(l31-m3);e32=tl.exp(l32-m3);e33=tl.exp(l33-m3)
-    ir0=1./(e00+e01+e02+e03);ir1=1./(e10+e11+e12+e13)
-    ir2=1./(e20+e21+e22+e23);ir3=1./(e30+e31+e32+e33)
-    v00=e00*ir0;v01=e01*ir0;v02=e02*ir0;v03=e03*ir0
-    v10=e10*ir1;v11=e11*ir1;v12=e12*ir1;v13=e13*ir1
-    v20=e20*ir2;v21=e21*ir2;v22=e22*ir2;v23=e23*ir2
-    v30=e30*ir3;v31=e31*ir3;v32=e32*ir3;v33=e33*ir3
-    v00+=HC_EPS;v01+=HC_EPS;v02+=HC_EPS;v03+=HC_EPS
-    v10+=HC_EPS;v11+=HC_EPS;v12+=HC_EPS;v13+=HC_EPS
-    v20+=HC_EPS;v21+=HC_EPS;v22+=HC_EPS;v23+=HC_EPS
-    v30+=HC_EPS;v31+=HC_EPS;v32+=HC_EPS;v33+=HC_EPS
-    ic0=1./(v00+v10+v20+v30+HC_EPS);ic1=1./(v01+v11+v21+v31+HC_EPS)
-    ic2=1./(v02+v12+v22+v32+HC_EPS);ic3=1./(v03+v13+v23+v33+HC_EPS)
-    v00*=ic0;v01*=ic1;v02*=ic2;v03*=ic3
-    v10*=ic0;v11*=ic1;v12*=ic2;v13*=ic3
-    v20*=ic0;v21*=ic1;v22*=ic2;v23*=ic3
-    v30*=ic0;v31*=ic1;v32*=ic2;v33*=ic3
+    p0 = (
+        tl.sigmoid(
+            tl.load(mixes_ptr + mb + 0, mask=t_mask, other=0.0) * a0
+            + tl.load(base_ptr + 0)
+        )
+        + HC_EPS
+    )
+    p1 = (
+        tl.sigmoid(
+            tl.load(mixes_ptr + mb + 1, mask=t_mask, other=0.0) * a0
+            + tl.load(base_ptr + 1)
+        )
+        + HC_EPS
+    )
+    p2 = (
+        tl.sigmoid(
+            tl.load(mixes_ptr + mb + 2, mask=t_mask, other=0.0) * a0
+            + tl.load(base_ptr + 2)
+        )
+        + HC_EPS
+    )
+    p3 = (
+        tl.sigmoid(
+            tl.load(mixes_ptr + mb + 3, mask=t_mask, other=0.0) * a0
+            + tl.load(base_ptr + 3)
+        )
+        + HC_EPS
+    )
+    tl.store(pre_ptr + t_off * 4 + 0, p0, mask=t_mask)
+    tl.store(pre_ptr + t_off * 4 + 1, p1, mask=t_mask)
+    tl.store(pre_ptr + t_off * 4 + 2, p2, mask=t_mask)
+    tl.store(pre_ptr + t_off * 4 + 3, p3, mask=t_mask)
+    tl.store(
+        post_ptr + t_off * 4 + 0,
+        2.0
+        * tl.sigmoid(
+            tl.load(mixes_ptr + mb + 4, mask=t_mask, other=0.0) * a1
+            + tl.load(base_ptr + 4)
+        ),
+        mask=t_mask,
+    )
+    tl.store(
+        post_ptr + t_off * 4 + 1,
+        2.0
+        * tl.sigmoid(
+            tl.load(mixes_ptr + mb + 5, mask=t_mask, other=0.0) * a1
+            + tl.load(base_ptr + 5)
+        ),
+        mask=t_mask,
+    )
+    tl.store(
+        post_ptr + t_off * 4 + 2,
+        2.0
+        * tl.sigmoid(
+            tl.load(mixes_ptr + mb + 6, mask=t_mask, other=0.0) * a1
+            + tl.load(base_ptr + 6)
+        ),
+        mask=t_mask,
+    )
+    tl.store(
+        post_ptr + t_off * 4 + 3,
+        2.0
+        * tl.sigmoid(
+            tl.load(mixes_ptr + mb + 7, mask=t_mask, other=0.0) * a1
+            + tl.load(base_ptr + 7)
+        ),
+        mask=t_mask,
+    )
+    l00 = tl.load(mixes_ptr + mb + 8, mask=t_mask, other=0.0) * a2 + tl.load(
+        base_ptr + 8
+    )
+    l01 = tl.load(mixes_ptr + mb + 9, mask=t_mask, other=0.0) * a2 + tl.load(
+        base_ptr + 9
+    )
+    l02 = tl.load(mixes_ptr + mb + 10, mask=t_mask, other=0.0) * a2 + tl.load(
+        base_ptr + 10
+    )
+    l03 = tl.load(mixes_ptr + mb + 11, mask=t_mask, other=0.0) * a2 + tl.load(
+        base_ptr + 11
+    )
+    l10 = tl.load(mixes_ptr + mb + 12, mask=t_mask, other=0.0) * a2 + tl.load(
+        base_ptr + 12
+    )
+    l11 = tl.load(mixes_ptr + mb + 13, mask=t_mask, other=0.0) * a2 + tl.load(
+        base_ptr + 13
+    )
+    l12 = tl.load(mixes_ptr + mb + 14, mask=t_mask, other=0.0) * a2 + tl.load(
+        base_ptr + 14
+    )
+    l13 = tl.load(mixes_ptr + mb + 15, mask=t_mask, other=0.0) * a2 + tl.load(
+        base_ptr + 15
+    )
+    l20 = tl.load(mixes_ptr + mb + 16, mask=t_mask, other=0.0) * a2 + tl.load(
+        base_ptr + 16
+    )
+    l21 = tl.load(mixes_ptr + mb + 17, mask=t_mask, other=0.0) * a2 + tl.load(
+        base_ptr + 17
+    )
+    l22 = tl.load(mixes_ptr + mb + 18, mask=t_mask, other=0.0) * a2 + tl.load(
+        base_ptr + 18
+    )
+    l23 = tl.load(mixes_ptr + mb + 19, mask=t_mask, other=0.0) * a2 + tl.load(
+        base_ptr + 19
+    )
+    l30 = tl.load(mixes_ptr + mb + 20, mask=t_mask, other=0.0) * a2 + tl.load(
+        base_ptr + 20
+    )
+    l31 = tl.load(mixes_ptr + mb + 21, mask=t_mask, other=0.0) * a2 + tl.load(
+        base_ptr + 21
+    )
+    l32 = tl.load(mixes_ptr + mb + 22, mask=t_mask, other=0.0) * a2 + tl.load(
+        base_ptr + 22
+    )
+    l33 = tl.load(mixes_ptr + mb + 23, mask=t_mask, other=0.0) * a2 + tl.load(
+        base_ptr + 23
+    )
+    l00 = tl.minimum(tl.maximum(l00, CLAMP_MIN), CLAMP_MAX)
+    l01 = tl.minimum(tl.maximum(l01, CLAMP_MIN), CLAMP_MAX)
+    l02 = tl.minimum(tl.maximum(l02, CLAMP_MIN), CLAMP_MAX)
+    l03 = tl.minimum(tl.maximum(l03, CLAMP_MIN), CLAMP_MAX)
+    l10 = tl.minimum(tl.maximum(l10, CLAMP_MIN), CLAMP_MAX)
+    l11 = tl.minimum(tl.maximum(l11, CLAMP_MIN), CLAMP_MAX)
+    l12 = tl.minimum(tl.maximum(l12, CLAMP_MIN), CLAMP_MAX)
+    l13 = tl.minimum(tl.maximum(l13, CLAMP_MIN), CLAMP_MAX)
+    l20 = tl.minimum(tl.maximum(l20, CLAMP_MIN), CLAMP_MAX)
+    l21 = tl.minimum(tl.maximum(l21, CLAMP_MIN), CLAMP_MAX)
+    l22 = tl.minimum(tl.maximum(l22, CLAMP_MIN), CLAMP_MAX)
+    l23 = tl.minimum(tl.maximum(l23, CLAMP_MIN), CLAMP_MAX)
+    l30 = tl.minimum(tl.maximum(l30, CLAMP_MIN), CLAMP_MAX)
+    l31 = tl.minimum(tl.maximum(l31, CLAMP_MIN), CLAMP_MAX)
+    l32 = tl.minimum(tl.maximum(l32, CLAMP_MIN), CLAMP_MAX)
+    l33 = tl.minimum(tl.maximum(l33, CLAMP_MIN), CLAMP_MAX)
+    m0 = tl.maximum(tl.maximum(l00, l01), tl.maximum(l02, l03))
+    m1 = tl.maximum(tl.maximum(l10, l11), tl.maximum(l12, l13))
+    m2 = tl.maximum(tl.maximum(l20, l21), tl.maximum(l22, l23))
+    m3 = tl.maximum(tl.maximum(l30, l31), tl.maximum(l32, l33))
+    e00 = tl.exp(l00 - m0)
+    e01 = tl.exp(l01 - m0)
+    e02 = tl.exp(l02 - m0)
+    e03 = tl.exp(l03 - m0)
+    e10 = tl.exp(l10 - m1)
+    e11 = tl.exp(l11 - m1)
+    e12 = tl.exp(l12 - m1)
+    e13 = tl.exp(l13 - m1)
+    e20 = tl.exp(l20 - m2)
+    e21 = tl.exp(l21 - m2)
+    e22 = tl.exp(l22 - m2)
+    e23 = tl.exp(l23 - m2)
+    e30 = tl.exp(l30 - m3)
+    e31 = tl.exp(l31 - m3)
+    e32 = tl.exp(l32 - m3)
+    e33 = tl.exp(l33 - m3)
+    ir0 = 1.0 / (e00 + e01 + e02 + e03)
+    ir1 = 1.0 / (e10 + e11 + e12 + e13)
+    ir2 = 1.0 / (e20 + e21 + e22 + e23)
+    ir3 = 1.0 / (e30 + e31 + e32 + e33)
+    v00 = e00 * ir0
+    v01 = e01 * ir0
+    v02 = e02 * ir0
+    v03 = e03 * ir0
+    v10 = e10 * ir1
+    v11 = e11 * ir1
+    v12 = e12 * ir1
+    v13 = e13 * ir1
+    v20 = e20 * ir2
+    v21 = e21 * ir2
+    v22 = e22 * ir2
+    v23 = e23 * ir2
+    v30 = e30 * ir3
+    v31 = e31 * ir3
+    v32 = e32 * ir3
+    v33 = e33 * ir3
+    v00 += HC_EPS
+    v01 += HC_EPS
+    v02 += HC_EPS
+    v03 += HC_EPS
+    v10 += HC_EPS
+    v11 += HC_EPS
+    v12 += HC_EPS
+    v13 += HC_EPS
+    v20 += HC_EPS
+    v21 += HC_EPS
+    v22 += HC_EPS
+    v23 += HC_EPS
+    v30 += HC_EPS
+    v31 += HC_EPS
+    v32 += HC_EPS
+    v33 += HC_EPS
+    ic0 = 1.0 / (v00 + v10 + v20 + v30 + HC_EPS)
+    ic1 = 1.0 / (v01 + v11 + v21 + v31 + HC_EPS)
+    ic2 = 1.0 / (v02 + v12 + v22 + v32 + HC_EPS)
+    ic3 = 1.0 / (v03 + v13 + v23 + v33 + HC_EPS)
+    v00 *= ic0
+    v01 *= ic1
+    v02 *= ic2
+    v03 *= ic3
+    v10 *= ic0
+    v11 *= ic1
+    v12 *= ic2
+    v13 *= ic3
+    v20 *= ic0
+    v21 *= ic1
+    v22 *= ic2
+    v23 *= ic3
+    v30 *= ic0
+    v31 *= ic1
+    v32 *= ic2
+    v33 *= ic3
     for _ in tl.static_range(14):
-        ir0=1./(v00+v01+v02+v03+HC_EPS);ir1=1./(v10+v11+v12+v13+HC_EPS)
-        ir2=1./(v20+v21+v22+v23+HC_EPS);ir3=1./(v30+v31+v32+v33+HC_EPS)
-        v00*=ir0;v01*=ir0;v02*=ir0;v03*=ir0
-        v10*=ir1;v11*=ir1;v12*=ir1;v13*=ir1
-        v20*=ir2;v21*=ir2;v22*=ir2;v23*=ir2
-        v30*=ir3;v31*=ir3;v32*=ir3;v33*=ir3
-        ic0=1./(v00+v10+v20+v30+HC_EPS);ic1=1./(v01+v11+v21+v31+HC_EPS)
-        ic2=1./(v02+v12+v22+v32+HC_EPS);ic3=1./(v03+v13+v23+v33+HC_EPS)
-        v00*=ic0;v01*=ic1;v02*=ic2;v03*=ic3
-        v10*=ic0;v11*=ic1;v12*=ic2;v13*=ic3
-        v20*=ic0;v21*=ic1;v22*=ic2;v23*=ic3
-        v30*=ic0;v31*=ic1;v32*=ic2;v33*=ic3
-    cb=t_off*16
-    tl.store(comb_ptr+cb+ 0,v00,mask=t_mask);tl.store(comb_ptr+cb+ 1,v01,mask=t_mask)
-    tl.store(comb_ptr+cb+ 2,v02,mask=t_mask);tl.store(comb_ptr+cb+ 3,v03,mask=t_mask)
-    tl.store(comb_ptr+cb+ 4,v10,mask=t_mask);tl.store(comb_ptr+cb+ 5,v11,mask=t_mask)
-    tl.store(comb_ptr+cb+ 6,v12,mask=t_mask);tl.store(comb_ptr+cb+ 7,v13,mask=t_mask)
-    tl.store(comb_ptr+cb+ 8,v20,mask=t_mask);tl.store(comb_ptr+cb+ 9,v21,mask=t_mask)
-    tl.store(comb_ptr+cb+10,v22,mask=t_mask);tl.store(comb_ptr+cb+11,v23,mask=t_mask)
-    tl.store(comb_ptr+cb+12,v30,mask=t_mask);tl.store(comb_ptr+cb+13,v31,mask=t_mask)
-    tl.store(comb_ptr+cb+14,v32,mask=t_mask);tl.store(comb_ptr+cb+15,v33,mask=t_mask)
+        ir0 = 1.0 / (v00 + v01 + v02 + v03 + HC_EPS)
+        ir1 = 1.0 / (v10 + v11 + v12 + v13 + HC_EPS)
+        ir2 = 1.0 / (v20 + v21 + v22 + v23 + HC_EPS)
+        ir3 = 1.0 / (v30 + v31 + v32 + v33 + HC_EPS)
+        v00 *= ir0
+        v01 *= ir0
+        v02 *= ir0
+        v03 *= ir0
+        v10 *= ir1
+        v11 *= ir1
+        v12 *= ir1
+        v13 *= ir1
+        v20 *= ir2
+        v21 *= ir2
+        v22 *= ir2
+        v23 *= ir2
+        v30 *= ir3
+        v31 *= ir3
+        v32 *= ir3
+        v33 *= ir3
+        ic0 = 1.0 / (v00 + v10 + v20 + v30 + HC_EPS)
+        ic1 = 1.0 / (v01 + v11 + v21 + v31 + HC_EPS)
+        ic2 = 1.0 / (v02 + v12 + v22 + v32 + HC_EPS)
+        ic3 = 1.0 / (v03 + v13 + v23 + v33 + HC_EPS)
+        v00 *= ic0
+        v01 *= ic1
+        v02 *= ic2
+        v03 *= ic3
+        v10 *= ic0
+        v11 *= ic1
+        v12 *= ic2
+        v13 *= ic3
+        v20 *= ic0
+        v21 *= ic1
+        v22 *= ic2
+        v23 *= ic3
+        v30 *= ic0
+        v31 *= ic1
+        v32 *= ic2
+        v33 *= ic3
+    cb = t_off * 16
+    tl.store(comb_ptr + cb + 0, v00, mask=t_mask)
+    tl.store(comb_ptr + cb + 1, v01, mask=t_mask)
+    tl.store(comb_ptr + cb + 2, v02, mask=t_mask)
+    tl.store(comb_ptr + cb + 3, v03, mask=t_mask)
+    tl.store(comb_ptr + cb + 4, v10, mask=t_mask)
+    tl.store(comb_ptr + cb + 5, v11, mask=t_mask)
+    tl.store(comb_ptr + cb + 6, v12, mask=t_mask)
+    tl.store(comb_ptr + cb + 7, v13, mask=t_mask)
+    tl.store(comb_ptr + cb + 8, v20, mask=t_mask)
+    tl.store(comb_ptr + cb + 9, v21, mask=t_mask)
+    tl.store(comb_ptr + cb + 10, v22, mask=t_mask)
+    tl.store(comb_ptr + cb + 11, v23, mask=t_mask)
+    tl.store(comb_ptr + cb + 12, v30, mask=t_mask)
+    tl.store(comb_ptr + cb + 13, v31, mask=t_mask)
+    tl.store(comb_ptr + cb + 14, v32, mask=t_mask)
+    tl.store(comb_ptr + cb + 15, v33, mask=t_mask)
 
 
 @triton.jit
 def _sinkhorn_continue5_hc4(
-    comb_ptr, T: tl.constexpr, BLOCK_T: tl.constexpr, HC_EPS: tl.constexpr,
+    comb_ptr,
+    T: tl.constexpr,
+    BLOCK_T: tl.constexpr,
+    HC_EPS: tl.constexpr,
 ):
     """Continue sinkhorn for 5 more iterations (vectorized, BLOCK_T tokens/program)."""
     pid = tl.program_id(0)
-    t_off = pid * BLOCK_T + tl.arange(0, BLOCK_T); t_mask = t_off < T
+    t_off = pid * BLOCK_T + tl.arange(0, BLOCK_T)
+    t_mask = t_off < T
     cb = t_off * 16
-    v00=tl.load(comb_ptr+cb+ 0,mask=t_mask,other=0.);v01=tl.load(comb_ptr+cb+ 1,mask=t_mask,other=0.)
-    v02=tl.load(comb_ptr+cb+ 2,mask=t_mask,other=0.);v03=tl.load(comb_ptr+cb+ 3,mask=t_mask,other=0.)
-    v10=tl.load(comb_ptr+cb+ 4,mask=t_mask,other=0.);v11=tl.load(comb_ptr+cb+ 5,mask=t_mask,other=0.)
-    v12=tl.load(comb_ptr+cb+ 6,mask=t_mask,other=0.);v13=tl.load(comb_ptr+cb+ 7,mask=t_mask,other=0.)
-    v20=tl.load(comb_ptr+cb+ 8,mask=t_mask,other=0.);v21=tl.load(comb_ptr+cb+ 9,mask=t_mask,other=0.)
-    v22=tl.load(comb_ptr+cb+10,mask=t_mask,other=0.);v23=tl.load(comb_ptr+cb+11,mask=t_mask,other=0.)
-    v30=tl.load(comb_ptr+cb+12,mask=t_mask,other=0.);v31=tl.load(comb_ptr+cb+13,mask=t_mask,other=0.)
-    v32=tl.load(comb_ptr+cb+14,mask=t_mask,other=0.);v33=tl.load(comb_ptr+cb+15,mask=t_mask,other=0.)
+    v00 = tl.load(comb_ptr + cb + 0, mask=t_mask, other=0.0)
+    v01 = tl.load(comb_ptr + cb + 1, mask=t_mask, other=0.0)
+    v02 = tl.load(comb_ptr + cb + 2, mask=t_mask, other=0.0)
+    v03 = tl.load(comb_ptr + cb + 3, mask=t_mask, other=0.0)
+    v10 = tl.load(comb_ptr + cb + 4, mask=t_mask, other=0.0)
+    v11 = tl.load(comb_ptr + cb + 5, mask=t_mask, other=0.0)
+    v12 = tl.load(comb_ptr + cb + 6, mask=t_mask, other=0.0)
+    v13 = tl.load(comb_ptr + cb + 7, mask=t_mask, other=0.0)
+    v20 = tl.load(comb_ptr + cb + 8, mask=t_mask, other=0.0)
+    v21 = tl.load(comb_ptr + cb + 9, mask=t_mask, other=0.0)
+    v22 = tl.load(comb_ptr + cb + 10, mask=t_mask, other=0.0)
+    v23 = tl.load(comb_ptr + cb + 11, mask=t_mask, other=0.0)
+    v30 = tl.load(comb_ptr + cb + 12, mask=t_mask, other=0.0)
+    v31 = tl.load(comb_ptr + cb + 13, mask=t_mask, other=0.0)
+    v32 = tl.load(comb_ptr + cb + 14, mask=t_mask, other=0.0)
+    v33 = tl.load(comb_ptr + cb + 15, mask=t_mask, other=0.0)
     for _ in tl.static_range(5):
-        ir0=1./(v00+v01+v02+v03+HC_EPS);ir1=1./(v10+v11+v12+v13+HC_EPS)
-        ir2=1./(v20+v21+v22+v23+HC_EPS);ir3=1./(v30+v31+v32+v33+HC_EPS)
-        v00*=ir0;v01*=ir0;v02*=ir0;v03*=ir0
-        v10*=ir1;v11*=ir1;v12*=ir1;v13*=ir1
-        v20*=ir2;v21*=ir2;v22*=ir2;v23*=ir2
-        v30*=ir3;v31*=ir3;v32*=ir3;v33*=ir3
-        ic0=1./(v00+v10+v20+v30+HC_EPS);ic1=1./(v01+v11+v21+v31+HC_EPS)
-        ic2=1./(v02+v12+v22+v32+HC_EPS);ic3=1./(v03+v13+v23+v33+HC_EPS)
-        v00*=ic0;v01*=ic1;v02*=ic2;v03*=ic3
-        v10*=ic0;v11*=ic1;v12*=ic2;v13*=ic3
-        v20*=ic0;v21*=ic1;v22*=ic2;v23*=ic3
-        v30*=ic0;v31*=ic1;v32*=ic2;v33*=ic3
-    tl.store(comb_ptr+cb+ 0,v00,mask=t_mask);tl.store(comb_ptr+cb+ 1,v01,mask=t_mask)
-    tl.store(comb_ptr+cb+ 2,v02,mask=t_mask);tl.store(comb_ptr+cb+ 3,v03,mask=t_mask)
-    tl.store(comb_ptr+cb+ 4,v10,mask=t_mask);tl.store(comb_ptr+cb+ 5,v11,mask=t_mask)
-    tl.store(comb_ptr+cb+ 6,v12,mask=t_mask);tl.store(comb_ptr+cb+ 7,v13,mask=t_mask)
-    tl.store(comb_ptr+cb+ 8,v20,mask=t_mask);tl.store(comb_ptr+cb+ 9,v21,mask=t_mask)
-    tl.store(comb_ptr+cb+10,v22,mask=t_mask);tl.store(comb_ptr+cb+11,v23,mask=t_mask)
-    tl.store(comb_ptr+cb+12,v30,mask=t_mask);tl.store(comb_ptr+cb+13,v31,mask=t_mask)
-    tl.store(comb_ptr+cb+14,v32,mask=t_mask);tl.store(comb_ptr+cb+15,v33,mask=t_mask)
+        ir0 = 1.0 / (v00 + v01 + v02 + v03 + HC_EPS)
+        ir1 = 1.0 / (v10 + v11 + v12 + v13 + HC_EPS)
+        ir2 = 1.0 / (v20 + v21 + v22 + v23 + HC_EPS)
+        ir3 = 1.0 / (v30 + v31 + v32 + v33 + HC_EPS)
+        v00 *= ir0
+        v01 *= ir0
+        v02 *= ir0
+        v03 *= ir0
+        v10 *= ir1
+        v11 *= ir1
+        v12 *= ir1
+        v13 *= ir1
+        v20 *= ir2
+        v21 *= ir2
+        v22 *= ir2
+        v23 *= ir2
+        v30 *= ir3
+        v31 *= ir3
+        v32 *= ir3
+        v33 *= ir3
+        ic0 = 1.0 / (v00 + v10 + v20 + v30 + HC_EPS)
+        ic1 = 1.0 / (v01 + v11 + v21 + v31 + HC_EPS)
+        ic2 = 1.0 / (v02 + v12 + v22 + v32 + HC_EPS)
+        ic3 = 1.0 / (v03 + v13 + v23 + v33 + HC_EPS)
+        v00 *= ic0
+        v01 *= ic1
+        v02 *= ic2
+        v03 *= ic3
+        v10 *= ic0
+        v11 *= ic1
+        v12 *= ic2
+        v13 *= ic3
+        v20 *= ic0
+        v21 *= ic1
+        v22 *= ic2
+        v23 *= ic3
+        v30 *= ic0
+        v31 *= ic1
+        v32 *= ic2
+        v33 *= ic3
+    tl.store(comb_ptr + cb + 0, v00, mask=t_mask)
+    tl.store(comb_ptr + cb + 1, v01, mask=t_mask)
+    tl.store(comb_ptr + cb + 2, v02, mask=t_mask)
+    tl.store(comb_ptr + cb + 3, v03, mask=t_mask)
+    tl.store(comb_ptr + cb + 4, v10, mask=t_mask)
+    tl.store(comb_ptr + cb + 5, v11, mask=t_mask)
+    tl.store(comb_ptr + cb + 6, v12, mask=t_mask)
+    tl.store(comb_ptr + cb + 7, v13, mask=t_mask)
+    tl.store(comb_ptr + cb + 8, v20, mask=t_mask)
+    tl.store(comb_ptr + cb + 9, v21, mask=t_mask)
+    tl.store(comb_ptr + cb + 10, v22, mask=t_mask)
+    tl.store(comb_ptr + cb + 11, v23, mask=t_mask)
+    tl.store(comb_ptr + cb + 12, v30, mask=t_mask)
+    tl.store(comb_ptr + cb + 13, v31, mask=t_mask)
+    tl.store(comb_ptr + cb + 14, v32, mask=t_mask)
+    tl.store(comb_ptr + cb + 15, v33, mask=t_mask)
 
 
 @triton.jit
 def _y_scale_unrolled_hc4(
-    x_ptr, pre_ptr, y_ptr, D: tl.constexpr, BLOCK_D: tl.constexpr,
+    x_ptr,
+    pre_ptr,
+    y_ptr,
+    D: tl.constexpr,
+    BLOCK_D: tl.constexpr,
 ):
     """y_scale with tl.static_range over D chunks — vectorized on Ascend NPU."""
     pid = tl.program_id(0)
-    p0=tl.load(pre_ptr+pid*4+0); p1=tl.load(pre_ptr+pid*4+1)
-    p2=tl.load(pre_ptr+pid*4+2); p3=tl.load(pre_ptr+pid*4+3)
+    p0 = tl.load(pre_ptr + pid * 4 + 0)
+    p1 = tl.load(pre_ptr + pid * 4 + 1)
+    p2 = tl.load(pre_ptr + pid * 4 + 2)
+    p3 = tl.load(pre_ptr + pid * 4 + 3)
     xb = pid * 4 * D
     dt = y_ptr.dtype.element_ty
     for d_start in tl.static_range(0, D, BLOCK_D):
         d_off = d_start + tl.arange(0, BLOCK_D)
         d_mask = d_off < D
-        x0=tl.load(x_ptr+xb+0*D+d_off,mask=d_mask,other=0.).to(tl.float32)
-        x1=tl.load(x_ptr+xb+1*D+d_off,mask=d_mask,other=0.).to(tl.float32)
-        x2=tl.load(x_ptr+xb+2*D+d_off,mask=d_mask,other=0.).to(tl.float32)
-        x3=tl.load(x_ptr+xb+3*D+d_off,mask=d_mask,other=0.).to(tl.float32)
-        hin=x0*p0+x1*p1+x2*p2+x3*p3
-        tl.store(y_ptr+pid*D+d_off,hin.to(dt),mask=d_mask)
+        x0 = tl.load(x_ptr + xb + 0 * D + d_off, mask=d_mask, other=0.0).to(tl.float32)
+        x1 = tl.load(x_ptr + xb + 1 * D + d_off, mask=d_mask, other=0.0).to(tl.float32)
+        x2 = tl.load(x_ptr + xb + 2 * D + d_off, mask=d_mask, other=0.0).to(tl.float32)
+        x3 = tl.load(x_ptr + xb + 3 * D + d_off, mask=d_mask, other=0.0).to(tl.float32)
+        hin = x0 * p0 + x1 * p1 + x2 * p2 + x3 * p3
+        tl.store(y_ptr + pid * D + d_off, hin.to(dt), mask=d_mask)
 
 
 # ---------------------------------------------------------------------------
@@ -468,15 +799,15 @@ def _y_scale_unrolled_hc4(
 )
 @triton.jit
 def _batched_sinkhorn_yscale_kernel_hc4(
-    mixes_ptr,   # (T, 24) fp32
-    alpha_ptr,   # (3,)
-    base_ptr,    # (24,)
-    x_ptr,       # (T, 4, D) input dtype
-    pre_ptr,     # (T, 4)    fp32  OUTPUT
-    post_ptr,    # (T, 4)    fp32  OUTPUT
-    comb_ptr,    # (T, 4, 4) fp32  OUTPUT
+    mixes_ptr,  # (T, 24) fp32
+    alpha_ptr,  # (3,)
+    base_ptr,  # (24,)
+    x_ptr,  # (T, 4, D) input dtype
+    pre_ptr,  # (T, 4)    fp32  OUTPUT
+    post_ptr,  # (T, 4)    fp32  OUTPUT
+    comb_ptr,  # (T, 4, 4) fp32  OUTPUT
     logits_ptr,  # (T, 4, 4) fp32  OUTPUT
-    y_ptr,       # (T, D)    input dtype  OUTPUT
+    y_ptr,  # (T, D)    input dtype  OUTPUT
     T: tl.constexpr,
     D: tl.constexpr,
     HC_EPS: tl.constexpr,
@@ -488,8 +819,8 @@ def _batched_sinkhorn_yscale_kernel_hc4(
     BLOCK_T: tl.constexpr,
     BLOCK_D: tl.constexpr,
 ):
-    pid_t = tl.program_id(0)   # token-block index
-    pid_d = tl.program_id(1)   # D-block index
+    pid_t = tl.program_id(0)  # token-block index
+    pid_d = tl.program_id(1)  # D-block index
 
     t_off = pid_t * BLOCK_T + tl.arange(0, BLOCK_T)
     t_mask = t_off < T
@@ -504,10 +835,34 @@ def _batched_sinkhorn_yscale_kernel_hc4(
     mb = t_off * 24  # (BLOCK_T,)
 
     # Pre head: 4 sigmoid vectors
-    p0 = tl.sigmoid(tl.load(mixes_ptr + mb + 0, mask=t_mask, other=0.0) * a0 + tl.load(base_ptr + 0)) + HC_EPS
-    p1 = tl.sigmoid(tl.load(mixes_ptr + mb + 1, mask=t_mask, other=0.0) * a0 + tl.load(base_ptr + 1)) + HC_EPS
-    p2 = tl.sigmoid(tl.load(mixes_ptr + mb + 2, mask=t_mask, other=0.0) * a0 + tl.load(base_ptr + 2)) + HC_EPS
-    p3 = tl.sigmoid(tl.load(mixes_ptr + mb + 3, mask=t_mask, other=0.0) * a0 + tl.load(base_ptr + 3)) + HC_EPS
+    p0 = (
+        tl.sigmoid(
+            tl.load(mixes_ptr + mb + 0, mask=t_mask, other=0.0) * a0
+            + tl.load(base_ptr + 0)
+        )
+        + HC_EPS
+    )
+    p1 = (
+        tl.sigmoid(
+            tl.load(mixes_ptr + mb + 1, mask=t_mask, other=0.0) * a0
+            + tl.load(base_ptr + 1)
+        )
+        + HC_EPS
+    )
+    p2 = (
+        tl.sigmoid(
+            tl.load(mixes_ptr + mb + 2, mask=t_mask, other=0.0) * a0
+            + tl.load(base_ptr + 2)
+        )
+        + HC_EPS
+    )
+    p3 = (
+        tl.sigmoid(
+            tl.load(mixes_ptr + mb + 3, mask=t_mask, other=0.0) * a0
+            + tl.load(base_ptr + 3)
+        )
+        + HC_EPS
+    )
 
     # Store pre
     tl.store(pre_ptr + t_off * 4 + 0, p0, mask=t_mask)
@@ -516,39 +871,111 @@ def _batched_sinkhorn_yscale_kernel_hc4(
     tl.store(pre_ptr + t_off * 4 + 3, p3, mask=t_mask)
 
     # Post head: 4 sigmoid vectors
-    tl.store(post_ptr + t_off * 4 + 0, 2.0 * tl.sigmoid(tl.load(mixes_ptr + mb + 4, mask=t_mask, other=0.0) * a1 + tl.load(base_ptr + 4)), mask=t_mask)
-    tl.store(post_ptr + t_off * 4 + 1, 2.0 * tl.sigmoid(tl.load(mixes_ptr + mb + 5, mask=t_mask, other=0.0) * a1 + tl.load(base_ptr + 5)), mask=t_mask)
-    tl.store(post_ptr + t_off * 4 + 2, 2.0 * tl.sigmoid(tl.load(mixes_ptr + mb + 6, mask=t_mask, other=0.0) * a1 + tl.load(base_ptr + 6)), mask=t_mask)
-    tl.store(post_ptr + t_off * 4 + 3, 2.0 * tl.sigmoid(tl.load(mixes_ptr + mb + 7, mask=t_mask, other=0.0) * a1 + tl.load(base_ptr + 7)), mask=t_mask)
+    tl.store(
+        post_ptr + t_off * 4 + 0,
+        2.0
+        * tl.sigmoid(
+            tl.load(mixes_ptr + mb + 4, mask=t_mask, other=0.0) * a1
+            + tl.load(base_ptr + 4)
+        ),
+        mask=t_mask,
+    )
+    tl.store(
+        post_ptr + t_off * 4 + 1,
+        2.0
+        * tl.sigmoid(
+            tl.load(mixes_ptr + mb + 5, mask=t_mask, other=0.0) * a1
+            + tl.load(base_ptr + 5)
+        ),
+        mask=t_mask,
+    )
+    tl.store(
+        post_ptr + t_off * 4 + 2,
+        2.0
+        * tl.sigmoid(
+            tl.load(mixes_ptr + mb + 6, mask=t_mask, other=0.0) * a1
+            + tl.load(base_ptr + 6)
+        ),
+        mask=t_mask,
+    )
+    tl.store(
+        post_ptr + t_off * 4 + 3,
+        2.0
+        * tl.sigmoid(
+            tl.load(mixes_ptr + mb + 7, mask=t_mask, other=0.0) * a1
+            + tl.load(base_ptr + 7)
+        ),
+        mask=t_mask,
+    )
 
     # CombLogits: 16 vectors of BLOCK_T
-    l00 = tl.load(mixes_ptr + mb +  8, mask=t_mask, other=0.0) * a2 + tl.load(base_ptr +  8)
-    l01 = tl.load(mixes_ptr + mb +  9, mask=t_mask, other=0.0) * a2 + tl.load(base_ptr +  9)
-    l02 = tl.load(mixes_ptr + mb + 10, mask=t_mask, other=0.0) * a2 + tl.load(base_ptr + 10)
-    l03 = tl.load(mixes_ptr + mb + 11, mask=t_mask, other=0.0) * a2 + tl.load(base_ptr + 11)
-    l10 = tl.load(mixes_ptr + mb + 12, mask=t_mask, other=0.0) * a2 + tl.load(base_ptr + 12)
-    l11 = tl.load(mixes_ptr + mb + 13, mask=t_mask, other=0.0) * a2 + tl.load(base_ptr + 13)
-    l12 = tl.load(mixes_ptr + mb + 14, mask=t_mask, other=0.0) * a2 + tl.load(base_ptr + 14)
-    l13 = tl.load(mixes_ptr + mb + 15, mask=t_mask, other=0.0) * a2 + tl.load(base_ptr + 15)
-    l20 = tl.load(mixes_ptr + mb + 16, mask=t_mask, other=0.0) * a2 + tl.load(base_ptr + 16)
-    l21 = tl.load(mixes_ptr + mb + 17, mask=t_mask, other=0.0) * a2 + tl.load(base_ptr + 17)
-    l22 = tl.load(mixes_ptr + mb + 18, mask=t_mask, other=0.0) * a2 + tl.load(base_ptr + 18)
-    l23 = tl.load(mixes_ptr + mb + 19, mask=t_mask, other=0.0) * a2 + tl.load(base_ptr + 19)
-    l30 = tl.load(mixes_ptr + mb + 20, mask=t_mask, other=0.0) * a2 + tl.load(base_ptr + 20)
-    l31 = tl.load(mixes_ptr + mb + 21, mask=t_mask, other=0.0) * a2 + tl.load(base_ptr + 21)
-    l32 = tl.load(mixes_ptr + mb + 22, mask=t_mask, other=0.0) * a2 + tl.load(base_ptr + 22)
-    l33 = tl.load(mixes_ptr + mb + 23, mask=t_mask, other=0.0) * a2 + tl.load(base_ptr + 23)
+    l00 = tl.load(mixes_ptr + mb + 8, mask=t_mask, other=0.0) * a2 + tl.load(
+        base_ptr + 8
+    )
+    l01 = tl.load(mixes_ptr + mb + 9, mask=t_mask, other=0.0) * a2 + tl.load(
+        base_ptr + 9
+    )
+    l02 = tl.load(mixes_ptr + mb + 10, mask=t_mask, other=0.0) * a2 + tl.load(
+        base_ptr + 10
+    )
+    l03 = tl.load(mixes_ptr + mb + 11, mask=t_mask, other=0.0) * a2 + tl.load(
+        base_ptr + 11
+    )
+    l10 = tl.load(mixes_ptr + mb + 12, mask=t_mask, other=0.0) * a2 + tl.load(
+        base_ptr + 12
+    )
+    l11 = tl.load(mixes_ptr + mb + 13, mask=t_mask, other=0.0) * a2 + tl.load(
+        base_ptr + 13
+    )
+    l12 = tl.load(mixes_ptr + mb + 14, mask=t_mask, other=0.0) * a2 + tl.load(
+        base_ptr + 14
+    )
+    l13 = tl.load(mixes_ptr + mb + 15, mask=t_mask, other=0.0) * a2 + tl.load(
+        base_ptr + 15
+    )
+    l20 = tl.load(mixes_ptr + mb + 16, mask=t_mask, other=0.0) * a2 + tl.load(
+        base_ptr + 16
+    )
+    l21 = tl.load(mixes_ptr + mb + 17, mask=t_mask, other=0.0) * a2 + tl.load(
+        base_ptr + 17
+    )
+    l22 = tl.load(mixes_ptr + mb + 18, mask=t_mask, other=0.0) * a2 + tl.load(
+        base_ptr + 18
+    )
+    l23 = tl.load(mixes_ptr + mb + 19, mask=t_mask, other=0.0) * a2 + tl.load(
+        base_ptr + 19
+    )
+    l30 = tl.load(mixes_ptr + mb + 20, mask=t_mask, other=0.0) * a2 + tl.load(
+        base_ptr + 20
+    )
+    l31 = tl.load(mixes_ptr + mb + 21, mask=t_mask, other=0.0) * a2 + tl.load(
+        base_ptr + 21
+    )
+    l32 = tl.load(mixes_ptr + mb + 22, mask=t_mask, other=0.0) * a2 + tl.load(
+        base_ptr + 22
+    )
+    l33 = tl.load(mixes_ptr + mb + 23, mask=t_mask, other=0.0) * a2 + tl.load(
+        base_ptr + 23
+    )
 
     if SAVE_INTERMEDIATES:
         lb = t_off * 16
-        tl.store(logits_ptr + lb +  0, l00, mask=t_mask); tl.store(logits_ptr + lb +  1, l01, mask=t_mask)
-        tl.store(logits_ptr + lb +  2, l02, mask=t_mask); tl.store(logits_ptr + lb +  3, l03, mask=t_mask)
-        tl.store(logits_ptr + lb +  4, l10, mask=t_mask); tl.store(logits_ptr + lb +  5, l11, mask=t_mask)
-        tl.store(logits_ptr + lb +  6, l12, mask=t_mask); tl.store(logits_ptr + lb +  7, l13, mask=t_mask)
-        tl.store(logits_ptr + lb +  8, l20, mask=t_mask); tl.store(logits_ptr + lb +  9, l21, mask=t_mask)
-        tl.store(logits_ptr + lb + 10, l22, mask=t_mask); tl.store(logits_ptr + lb + 11, l23, mask=t_mask)
-        tl.store(logits_ptr + lb + 12, l30, mask=t_mask); tl.store(logits_ptr + lb + 13, l31, mask=t_mask)
-        tl.store(logits_ptr + lb + 14, l32, mask=t_mask); tl.store(logits_ptr + lb + 15, l33, mask=t_mask)
+        tl.store(logits_ptr + lb + 0, l00, mask=t_mask)
+        tl.store(logits_ptr + lb + 1, l01, mask=t_mask)
+        tl.store(logits_ptr + lb + 2, l02, mask=t_mask)
+        tl.store(logits_ptr + lb + 3, l03, mask=t_mask)
+        tl.store(logits_ptr + lb + 4, l10, mask=t_mask)
+        tl.store(logits_ptr + lb + 5, l11, mask=t_mask)
+        tl.store(logits_ptr + lb + 6, l12, mask=t_mask)
+        tl.store(logits_ptr + lb + 7, l13, mask=t_mask)
+        tl.store(logits_ptr + lb + 8, l20, mask=t_mask)
+        tl.store(logits_ptr + lb + 9, l21, mask=t_mask)
+        tl.store(logits_ptr + lb + 10, l22, mask=t_mask)
+        tl.store(logits_ptr + lb + 11, l23, mask=t_mask)
+        tl.store(logits_ptr + lb + 12, l30, mask=t_mask)
+        tl.store(logits_ptr + lb + 13, l31, mask=t_mask)
+        tl.store(logits_ptr + lb + 14, l32, mask=t_mask)
+        tl.store(logits_ptr + lb + 15, l33, mask=t_mask)
 
     if APPLY_CLAMP:
         l00 = tl.minimum(tl.maximum(l00, CLAMP_MIN), CLAMP_MAX)
@@ -573,76 +1000,171 @@ def _batched_sinkhorn_yscale_kernel_hc4(
     m1 = tl.maximum(tl.maximum(l10, l11), tl.maximum(l12, l13))
     m2 = tl.maximum(tl.maximum(l20, l21), tl.maximum(l22, l23))
     m3 = tl.maximum(tl.maximum(l30, l31), tl.maximum(l32, l33))
-    e00 = tl.exp(l00 - m0); e01 = tl.exp(l01 - m0); e02 = tl.exp(l02 - m0); e03 = tl.exp(l03 - m0)
-    e10 = tl.exp(l10 - m1); e11 = tl.exp(l11 - m1); e12 = tl.exp(l12 - m1); e13 = tl.exp(l13 - m1)
-    e20 = tl.exp(l20 - m2); e21 = tl.exp(l21 - m2); e22 = tl.exp(l22 - m2); e23 = tl.exp(l23 - m2)
-    e30 = tl.exp(l30 - m3); e31 = tl.exp(l31 - m3); e32 = tl.exp(l32 - m3); e33 = tl.exp(l33 - m3)
+    e00 = tl.exp(l00 - m0)
+    e01 = tl.exp(l01 - m0)
+    e02 = tl.exp(l02 - m0)
+    e03 = tl.exp(l03 - m0)
+    e10 = tl.exp(l10 - m1)
+    e11 = tl.exp(l11 - m1)
+    e12 = tl.exp(l12 - m1)
+    e13 = tl.exp(l13 - m1)
+    e20 = tl.exp(l20 - m2)
+    e21 = tl.exp(l21 - m2)
+    e22 = tl.exp(l22 - m2)
+    e23 = tl.exp(l23 - m2)
+    e30 = tl.exp(l30 - m3)
+    e31 = tl.exp(l31 - m3)
+    e32 = tl.exp(l32 - m3)
+    e33 = tl.exp(l33 - m3)
     inv_r0 = 1.0 / (e00 + e01 + e02 + e03)
     inv_r1 = 1.0 / (e10 + e11 + e12 + e13)
     inv_r2 = 1.0 / (e20 + e21 + e22 + e23)
     inv_r3 = 1.0 / (e30 + e31 + e32 + e33)
-    v00 = e00 * inv_r0; v01 = e01 * inv_r0; v02 = e02 * inv_r0; v03 = e03 * inv_r0
-    v10 = e10 * inv_r1; v11 = e11 * inv_r1; v12 = e12 * inv_r1; v13 = e13 * inv_r1
-    v20 = e20 * inv_r2; v21 = e21 * inv_r2; v22 = e22 * inv_r2; v23 = e23 * inv_r2
-    v30 = e30 * inv_r3; v31 = e31 * inv_r3; v32 = e32 * inv_r3; v33 = e33 * inv_r3
+    v00 = e00 * inv_r0
+    v01 = e01 * inv_r0
+    v02 = e02 * inv_r0
+    v03 = e03 * inv_r0
+    v10 = e10 * inv_r1
+    v11 = e11 * inv_r1
+    v12 = e12 * inv_r1
+    v13 = e13 * inv_r1
+    v20 = e20 * inv_r2
+    v21 = e21 * inv_r2
+    v22 = e22 * inv_r2
+    v23 = e23 * inv_r2
+    v30 = e30 * inv_r3
+    v31 = e31 * inv_r3
+    v32 = e32 * inv_r3
+    v33 = e33 * inv_r3
 
     # Add HC_EPS then col-normalize (first pass)
-    v00 = v00 + HC_EPS; v01 = v01 + HC_EPS; v02 = v02 + HC_EPS; v03 = v03 + HC_EPS
-    v10 = v10 + HC_EPS; v11 = v11 + HC_EPS; v12 = v12 + HC_EPS; v13 = v13 + HC_EPS
-    v20 = v20 + HC_EPS; v21 = v21 + HC_EPS; v22 = v22 + HC_EPS; v23 = v23 + HC_EPS
-    v30 = v30 + HC_EPS; v31 = v31 + HC_EPS; v32 = v32 + HC_EPS; v33 = v33 + HC_EPS
+    v00 = v00 + HC_EPS
+    v01 = v01 + HC_EPS
+    v02 = v02 + HC_EPS
+    v03 = v03 + HC_EPS
+    v10 = v10 + HC_EPS
+    v11 = v11 + HC_EPS
+    v12 = v12 + HC_EPS
+    v13 = v13 + HC_EPS
+    v20 = v20 + HC_EPS
+    v21 = v21 + HC_EPS
+    v22 = v22 + HC_EPS
+    v23 = v23 + HC_EPS
+    v30 = v30 + HC_EPS
+    v31 = v31 + HC_EPS
+    v32 = v32 + HC_EPS
+    v33 = v33 + HC_EPS
     inv_c0 = 1.0 / (v00 + v10 + v20 + v30 + HC_EPS)
     inv_c1 = 1.0 / (v01 + v11 + v21 + v31 + HC_EPS)
     inv_c2 = 1.0 / (v02 + v12 + v22 + v32 + HC_EPS)
     inv_c3 = 1.0 / (v03 + v13 + v23 + v33 + HC_EPS)
-    v00 = v00 * inv_c0; v01 = v01 * inv_c1; v02 = v02 * inv_c2; v03 = v03 * inv_c3
-    v10 = v10 * inv_c0; v11 = v11 * inv_c1; v12 = v12 * inv_c2; v13 = v13 * inv_c3
-    v20 = v20 * inv_c0; v21 = v21 * inv_c1; v22 = v22 * inv_c2; v23 = v23 * inv_c3
-    v30 = v30 * inv_c0; v31 = v31 * inv_c1; v32 = v32 * inv_c2; v33 = v33 * inv_c3
+    v00 = v00 * inv_c0
+    v01 = v01 * inv_c1
+    v02 = v02 * inv_c2
+    v03 = v03 * inv_c3
+    v10 = v10 * inv_c0
+    v11 = v11 * inv_c1
+    v12 = v12 * inv_c2
+    v13 = v13 * inv_c3
+    v20 = v20 * inv_c0
+    v21 = v21 * inv_c1
+    v22 = v22 * inv_c2
+    v23 = v23 * inv_c3
+    v30 = v30 * inv_c0
+    v31 = v31 * inv_c1
+    v32 = v32 * inv_c2
+    v33 = v33 * inv_c3
 
     for _ in range(ITERS - 1):
         ir0 = 1.0 / (v00 + v01 + v02 + v03 + HC_EPS)
         ir1 = 1.0 / (v10 + v11 + v12 + v13 + HC_EPS)
         ir2 = 1.0 / (v20 + v21 + v22 + v23 + HC_EPS)
         ir3 = 1.0 / (v30 + v31 + v32 + v33 + HC_EPS)
-        v00 = v00 * ir0; v01 = v01 * ir0; v02 = v02 * ir0; v03 = v03 * ir0
-        v10 = v10 * ir1; v11 = v11 * ir1; v12 = v12 * ir1; v13 = v13 * ir1
-        v20 = v20 * ir2; v21 = v21 * ir2; v22 = v22 * ir2; v23 = v23 * ir2
-        v30 = v30 * ir3; v31 = v31 * ir3; v32 = v32 * ir3; v33 = v33 * ir3
+        v00 = v00 * ir0
+        v01 = v01 * ir0
+        v02 = v02 * ir0
+        v03 = v03 * ir0
+        v10 = v10 * ir1
+        v11 = v11 * ir1
+        v12 = v12 * ir1
+        v13 = v13 * ir1
+        v20 = v20 * ir2
+        v21 = v21 * ir2
+        v22 = v22 * ir2
+        v23 = v23 * ir2
+        v30 = v30 * ir3
+        v31 = v31 * ir3
+        v32 = v32 * ir3
+        v33 = v33 * ir3
         ic0 = 1.0 / (v00 + v10 + v20 + v30 + HC_EPS)
         ic1 = 1.0 / (v01 + v11 + v21 + v31 + HC_EPS)
         ic2 = 1.0 / (v02 + v12 + v22 + v32 + HC_EPS)
         ic3 = 1.0 / (v03 + v13 + v23 + v33 + HC_EPS)
-        v00 = v00 * ic0; v01 = v01 * ic1; v02 = v02 * ic2; v03 = v03 * ic3
-        v10 = v10 * ic0; v11 = v11 * ic1; v12 = v12 * ic2; v13 = v13 * ic3
-        v20 = v20 * ic0; v21 = v21 * ic1; v22 = v22 * ic2; v23 = v23 * ic3
-        v30 = v30 * ic0; v31 = v31 * ic1; v32 = v32 * ic2; v33 = v33 * ic3
+        v00 = v00 * ic0
+        v01 = v01 * ic1
+        v02 = v02 * ic2
+        v03 = v03 * ic3
+        v10 = v10 * ic0
+        v11 = v11 * ic1
+        v12 = v12 * ic2
+        v13 = v13 * ic3
+        v20 = v20 * ic0
+        v21 = v21 * ic1
+        v22 = v22 * ic2
+        v23 = v23 * ic3
+        v30 = v30 * ic0
+        v31 = v31 * ic1
+        v32 = v32 * ic2
+        v33 = v33 * ic3
 
     # Store comb_frag
     cb = t_off * 16
-    tl.store(comb_ptr + cb +  0, v00, mask=t_mask); tl.store(comb_ptr + cb +  1, v01, mask=t_mask)
-    tl.store(comb_ptr + cb +  2, v02, mask=t_mask); tl.store(comb_ptr + cb +  3, v03, mask=t_mask)
-    tl.store(comb_ptr + cb +  4, v10, mask=t_mask); tl.store(comb_ptr + cb +  5, v11, mask=t_mask)
-    tl.store(comb_ptr + cb +  6, v12, mask=t_mask); tl.store(comb_ptr + cb +  7, v13, mask=t_mask)
-    tl.store(comb_ptr + cb +  8, v20, mask=t_mask); tl.store(comb_ptr + cb +  9, v21, mask=t_mask)
-    tl.store(comb_ptr + cb + 10, v22, mask=t_mask); tl.store(comb_ptr + cb + 11, v23, mask=t_mask)
-    tl.store(comb_ptr + cb + 12, v30, mask=t_mask); tl.store(comb_ptr + cb + 13, v31, mask=t_mask)
-    tl.store(comb_ptr + cb + 14, v32, mask=t_mask); tl.store(comb_ptr + cb + 15, v33, mask=t_mask)
+    tl.store(comb_ptr + cb + 0, v00, mask=t_mask)
+    tl.store(comb_ptr + cb + 1, v01, mask=t_mask)
+    tl.store(comb_ptr + cb + 2, v02, mask=t_mask)
+    tl.store(comb_ptr + cb + 3, v03, mask=t_mask)
+    tl.store(comb_ptr + cb + 4, v10, mask=t_mask)
+    tl.store(comb_ptr + cb + 5, v11, mask=t_mask)
+    tl.store(comb_ptr + cb + 6, v12, mask=t_mask)
+    tl.store(comb_ptr + cb + 7, v13, mask=t_mask)
+    tl.store(comb_ptr + cb + 8, v20, mask=t_mask)
+    tl.store(comb_ptr + cb + 9, v21, mask=t_mask)
+    tl.store(comb_ptr + cb + 10, v22, mask=t_mask)
+    tl.store(comb_ptr + cb + 11, v23, mask=t_mask)
+    tl.store(comb_ptr + cb + 12, v30, mask=t_mask)
+    tl.store(comb_ptr + cb + 13, v31, mask=t_mask)
+    tl.store(comb_ptr + cb + 14, v32, mask=t_mask)
+    tl.store(comb_ptr + cb + 15, v33, mask=t_mask)
 
     # y_scale: hin[t, d] = sum_n x[t,n,d] * pre[t,n]  — fused here to avoid extra kernel
     xb = t_off * 4 * D  # (BLOCK_T,)
-    x0v = tl.load(x_ptr + xb[:, None] + 0 * D + d_off[None, :],
-                  mask=t_mask[:, None] & d_mask[None, :], other=0.0).to(tl.float32)
-    x1v = tl.load(x_ptr + xb[:, None] + 1 * D + d_off[None, :],
-                  mask=t_mask[:, None] & d_mask[None, :], other=0.0).to(tl.float32)
-    x2v = tl.load(x_ptr + xb[:, None] + 2 * D + d_off[None, :],
-                  mask=t_mask[:, None] & d_mask[None, :], other=0.0).to(tl.float32)
-    x3v = tl.load(x_ptr + xb[:, None] + 3 * D + d_off[None, :],
-                  mask=t_mask[:, None] & d_mask[None, :], other=0.0).to(tl.float32)
+    x0v = tl.load(
+        x_ptr + xb[:, None] + 0 * D + d_off[None, :],
+        mask=t_mask[:, None] & d_mask[None, :],
+        other=0.0,
+    ).to(tl.float32)
+    x1v = tl.load(
+        x_ptr + xb[:, None] + 1 * D + d_off[None, :],
+        mask=t_mask[:, None] & d_mask[None, :],
+        other=0.0,
+    ).to(tl.float32)
+    x2v = tl.load(
+        x_ptr + xb[:, None] + 2 * D + d_off[None, :],
+        mask=t_mask[:, None] & d_mask[None, :],
+        other=0.0,
+    ).to(tl.float32)
+    x3v = tl.load(
+        x_ptr + xb[:, None] + 3 * D + d_off[None, :],
+        mask=t_mask[:, None] & d_mask[None, :],
+        other=0.0,
+    ).to(tl.float32)
     hin = x0v * p0[:, None] + x1v * p1[:, None] + x2v * p2[:, None] + x3v * p3[:, None]
     dt = y_ptr.dtype.element_ty
-    tl.store(y_ptr + t_off[:, None] * D + d_off[None, :],
-             hin.to(dt), mask=t_mask[:, None] & d_mask[None, :])
+    tl.store(
+        y_ptr + t_off[:, None] * D + d_off[None, :],
+        hin.to(dt),
+        mask=t_mask[:, None] & d_mask[None, :],
+    )
 
 
 # ---------------------------------------------------------------------------
@@ -658,15 +1180,15 @@ def _batched_sinkhorn_yscale_kernel_hc4(
 )
 @triton.jit
 def _heads_sinkhorn_yscale_kernel_hc4(
-    mixes_ptr,      # (T, 24) fp32
-    alpha_ptr,      # (3,)
-    base_ptr,       # (24,)
-    x_ptr,          # (T, 4, D) input dtype
-    pre_ptr,        # (T, 4)    fp32  OUTPUT
-    post_ptr,       # (T, 4)    fp32  OUTPUT
-    comb_ptr,       # (T, 4, 4) fp32  OUTPUT
-    logits_ptr,     # (T, 4, 4) fp32  OUTPUT (saved pre-clamp logits)
-    y_ptr,          # (T, D)    input dtype  OUTPUT (hin = sum_n x*pre)
+    mixes_ptr,  # (T, 24) fp32
+    alpha_ptr,  # (3,)
+    base_ptr,  # (24,)
+    x_ptr,  # (T, 4, D) input dtype
+    pre_ptr,  # (T, 4)    fp32  OUTPUT
+    post_ptr,  # (T, 4)    fp32  OUTPUT
+    comb_ptr,  # (T, 4, 4) fp32  OUTPUT
+    logits_ptr,  # (T, 4, 4) fp32  OUTPUT (saved pre-clamp logits)
+    y_ptr,  # (T, D)    input dtype  OUTPUT (hin = sum_n x*pre)
     D: tl.constexpr,
     HC_EPS: tl.constexpr,
     CLAMP_MIN: tl.constexpr,
@@ -768,32 +1290,80 @@ def _heads_sinkhorn_yscale_kernel_hc4(
     m1 = tl.maximum(tl.maximum(l10, l11), tl.maximum(l12, l13))
     m2 = tl.maximum(tl.maximum(l20, l21), tl.maximum(l22, l23))
     m3 = tl.maximum(tl.maximum(l30, l31), tl.maximum(l32, l33))
-    e00 = tl.exp(l00 - m0); e01 = tl.exp(l01 - m0); e02 = tl.exp(l02 - m0); e03 = tl.exp(l03 - m0)
-    e10 = tl.exp(l10 - m1); e11 = tl.exp(l11 - m1); e12 = tl.exp(l12 - m1); e13 = tl.exp(l13 - m1)
-    e20 = tl.exp(l20 - m2); e21 = tl.exp(l21 - m2); e22 = tl.exp(l22 - m2); e23 = tl.exp(l23 - m2)
-    e30 = tl.exp(l30 - m3); e31 = tl.exp(l31 - m3); e32 = tl.exp(l32 - m3); e33 = tl.exp(l33 - m3)
+    e00 = tl.exp(l00 - m0)
+    e01 = tl.exp(l01 - m0)
+    e02 = tl.exp(l02 - m0)
+    e03 = tl.exp(l03 - m0)
+    e10 = tl.exp(l10 - m1)
+    e11 = tl.exp(l11 - m1)
+    e12 = tl.exp(l12 - m1)
+    e13 = tl.exp(l13 - m1)
+    e20 = tl.exp(l20 - m2)
+    e21 = tl.exp(l21 - m2)
+    e22 = tl.exp(l22 - m2)
+    e23 = tl.exp(l23 - m2)
+    e30 = tl.exp(l30 - m3)
+    e31 = tl.exp(l31 - m3)
+    e32 = tl.exp(l32 - m3)
+    e33 = tl.exp(l33 - m3)
     inv_r0 = 1.0 / (e00 + e01 + e02 + e03)
     inv_r1 = 1.0 / (e10 + e11 + e12 + e13)
     inv_r2 = 1.0 / (e20 + e21 + e22 + e23)
     inv_r3 = 1.0 / (e30 + e31 + e32 + e33)
-    v00 = e00 * inv_r0; v01 = e01 * inv_r0; v02 = e02 * inv_r0; v03 = e03 * inv_r0
-    v10 = e10 * inv_r1; v11 = e11 * inv_r1; v12 = e12 * inv_r1; v13 = e13 * inv_r1
-    v20 = e20 * inv_r2; v21 = e21 * inv_r2; v22 = e22 * inv_r2; v23 = e23 * inv_r2
-    v30 = e30 * inv_r3; v31 = e31 * inv_r3; v32 = e32 * inv_r3; v33 = e33 * inv_r3
+    v00 = e00 * inv_r0
+    v01 = e01 * inv_r0
+    v02 = e02 * inv_r0
+    v03 = e03 * inv_r0
+    v10 = e10 * inv_r1
+    v11 = e11 * inv_r1
+    v12 = e12 * inv_r1
+    v13 = e13 * inv_r1
+    v20 = e20 * inv_r2
+    v21 = e21 * inv_r2
+    v22 = e22 * inv_r2
+    v23 = e23 * inv_r2
+    v30 = e30 * inv_r3
+    v31 = e31 * inv_r3
+    v32 = e32 * inv_r3
+    v33 = e33 * inv_r3
 
     # Add HC_EPS then col-normalize (first pass)
-    v00 = v00 + HC_EPS; v01 = v01 + HC_EPS; v02 = v02 + HC_EPS; v03 = v03 + HC_EPS
-    v10 = v10 + HC_EPS; v11 = v11 + HC_EPS; v12 = v12 + HC_EPS; v13 = v13 + HC_EPS
-    v20 = v20 + HC_EPS; v21 = v21 + HC_EPS; v22 = v22 + HC_EPS; v23 = v23 + HC_EPS
-    v30 = v30 + HC_EPS; v31 = v31 + HC_EPS; v32 = v32 + HC_EPS; v33 = v33 + HC_EPS
+    v00 = v00 + HC_EPS
+    v01 = v01 + HC_EPS
+    v02 = v02 + HC_EPS
+    v03 = v03 + HC_EPS
+    v10 = v10 + HC_EPS
+    v11 = v11 + HC_EPS
+    v12 = v12 + HC_EPS
+    v13 = v13 + HC_EPS
+    v20 = v20 + HC_EPS
+    v21 = v21 + HC_EPS
+    v22 = v22 + HC_EPS
+    v23 = v23 + HC_EPS
+    v30 = v30 + HC_EPS
+    v31 = v31 + HC_EPS
+    v32 = v32 + HC_EPS
+    v33 = v33 + HC_EPS
     inv_c0 = 1.0 / (v00 + v10 + v20 + v30 + HC_EPS)
     inv_c1 = 1.0 / (v01 + v11 + v21 + v31 + HC_EPS)
     inv_c2 = 1.0 / (v02 + v12 + v22 + v32 + HC_EPS)
     inv_c3 = 1.0 / (v03 + v13 + v23 + v33 + HC_EPS)
-    v00 = v00 * inv_c0; v01 = v01 * inv_c1; v02 = v02 * inv_c2; v03 = v03 * inv_c3
-    v10 = v10 * inv_c0; v11 = v11 * inv_c1; v12 = v12 * inv_c2; v13 = v13 * inv_c3
-    v20 = v20 * inv_c0; v21 = v21 * inv_c1; v22 = v22 * inv_c2; v23 = v23 * inv_c3
-    v30 = v30 * inv_c0; v31 = v31 * inv_c1; v32 = v32 * inv_c2; v33 = v33 * inv_c3
+    v00 = v00 * inv_c0
+    v01 = v01 * inv_c1
+    v02 = v02 * inv_c2
+    v03 = v03 * inv_c3
+    v10 = v10 * inv_c0
+    v11 = v11 * inv_c1
+    v12 = v12 * inv_c2
+    v13 = v13 * inv_c3
+    v20 = v20 * inv_c0
+    v21 = v21 * inv_c1
+    v22 = v22 * inv_c2
+    v23 = v23 * inv_c3
+    v30 = v30 * inv_c0
+    v31 = v31 * inv_c1
+    v32 = v32 * inv_c2
+    v33 = v33 * inv_c3
 
     # Remaining (ITERS-1) iterations: row-norm then col-norm
     for _ in tl.static_range(ITERS - 1):
@@ -801,28 +1371,60 @@ def _heads_sinkhorn_yscale_kernel_hc4(
         ir1 = 1.0 / (v10 + v11 + v12 + v13 + HC_EPS)
         ir2 = 1.0 / (v20 + v21 + v22 + v23 + HC_EPS)
         ir3 = 1.0 / (v30 + v31 + v32 + v33 + HC_EPS)
-        v00 = v00 * ir0; v01 = v01 * ir0; v02 = v02 * ir0; v03 = v03 * ir0
-        v10 = v10 * ir1; v11 = v11 * ir1; v12 = v12 * ir1; v13 = v13 * ir1
-        v20 = v20 * ir2; v21 = v21 * ir2; v22 = v22 * ir2; v23 = v23 * ir2
-        v30 = v30 * ir3; v31 = v31 * ir3; v32 = v32 * ir3; v33 = v33 * ir3
+        v00 = v00 * ir0
+        v01 = v01 * ir0
+        v02 = v02 * ir0
+        v03 = v03 * ir0
+        v10 = v10 * ir1
+        v11 = v11 * ir1
+        v12 = v12 * ir1
+        v13 = v13 * ir1
+        v20 = v20 * ir2
+        v21 = v21 * ir2
+        v22 = v22 * ir2
+        v23 = v23 * ir2
+        v30 = v30 * ir3
+        v31 = v31 * ir3
+        v32 = v32 * ir3
+        v33 = v33 * ir3
         ic0 = 1.0 / (v00 + v10 + v20 + v30 + HC_EPS)
         ic1 = 1.0 / (v01 + v11 + v21 + v31 + HC_EPS)
         ic2 = 1.0 / (v02 + v12 + v22 + v32 + HC_EPS)
         ic3 = 1.0 / (v03 + v13 + v23 + v33 + HC_EPS)
-        v00 = v00 * ic0; v01 = v01 * ic1; v02 = v02 * ic2; v03 = v03 * ic3
-        v10 = v10 * ic0; v11 = v11 * ic1; v12 = v12 * ic2; v13 = v13 * ic3
-        v20 = v20 * ic0; v21 = v21 * ic1; v22 = v22 * ic2; v23 = v23 * ic3
-        v30 = v30 * ic0; v31 = v31 * ic1; v32 = v32 * ic2; v33 = v33 * ic3
+        v00 = v00 * ic0
+        v01 = v01 * ic1
+        v02 = v02 * ic2
+        v03 = v03 * ic3
+        v10 = v10 * ic0
+        v11 = v11 * ic1
+        v12 = v12 * ic2
+        v13 = v13 * ic3
+        v20 = v20 * ic0
+        v21 = v21 * ic1
+        v22 = v22 * ic2
+        v23 = v23 * ic3
+        v30 = v30 * ic0
+        v31 = v31 * ic1
+        v32 = v32 * ic2
+        v33 = v33 * ic3
 
     cb = pid * 16
-    tl.store(comb_ptr + cb + 0, v00);  tl.store(comb_ptr + cb + 1, v01)
-    tl.store(comb_ptr + cb + 2, v02);  tl.store(comb_ptr + cb + 3, v03)
-    tl.store(comb_ptr + cb + 4, v10);  tl.store(comb_ptr + cb + 5, v11)
-    tl.store(comb_ptr + cb + 6, v12);  tl.store(comb_ptr + cb + 7, v13)
-    tl.store(comb_ptr + cb + 8, v20);  tl.store(comb_ptr + cb + 9, v21)
-    tl.store(comb_ptr + cb + 10, v22); tl.store(comb_ptr + cb + 11, v23)
-    tl.store(comb_ptr + cb + 12, v30); tl.store(comb_ptr + cb + 13, v31)
-    tl.store(comb_ptr + cb + 14, v32); tl.store(comb_ptr + cb + 15, v33)
+    tl.store(comb_ptr + cb + 0, v00)
+    tl.store(comb_ptr + cb + 1, v01)
+    tl.store(comb_ptr + cb + 2, v02)
+    tl.store(comb_ptr + cb + 3, v03)
+    tl.store(comb_ptr + cb + 4, v10)
+    tl.store(comb_ptr + cb + 5, v11)
+    tl.store(comb_ptr + cb + 6, v12)
+    tl.store(comb_ptr + cb + 7, v13)
+    tl.store(comb_ptr + cb + 8, v20)
+    tl.store(comb_ptr + cb + 9, v21)
+    tl.store(comb_ptr + cb + 10, v22)
+    tl.store(comb_ptr + cb + 11, v23)
+    tl.store(comb_ptr + cb + 12, v30)
+    tl.store(comb_ptr + cb + 13, v31)
+    tl.store(comb_ptr + cb + 14, v32)
+    tl.store(comb_ptr + cb + 15, v33)
 
     # ---- Fused y_scale: y[d] = sum_n(x[n,d] * pre[n]) ----
     xb = pid * 4 * D
@@ -895,7 +1497,9 @@ def mhc_pre_clamp_sinkhorn(
         # Full path: materialize x_scaled for backward pass
         x_scaled = torch.empty(T, hc_d, dtype=torch.float32, device=xf.device)
         _rms_scale_kernel[(T,)](
-            xf, x_scaled, inv_rms,
+            xf,
+            x_scaled,
+            inv_rms,
             HC_D=hc_d,
             D_INV=1.0 / hc_d,
             NORM_EPS=norm_eps,
@@ -906,7 +1510,8 @@ def mhc_pre_clamp_sinkhorn(
         # mixes = (x * inv_rms) @ phi^T = inv_rms * (x @ phi^T)
         x_scaled = None
         _rms_only_kernel[(T,)](
-            xf, inv_rms,
+            xf,
+            inv_rms,
             HC_D=hc_d,
             D_INV=1.0 / hc_d,
             NORM_EPS=norm_eps,
@@ -918,7 +1523,11 @@ def mhc_pre_clamp_sinkhorn(
     pre = torch.empty(T, N, dtype=torch.float32, device=xf.device)
     post_out = torch.empty(T, N, dtype=torch.float32, device=xf.device)
     comb_frag = torch.empty(T, N, N, dtype=torch.float32, device=xf.device)
-    h_res_logits = torch.empty(T, N, N, dtype=torch.float32, device=xf.device) if need_backward else torch.empty(0, device=xf.device)
+    h_res_logits = (
+        torch.empty(T, N, N, dtype=torch.float32, device=xf.device)
+        if need_backward
+        else torch.empty(0, device=xf.device)
+    )
 
     apply_clamp = 1 if (clamp_min != 0.0 or clamp_max != 0.0) else 0
 
@@ -929,23 +1538,38 @@ def mhc_pre_clamp_sinkhorn(
     BLOCK_T = 32
     grid = (triton.cdiv(T, BLOCK_T),)
     _sinkhorn_batched_14_hc4[grid](
-        mixes, alpha.to(torch.float32), base.to(torch.float32),
-        pre, post_out, comb_frag,
-        T=T, BLOCK_T=BLOCK_T,
+        mixes,
+        alpha.to(torch.float32),
+        base.to(torch.float32),
+        pre,
+        post_out,
+        comb_frag,
+        T=T,
+        BLOCK_T=BLOCK_T,
         HC_EPS=hc_eps,
         CLAMP_MIN=float(clamp_min),
         CLAMP_MAX=float(clamp_max),
-        num_warps=4, num_stages=1,
+        num_warps=4,
+        num_stages=1,
     )
     _sinkhorn_continue5_hc4[grid](
-        comb_frag, T=T, BLOCK_T=BLOCK_T, HC_EPS=hc_eps,
-        num_warps=4, num_stages=1,
+        comb_frag,
+        T=T,
+        BLOCK_T=BLOCK_T,
+        HC_EPS=hc_eps,
+        num_warps=4,
+        num_stages=1,
     )
     if need_backward:
         # Save logits: re-run sinkhorn kernel with SAVE_INTERMEDIATES via old kernel
         _heads_sinkhorn_kernel_hc4[(T,)](
-            mixes, alpha.to(torch.float32), base.to(torch.float32),
-            pre, post_out, comb_frag, h_res_logits,
+            mixes,
+            alpha.to(torch.float32),
+            base.to(torch.float32),
+            pre,
+            post_out,
+            comb_frag,
+            h_res_logits,
             HC_EPS=hc_eps,
             CLAMP_MIN=float(clamp_min),
             CLAMP_MAX=float(clamp_max),
@@ -953,7 +1577,9 @@ def mhc_pre_clamp_sinkhorn(
             ITERS=int(iter_times),
             SAVE_INTERMEDIATES=1,
         )
-    _y_scale_unrolled_hc4[(T,)](xf.reshape(T, N, D), pre, y, D=D, BLOCK_D=256, num_warps=4, num_stages=1)
+    _y_scale_unrolled_hc4[(T,)](
+        xf.reshape(T, N, D), pre, y, D=D, BLOCK_D=256, num_warps=4, num_stages=1
+    )
 
     result = {
         "y": y.reshape(shape),
@@ -972,9 +1598,14 @@ def mhc_pre_clamp_sinkhorn(
 
 
 def mhc_pre_clamp_sinkhorn_ref(
-    x, phi, alpha, base,
-    norm_eps=1e-6, hc_eps=1e-6,
-    clamp_min=0.0, clamp_max=0.0,
+    x,
+    phi,
+    alpha,
+    base,
+    norm_eps=1e-6,
+    hc_eps=1e-6,
+    clamp_min=0.0,
+    clamp_max=0.0,
     iter_times=20,
 ):
     """PyTorch reference implementation (aclnn semantic).
@@ -995,8 +1626,8 @@ def mhc_pre_clamp_sinkhorn_ref(
     a = alpha.float()
     b = base.float()
     pre = torch.sigmoid(mixes[:, :N] * a[0] + b[:N]) + hc_eps
-    post_out = 2.0 * torch.sigmoid(mixes[:, N:2*N] * a[1] + b[N:2*N])
-    logits = (mixes[:, 2*N:] * a[2] + b[2*N:]).reshape(T, N, N)
+    post_out = 2.0 * torch.sigmoid(mixes[:, N : 2 * N] * a[1] + b[N : 2 * N])
+    logits = (mixes[:, 2 * N :] * a[2] + b[2 * N :]).reshape(T, N, N)
     if clamp_min != 0.0 or clamp_max != 0.0:
         logits_c = torch.clamp(logits, clamp_min, clamp_max)
     else:

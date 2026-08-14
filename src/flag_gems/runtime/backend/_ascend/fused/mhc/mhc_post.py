@@ -57,6 +57,7 @@ logger = logging.getLogger(__name__)
 
 try:
     import triton.experimental.tle as tle
+
     _HAS_DSA = hasattr(tle, "dsa") and hasattr(tle.dsa, "alloc")
 except (ImportError, AttributeError):
     tle = None
@@ -101,10 +102,10 @@ def _mhc_post_kernel_tle(
     hp = tle.dsa.to_tensor(hpost_ub)  # [4] f32
 
     hr_vec = tle.dsa.to_tensor(hres_ub)  # [16] f32
-    hr0 = tl.reshape(tle.dsa.extract_slice(hr_vec, (0, ), (4, ), (1, )), [4])
-    hr1 = tl.reshape(tle.dsa.extract_slice(hr_vec, (4, ), (4, ), (1, )), [4])
-    hr2 = tl.reshape(tle.dsa.extract_slice(hr_vec, (8, ), (4, ), (1, )), [4])
-    hr3 = tl.reshape(tle.dsa.extract_slice(hr_vec, (12, ), (4, ), (1, )), [4])
+    hr0 = tl.reshape(tle.dsa.extract_slice(hr_vec, (0,), (4,), (1,)), [4])
+    hr1 = tl.reshape(tle.dsa.extract_slice(hr_vec, (4,), (4,), (1,)), [4])
+    hr2 = tl.reshape(tle.dsa.extract_slice(hr_vec, (8,), (4,), (1,)), [4])
+    hr3 = tl.reshape(tle.dsa.extract_slice(hr_vec, (12,), (4,), (1,)), [4])
 
     # ---- Allocate double-buffered UB for x[4,BLOCK_D] and h_out[BLOCK_D] ------
     ho_ub = tle.dsa.alloc([BLOCK_D], dtype=x_dt, mem_addr_space=tle.dsa.ascend.UB)
@@ -125,10 +126,18 @@ def _mhc_post_kernel_tle(
         # -- Compute stage: parallel FMA across 4 heads -----------------------
         ho = tle.dsa.to_tensor(ho_ub).to(tl.float32)  # [BLOCK_D]
         x2d = tle.dsa.to_tensor(x_ub).to(tl.float32)  # [4, BLOCK_D]
-        x0 = tl.reshape(tle.dsa.extract_slice(x2d, (0, 0), (1, BLOCK_D), (1, 1)), [BLOCK_D])
-        x1 = tl.reshape(tle.dsa.extract_slice(x2d, (1, 0), (1, BLOCK_D), (1, 1)), [BLOCK_D])
-        x2 = tl.reshape(tle.dsa.extract_slice(x2d, (2, 0), (1, BLOCK_D), (1, 1)), [BLOCK_D])
-        x3 = tl.reshape(tle.dsa.extract_slice(x2d, (3, 0), (1, BLOCK_D), (1, 1)), [BLOCK_D])
+        x0 = tl.reshape(
+            tle.dsa.extract_slice(x2d, (0, 0), (1, BLOCK_D), (1, 1)), [BLOCK_D]
+        )
+        x1 = tl.reshape(
+            tle.dsa.extract_slice(x2d, (1, 0), (1, BLOCK_D), (1, 1)), [BLOCK_D]
+        )
+        x2 = tl.reshape(
+            tle.dsa.extract_slice(x2d, (2, 0), (1, BLOCK_D), (1, 1)), [BLOCK_D]
+        )
+        x3 = tl.reshape(
+            tle.dsa.extract_slice(x2d, (3, 0), (1, BLOCK_D), (1, 1)), [BLOCK_D]
+        )
 
         with tle.dsa.hint(inter_no_alias=True):
             Y = tl.expand_dims(hp, 1) * tl.expand_dims(ho, 0)  # [4, BLOCK_D]
@@ -138,10 +147,18 @@ def _mhc_post_kernel_tle(
             Y += tl.expand_dims(hr3, 1) * tl.expand_dims(x3, 0)
 
         # -- Store: to_buffer + dsa.copy (matching AscendC CopyOutTile) -------
-        y0 = tl.reshape(tle.dsa.extract_slice(Y, (0, 0), (1, BLOCK_D), (1, 1)), [BLOCK_D])
-        y1 = tl.reshape(tle.dsa.extract_slice(Y, (1, 0), (1, BLOCK_D), (1, 1)), [BLOCK_D])
-        y2 = tl.reshape(tle.dsa.extract_slice(Y, (2, 0), (1, BLOCK_D), (1, 1)), [BLOCK_D])
-        y3 = tl.reshape(tle.dsa.extract_slice(Y, (3, 0), (1, BLOCK_D), (1, 1)), [BLOCK_D])
+        y0 = tl.reshape(
+            tle.dsa.extract_slice(Y, (0, 0), (1, BLOCK_D), (1, 1)), [BLOCK_D]
+        )
+        y1 = tl.reshape(
+            tle.dsa.extract_slice(Y, (1, 0), (1, BLOCK_D), (1, 1)), [BLOCK_D]
+        )
+        y2 = tl.reshape(
+            tle.dsa.extract_slice(Y, (2, 0), (1, BLOCK_D), (1, 1)), [BLOCK_D]
+        )
+        y3 = tl.reshape(
+            tle.dsa.extract_slice(Y, (3, 0), (1, BLOCK_D), (1, 1)), [BLOCK_D]
+        )
 
         y0b = tle.dsa.to_buffer(y0.to(x_dt), tle.dsa.ascend.UB)
         y1b = tle.dsa.to_buffer(y1.to(x_dt), tle.dsa.ascend.UB)
@@ -200,10 +217,18 @@ def _mhc_post_kernel_tle_rows(
     # Row j of h_res[j,i] contains the coefficients of x[j] for all 4 output heads.
     # Extract contiguous [4] slices — one per input x row:
     hr_vec = tle.dsa.to_tensor(hres_ub)  # [16] f32
-    hr0 = tl.reshape(tle.dsa.extract_slice(hr_vec, (0, ), (4, ), (1, )), [4])  # [r00,r01,r02,r03]
-    hr1 = tl.reshape(tle.dsa.extract_slice(hr_vec, (4, ), (4, ), (1, )), [4])  # [r10,r11,r12,r13]
-    hr2 = tl.reshape(tle.dsa.extract_slice(hr_vec, (8, ), (4, ), (1, )), [4])  # [r20,r21,r22,r23]
-    hr3 = tl.reshape(tle.dsa.extract_slice(hr_vec, (12, ), (4, ), (1, )), [4])  # [r30,r31,r32,r33]
+    hr0 = tl.reshape(
+        tle.dsa.extract_slice(hr_vec, (0,), (4,), (1,)), [4]
+    )  # [r00,r01,r02,r03]
+    hr1 = tl.reshape(
+        tle.dsa.extract_slice(hr_vec, (4,), (4,), (1,)), [4]
+    )  # [r10,r11,r12,r13]
+    hr2 = tl.reshape(
+        tle.dsa.extract_slice(hr_vec, (8,), (4,), (1,)), [4]
+    )  # [r20,r21,r22,r23]
+    hr3 = tl.reshape(
+        tle.dsa.extract_slice(hr_vec, (12,), (4,), (1,)), [4]
+    )  # [r30,r31,r32,r33]
 
     # ---- Load x, h_out with mask (handles non-power-of-2 D correctly) ---------
     ho = tl.load(h_out_ptr + hout_base + d_off, mask=d_mask, other=0.0).to(tl.float32)
@@ -276,10 +301,10 @@ def _mhc_post_kernel_tle_rows_pipeline(
     hp = tle.dsa.to_tensor(hpost_ub)  # [4] f32
 
     hr_vec = tle.dsa.to_tensor(hres_ub)  # [16] f32
-    hr0 = tl.reshape(tle.dsa.extract_slice(hr_vec, (0, ), (4, ), (1, )), [4])
-    hr1 = tl.reshape(tle.dsa.extract_slice(hr_vec, (4, ), (4, ), (1, )), [4])
-    hr2 = tl.reshape(tle.dsa.extract_slice(hr_vec, (8, ), (4, ), (1, )), [4])
-    hr3 = tl.reshape(tle.dsa.extract_slice(hr_vec, (12, ), (4, ), (1, )), [4])
+    hr0 = tl.reshape(tle.dsa.extract_slice(hr_vec, (0,), (4,), (1,)), [4])
+    hr1 = tl.reshape(tle.dsa.extract_slice(hr_vec, (4,), (4,), (1,)), [4])
+    hr2 = tl.reshape(tle.dsa.extract_slice(hr_vec, (8,), (4,), (1,)), [4])
+    hr3 = tl.reshape(tle.dsa.extract_slice(hr_vec, (12,), (4,), (1,)), [4])
 
     # ---- Allocate double-buffered UB for x[4,BLOCK_D] and h_out[BLOCK_D] ------
     # tle.dsa.pipeline with num_stages=2 enables MTE2/V overlap via double buffer.
@@ -304,10 +329,18 @@ def _mhc_post_kernel_tle_rows_pipeline(
         # -- Compute stage: parallel FMA across 4 heads -----------------------
         ho = tle.dsa.to_tensor(ho_ub).to(tl.float32)  # [BLOCK_D]
         x2d = tle.dsa.to_tensor(x_ub).to(tl.float32)  # [4, BLOCK_D]
-        x0 = tl.reshape(tle.dsa.extract_slice(x2d, (0, 0), (1, BLOCK_D), (1, 1)), [BLOCK_D])
-        x1 = tl.reshape(tle.dsa.extract_slice(x2d, (1, 0), (1, BLOCK_D), (1, 1)), [BLOCK_D])
-        x2 = tl.reshape(tle.dsa.extract_slice(x2d, (2, 0), (1, BLOCK_D), (1, 1)), [BLOCK_D])
-        x3 = tl.reshape(tle.dsa.extract_slice(x2d, (3, 0), (1, BLOCK_D), (1, 1)), [BLOCK_D])
+        x0 = tl.reshape(
+            tle.dsa.extract_slice(x2d, (0, 0), (1, BLOCK_D), (1, 1)), [BLOCK_D]
+        )
+        x1 = tl.reshape(
+            tle.dsa.extract_slice(x2d, (1, 0), (1, BLOCK_D), (1, 1)), [BLOCK_D]
+        )
+        x2 = tl.reshape(
+            tle.dsa.extract_slice(x2d, (2, 0), (1, BLOCK_D), (1, 1)), [BLOCK_D]
+        )
+        x3 = tl.reshape(
+            tle.dsa.extract_slice(x2d, (3, 0), (1, BLOCK_D), (1, 1)), [BLOCK_D]
+        )
 
         # Compute all 5 terms separately, then sum once
         term0 = tl.expand_dims(hp, 1) * tl.expand_dims(ho, 0)  # [4, BLOCK_D]
@@ -318,10 +351,18 @@ def _mhc_post_kernel_tle_rows_pipeline(
         Y = term0 + term1 + term2 + term3 + term4  # [4, BLOCK_D]
 
         # -- Extract rows and store back to GM --------------------------------
-        y0 = tl.reshape(tle.dsa.extract_slice(Y, (0, 0), (1, BLOCK_D), (1, 1)), [BLOCK_D])
-        y1 = tl.reshape(tle.dsa.extract_slice(Y, (1, 0), (1, BLOCK_D), (1, 1)), [BLOCK_D])
-        y2 = tl.reshape(tle.dsa.extract_slice(Y, (2, 0), (1, BLOCK_D), (1, 1)), [BLOCK_D])
-        y3 = tl.reshape(tle.dsa.extract_slice(Y, (3, 0), (1, BLOCK_D), (1, 1)), [BLOCK_D])
+        y0 = tl.reshape(
+            tle.dsa.extract_slice(Y, (0, 0), (1, BLOCK_D), (1, 1)), [BLOCK_D]
+        )
+        y1 = tl.reshape(
+            tle.dsa.extract_slice(Y, (1, 0), (1, BLOCK_D), (1, 1)), [BLOCK_D]
+        )
+        y2 = tl.reshape(
+            tle.dsa.extract_slice(Y, (2, 0), (1, BLOCK_D), (1, 1)), [BLOCK_D]
+        )
+        y3 = tl.reshape(
+            tle.dsa.extract_slice(Y, (3, 0), (1, BLOCK_D), (1, 1)), [BLOCK_D]
+        )
 
         tl.store(out_ptr + x_base + 0 * D + d_off, y0.to(x_dt), mask=d_mask)
         tl.store(out_ptr + x_base + 1 * D + d_off, y1.to(x_dt), mask=d_mask)
@@ -368,10 +409,10 @@ def _mhc_post_kernel_tle_concat_reduce(
     # ---- Extract coefficient vectors (keep in FP32) --------------------------------------
     hp = tle.dsa.to_tensor(hpost_ub)  # [4] f32
     hr_vec = tle.dsa.to_tensor(hres_ub)  # [16] f32
-    hr0 = tl.reshape(tle.dsa.extract_slice(hr_vec, (0, ), (4, ), (1, )), [4])
-    hr1 = tl.reshape(tle.dsa.extract_slice(hr_vec, (4, ), (4, ), (1, )), [4])
-    hr2 = tl.reshape(tle.dsa.extract_slice(hr_vec, (8, ), (4, ), (1, )), [4])
-    hr3 = tl.reshape(tle.dsa.extract_slice(hr_vec, (12, ), (4, ), (1, )), [4])
+    hr0 = tl.reshape(tle.dsa.extract_slice(hr_vec, (0,), (4,), (1,)), [4])
+    hr1 = tl.reshape(tle.dsa.extract_slice(hr_vec, (4,), (4,), (1,)), [4])
+    hr2 = tl.reshape(tle.dsa.extract_slice(hr_vec, (8,), (4,), (1,)), [4])
+    hr3 = tl.reshape(tle.dsa.extract_slice(hr_vec, (12,), (4,), (1,)), [4])
 
     # ---- Allocate double-buffered UB ----------------------------------------
     ho_ub = tle.dsa.alloc([BLOCK_D], dtype=x_dt, mem_addr_space=tle.dsa.ascend.UB)
@@ -393,10 +434,18 @@ def _mhc_post_kernel_tle_concat_reduce(
         # -- Compute: compute 5 separate outer products [4, BLOCK_D] each in FP32 ---
         ho = tle.dsa.to_tensor(ho_ub).to(tl.float32)  # [BLOCK_D]
         x2d = tle.dsa.to_tensor(x_ub).to(tl.float32)  # [4, BLOCK_D]
-        x0 = tl.reshape(tle.dsa.extract_slice(x2d, (0, 0), (1, BLOCK_D), (1, 1)), [BLOCK_D])
-        x1 = tl.reshape(tle.dsa.extract_slice(x2d, (1, 0), (1, BLOCK_D), (1, 1)), [BLOCK_D])
-        x2 = tl.reshape(tle.dsa.extract_slice(x2d, (2, 0), (1, BLOCK_D), (1, 1)), [BLOCK_D])
-        x3 = tl.reshape(tle.dsa.extract_slice(x2d, (3, 0), (1, BLOCK_D), (1, 1)), [BLOCK_D])
+        x0 = tl.reshape(
+            tle.dsa.extract_slice(x2d, (0, 0), (1, BLOCK_D), (1, 1)), [BLOCK_D]
+        )
+        x1 = tl.reshape(
+            tle.dsa.extract_slice(x2d, (1, 0), (1, BLOCK_D), (1, 1)), [BLOCK_D]
+        )
+        x2 = tl.reshape(
+            tle.dsa.extract_slice(x2d, (2, 0), (1, BLOCK_D), (1, 1)), [BLOCK_D]
+        )
+        x3 = tl.reshape(
+            tle.dsa.extract_slice(x2d, (3, 0), (1, BLOCK_D), (1, 1)), [BLOCK_D]
+        )
 
         # Compute 5 terms, each is [4, BLOCK_D] in FP32
         term0 = tl.expand_dims(hp, 1) * tl.expand_dims(ho, 0)  # [4, BLOCK_D]
@@ -409,10 +458,18 @@ def _mhc_post_kernel_tle_concat_reduce(
         Y = term0 + term1 + term2 + term3 + term4  # [4, BLOCK_D]
 
         # -- Extract rows, cast once, and store ---
-        y0 = tl.reshape(tle.dsa.extract_slice(Y, (0, 0), (1, BLOCK_D), (1, 1)), [BLOCK_D])
-        y1 = tl.reshape(tle.dsa.extract_slice(Y, (1, 0), (1, BLOCK_D), (1, 1)), [BLOCK_D])
-        y2 = tl.reshape(tle.dsa.extract_slice(Y, (2, 0), (1, BLOCK_D), (1, 1)), [BLOCK_D])
-        y3 = tl.reshape(tle.dsa.extract_slice(Y, (3, 0), (1, BLOCK_D), (1, 1)), [BLOCK_D])
+        y0 = tl.reshape(
+            tle.dsa.extract_slice(Y, (0, 0), (1, BLOCK_D), (1, 1)), [BLOCK_D]
+        )
+        y1 = tl.reshape(
+            tle.dsa.extract_slice(Y, (1, 0), (1, BLOCK_D), (1, 1)), [BLOCK_D]
+        )
+        y2 = tl.reshape(
+            tle.dsa.extract_slice(Y, (2, 0), (1, BLOCK_D), (1, 1)), [BLOCK_D]
+        )
+        y3 = tl.reshape(
+            tle.dsa.extract_slice(Y, (3, 0), (1, BLOCK_D), (1, 1)), [BLOCK_D]
+        )
 
         tl.store(out_ptr + x_base + 0 * D + d_off, y0.to(x_dt), mask=d_mask)
         tl.store(out_ptr + x_base + 1 * D + d_off, y1.to(x_dt), mask=d_mask)
@@ -465,8 +522,10 @@ def mhc_post(
             Takes precedence over use_pipeline if both are True.
     """
     if not _HAS_DSA:
-        raise RuntimeError("This mhc_post implementation requires the TLE DSA surface "
-                           "(triton.experimental.tle.dsa.*).")
+        raise RuntimeError(
+            "This mhc_post implementation requires the TLE DSA surface "
+            "(triton.experimental.tle.dsa.*)."
+        )
 
     xf, hres, hout, hpost, shape = _flatten_bsn(x, h_res, h_out, h_post)
     T, N, D = xf.shape
@@ -483,7 +542,7 @@ def mhc_post(
 
     if use_concat_reduce:
         # Concat+reduce variant: 1D grid over T
-        grid = (T, )
+        grid = (T,)
         _mhc_post_kernel_tle_concat_reduce[grid](
             xf,
             hres.to(torch.float32),
@@ -497,7 +556,7 @@ def mhc_post(
     elif use_pipeline:
         # Pipeline kernel: 1D grid over T, iterates D-chunks internally
         # with tle.dsa.pipeline(num_stages=2) for MTE2/Vector overlap.
-        grid = (T, )
+        grid = (T,)
         _mhc_post_kernel_tle_rows_pipeline[grid](
             xf,
             hres.to(torch.float32),

@@ -34,8 +34,11 @@ logger = logging.getLogger(__name__)
 )
 @triton.jit
 def _mhc_post_bwd_dxdho_hc4(
-    grad_y_ptr, h_res_ptr, h_post_ptr,
-    grad_x_ptr, grad_hout_ptr,
+    grad_y_ptr,
+    h_res_ptr,
+    h_post_ptr,
+    grad_x_ptr,
+    grad_hout_ptr,
     D: tl.constexpr,
     BLOCK_D: tl.constexpr,
 ):
@@ -73,10 +76,18 @@ def _mhc_post_bwd_dxdho_hc4(
     hp2 = tl.load(h_post_ptr + hpost_base + 2)
     hp3 = tl.load(h_post_ptr + hpost_base + 3)
 
-    gy0 = tl.load(grad_y_ptr + gy_base + 0 * D + d_off, mask=d_mask, other=0.0).to(tl.float32)
-    gy1 = tl.load(grad_y_ptr + gy_base + 1 * D + d_off, mask=d_mask, other=0.0).to(tl.float32)
-    gy2 = tl.load(grad_y_ptr + gy_base + 2 * D + d_off, mask=d_mask, other=0.0).to(tl.float32)
-    gy3 = tl.load(grad_y_ptr + gy_base + 3 * D + d_off, mask=d_mask, other=0.0).to(tl.float32)
+    gy0 = tl.load(grad_y_ptr + gy_base + 0 * D + d_off, mask=d_mask, other=0.0).to(
+        tl.float32
+    )
+    gy1 = tl.load(grad_y_ptr + gy_base + 1 * D + d_off, mask=d_mask, other=0.0).to(
+        tl.float32
+    )
+    gy2 = tl.load(grad_y_ptr + gy_base + 2 * D + d_off, mask=d_mask, other=0.0).to(
+        tl.float32
+    )
+    gy3 = tl.load(grad_y_ptr + gy_base + 3 * D + d_off, mask=d_mask, other=0.0).to(
+        tl.float32
+    )
 
     gx0 = r00 * gy0 + r01 * gy1 + r02 * gy2 + r03 * gy3
     gx1 = r10 * gy0 + r11 * gy1 + r12 * gy2 + r13 * gy3
@@ -108,8 +119,11 @@ def _mhc_post_bwd_dxdho_hc4(
 )
 @triton.jit
 def _mhc_post_bwd_dxdho_hc4_loopD_pipe(
-    grad_y_ptr, h_res_ptr, h_post_ptr,
-    grad_x_ptr, grad_hout_ptr,
+    grad_y_ptr,
+    h_res_ptr,
+    h_post_ptr,
+    grad_x_ptr,
+    grad_hout_ptr,
     D: tl.constexpr,
     BLOCK_D: tl.constexpr,
 ):
@@ -156,10 +170,18 @@ def _mhc_post_bwd_dxdho_hc4_loopD_pipe(
         nxt = (db + 1) % NUM_D_BLOCKS
         d_off_nxt = nxt * BLOCK_D + tl.arange(0, BLOCK_D)
         d_mask_nxt = d_off_nxt < D
-        gy0_nxt = tl.load(grad_y_ptr + gy_base + 0 * D + d_off_nxt, mask=d_mask_nxt, other=0.0)
-        gy1_nxt = tl.load(grad_y_ptr + gy_base + 1 * D + d_off_nxt, mask=d_mask_nxt, other=0.0)
-        gy2_nxt = tl.load(grad_y_ptr + gy_base + 2 * D + d_off_nxt, mask=d_mask_nxt, other=0.0)
-        gy3_nxt = tl.load(grad_y_ptr + gy_base + 3 * D + d_off_nxt, mask=d_mask_nxt, other=0.0)
+        gy0_nxt = tl.load(
+            grad_y_ptr + gy_base + 0 * D + d_off_nxt, mask=d_mask_nxt, other=0.0
+        )
+        gy1_nxt = tl.load(
+            grad_y_ptr + gy_base + 1 * D + d_off_nxt, mask=d_mask_nxt, other=0.0
+        )
+        gy2_nxt = tl.load(
+            grad_y_ptr + gy_base + 2 * D + d_off_nxt, mask=d_mask_nxt, other=0.0
+        )
+        gy3_nxt = tl.load(
+            grad_y_ptr + gy_base + 3 * D + d_off_nxt, mask=d_mask_nxt, other=0.0
+        )
 
         gy0_f = gy0_cur.to(tl.float32)
         gy1_f = gy1_cur.to(tl.float32)
@@ -202,8 +224,11 @@ def _mhc_post_bwd_dxdho_hc4_loopD_pipe(
 )
 @triton.jit
 def _mhc_post_bwd_dresdpost_hc4(
-    grad_y_ptr, x_ptr, h_out_ptr,
-    grad_hres_ptr, grad_hpost_ptr,
+    grad_y_ptr,
+    x_ptr,
+    h_out_ptr,
+    grad_hres_ptr,
+    grad_hpost_ptr,
     D: tl.constexpr,
     BLOCK_D: tl.constexpr,
 ):
@@ -217,44 +242,78 @@ def _mhc_post_bwd_dresdpost_hc4(
     p1 = tl.zeros([], dtype=tl.float32)
     p2 = tl.zeros([], dtype=tl.float32)
     p3 = tl.zeros([], dtype=tl.float32)
-    r00 = tl.zeros([], dtype=tl.float32); r01 = tl.zeros([], dtype=tl.float32)
-    r02 = tl.zeros([], dtype=tl.float32); r03 = tl.zeros([], dtype=tl.float32)
-    r10 = tl.zeros([], dtype=tl.float32); r11 = tl.zeros([], dtype=tl.float32)
-    r12 = tl.zeros([], dtype=tl.float32); r13 = tl.zeros([], dtype=tl.float32)
-    r20 = tl.zeros([], dtype=tl.float32); r21 = tl.zeros([], dtype=tl.float32)
-    r22 = tl.zeros([], dtype=tl.float32); r23 = tl.zeros([], dtype=tl.float32)
-    r30 = tl.zeros([], dtype=tl.float32); r31 = tl.zeros([], dtype=tl.float32)
-    r32 = tl.zeros([], dtype=tl.float32); r33 = tl.zeros([], dtype=tl.float32)
+    r00 = tl.zeros([], dtype=tl.float32)
+    r01 = tl.zeros([], dtype=tl.float32)
+    r02 = tl.zeros([], dtype=tl.float32)
+    r03 = tl.zeros([], dtype=tl.float32)
+    r10 = tl.zeros([], dtype=tl.float32)
+    r11 = tl.zeros([], dtype=tl.float32)
+    r12 = tl.zeros([], dtype=tl.float32)
+    r13 = tl.zeros([], dtype=tl.float32)
+    r20 = tl.zeros([], dtype=tl.float32)
+    r21 = tl.zeros([], dtype=tl.float32)
+    r22 = tl.zeros([], dtype=tl.float32)
+    r23 = tl.zeros([], dtype=tl.float32)
+    r30 = tl.zeros([], dtype=tl.float32)
+    r31 = tl.zeros([], dtype=tl.float32)
+    r32 = tl.zeros([], dtype=tl.float32)
+    r33 = tl.zeros([], dtype=tl.float32)
 
     for d_start in range(0, D, BLOCK_D):
         d_off = d_start + tl.arange(0, BLOCK_D)
         d_mask = d_off < D
 
-        gy0 = tl.load(grad_y_ptr + gy_base + 0 * D + d_off, mask=d_mask, other=0.0).to(tl.float32)
-        gy1 = tl.load(grad_y_ptr + gy_base + 1 * D + d_off, mask=d_mask, other=0.0).to(tl.float32)
-        gy2 = tl.load(grad_y_ptr + gy_base + 2 * D + d_off, mask=d_mask, other=0.0).to(tl.float32)
-        gy3 = tl.load(grad_y_ptr + gy_base + 3 * D + d_off, mask=d_mask, other=0.0).to(tl.float32)
+        gy0 = tl.load(grad_y_ptr + gy_base + 0 * D + d_off, mask=d_mask, other=0.0).to(
+            tl.float32
+        )
+        gy1 = tl.load(grad_y_ptr + gy_base + 1 * D + d_off, mask=d_mask, other=0.0).to(
+            tl.float32
+        )
+        gy2 = tl.load(grad_y_ptr + gy_base + 2 * D + d_off, mask=d_mask, other=0.0).to(
+            tl.float32
+        )
+        gy3 = tl.load(grad_y_ptr + gy_base + 3 * D + d_off, mask=d_mask, other=0.0).to(
+            tl.float32
+        )
 
-        x0 = tl.load(x_ptr + x_base + 0 * D + d_off, mask=d_mask, other=0.0).to(tl.float32)
-        x1 = tl.load(x_ptr + x_base + 1 * D + d_off, mask=d_mask, other=0.0).to(tl.float32)
-        x2 = tl.load(x_ptr + x_base + 2 * D + d_off, mask=d_mask, other=0.0).to(tl.float32)
-        x3 = tl.load(x_ptr + x_base + 3 * D + d_off, mask=d_mask, other=0.0).to(tl.float32)
+        x0 = tl.load(x_ptr + x_base + 0 * D + d_off, mask=d_mask, other=0.0).to(
+            tl.float32
+        )
+        x1 = tl.load(x_ptr + x_base + 1 * D + d_off, mask=d_mask, other=0.0).to(
+            tl.float32
+        )
+        x2 = tl.load(x_ptr + x_base + 2 * D + d_off, mask=d_mask, other=0.0).to(
+            tl.float32
+        )
+        x3 = tl.load(x_ptr + x_base + 3 * D + d_off, mask=d_mask, other=0.0).to(
+            tl.float32
+        )
 
-        ho = tl.load(h_out_ptr + hout_base + d_off, mask=d_mask, other=0.0).to(tl.float32)
+        ho = tl.load(h_out_ptr + hout_base + d_off, mask=d_mask, other=0.0).to(
+            tl.float32
+        )
 
         p0 += tl.sum(ho * gy0, axis=0)
         p1 += tl.sum(ho * gy1, axis=0)
         p2 += tl.sum(ho * gy2, axis=0)
         p3 += tl.sum(ho * gy3, axis=0)
 
-        r00 += tl.sum(x0 * gy0, axis=0); r01 += tl.sum(x0 * gy1, axis=0)
-        r02 += tl.sum(x0 * gy2, axis=0); r03 += tl.sum(x0 * gy3, axis=0)
-        r10 += tl.sum(x1 * gy0, axis=0); r11 += tl.sum(x1 * gy1, axis=0)
-        r12 += tl.sum(x1 * gy2, axis=0); r13 += tl.sum(x1 * gy3, axis=0)
-        r20 += tl.sum(x2 * gy0, axis=0); r21 += tl.sum(x2 * gy1, axis=0)
-        r22 += tl.sum(x2 * gy2, axis=0); r23 += tl.sum(x2 * gy3, axis=0)
-        r30 += tl.sum(x3 * gy0, axis=0); r31 += tl.sum(x3 * gy1, axis=0)
-        r32 += tl.sum(x3 * gy2, axis=0); r33 += tl.sum(x3 * gy3, axis=0)
+        r00 += tl.sum(x0 * gy0, axis=0)
+        r01 += tl.sum(x0 * gy1, axis=0)
+        r02 += tl.sum(x0 * gy2, axis=0)
+        r03 += tl.sum(x0 * gy3, axis=0)
+        r10 += tl.sum(x1 * gy0, axis=0)
+        r11 += tl.sum(x1 * gy1, axis=0)
+        r12 += tl.sum(x1 * gy2, axis=0)
+        r13 += tl.sum(x1 * gy3, axis=0)
+        r20 += tl.sum(x2 * gy0, axis=0)
+        r21 += tl.sum(x2 * gy1, axis=0)
+        r22 += tl.sum(x2 * gy2, axis=0)
+        r23 += tl.sum(x2 * gy3, axis=0)
+        r30 += tl.sum(x3 * gy0, axis=0)
+        r31 += tl.sum(x3 * gy1, axis=0)
+        r32 += tl.sum(x3 * gy2, axis=0)
+        r33 += tl.sum(x3 * gy3, axis=0)
 
     hres_base = pid_t * 16
     hpost_base = pid_t * 4
@@ -301,8 +360,15 @@ def _mhc_post_bwd_dresdpost_hc4(
 )
 @triton.jit
 def _mhc_post_bwd_fused_hc4(
-    grad_y_ptr, x_ptr, h_res_ptr, h_out_ptr, h_post_ptr,
-    grad_x_ptr, grad_hout_ptr, grad_hres_ptr, grad_hpost_ptr,
+    grad_y_ptr,
+    x_ptr,
+    h_res_ptr,
+    h_out_ptr,
+    h_post_ptr,
+    grad_x_ptr,
+    grad_hout_ptr,
+    grad_hres_ptr,
+    grad_hpost_ptr,
     D: tl.constexpr,
     BLOCK_D: tl.constexpr,
 ):
@@ -344,14 +410,22 @@ def _mhc_post_bwd_fused_hc4(
     p1 = tl.zeros([], dtype=tl.float32)
     p2 = tl.zeros([], dtype=tl.float32)
     p3 = tl.zeros([], dtype=tl.float32)
-    g00 = tl.zeros([], dtype=tl.float32); g01 = tl.zeros([], dtype=tl.float32)
-    g02 = tl.zeros([], dtype=tl.float32); g03 = tl.zeros([], dtype=tl.float32)
-    g10 = tl.zeros([], dtype=tl.float32); g11 = tl.zeros([], dtype=tl.float32)
-    g12 = tl.zeros([], dtype=tl.float32); g13 = tl.zeros([], dtype=tl.float32)
-    g20 = tl.zeros([], dtype=tl.float32); g21 = tl.zeros([], dtype=tl.float32)
-    g22 = tl.zeros([], dtype=tl.float32); g23 = tl.zeros([], dtype=tl.float32)
-    g30 = tl.zeros([], dtype=tl.float32); g31 = tl.zeros([], dtype=tl.float32)
-    g32 = tl.zeros([], dtype=tl.float32); g33 = tl.zeros([], dtype=tl.float32)
+    g00 = tl.zeros([], dtype=tl.float32)
+    g01 = tl.zeros([], dtype=tl.float32)
+    g02 = tl.zeros([], dtype=tl.float32)
+    g03 = tl.zeros([], dtype=tl.float32)
+    g10 = tl.zeros([], dtype=tl.float32)
+    g11 = tl.zeros([], dtype=tl.float32)
+    g12 = tl.zeros([], dtype=tl.float32)
+    g13 = tl.zeros([], dtype=tl.float32)
+    g20 = tl.zeros([], dtype=tl.float32)
+    g21 = tl.zeros([], dtype=tl.float32)
+    g22 = tl.zeros([], dtype=tl.float32)
+    g23 = tl.zeros([], dtype=tl.float32)
+    g30 = tl.zeros([], dtype=tl.float32)
+    g31 = tl.zeros([], dtype=tl.float32)
+    g32 = tl.zeros([], dtype=tl.float32)
+    g33 = tl.zeros([], dtype=tl.float32)
 
     dt = grad_x_ptr.dtype.element_ty
 
@@ -359,10 +433,18 @@ def _mhc_post_bwd_fused_hc4(
         d_off = d_start + tl.arange(0, BLOCK_D)
         d_mask = d_off < D
 
-        gy0 = tl.load(grad_y_ptr + gy_base + 0 * D + d_off, mask=d_mask, other=0.0).to(tl.float32)
-        gy1 = tl.load(grad_y_ptr + gy_base + 1 * D + d_off, mask=d_mask, other=0.0).to(tl.float32)
-        gy2 = tl.load(grad_y_ptr + gy_base + 2 * D + d_off, mask=d_mask, other=0.0).to(tl.float32)
-        gy3 = tl.load(grad_y_ptr + gy_base + 3 * D + d_off, mask=d_mask, other=0.0).to(tl.float32)
+        gy0 = tl.load(grad_y_ptr + gy_base + 0 * D + d_off, mask=d_mask, other=0.0).to(
+            tl.float32
+        )
+        gy1 = tl.load(grad_y_ptr + gy_base + 1 * D + d_off, mask=d_mask, other=0.0).to(
+            tl.float32
+        )
+        gy2 = tl.load(grad_y_ptr + gy_base + 2 * D + d_off, mask=d_mask, other=0.0).to(
+            tl.float32
+        )
+        gy3 = tl.load(grad_y_ptr + gy_base + 3 * D + d_off, mask=d_mask, other=0.0).to(
+            tl.float32
+        )
 
         # ---- grad_x + grad_hout (uses grad_y only) ----
         gx0 = r00 * gy0 + r01 * gy1 + r02 * gy2 + r03 * gy3
@@ -378,25 +460,43 @@ def _mhc_post_bwd_fused_hc4(
         tl.store(grad_hout_ptr + gho_base + d_off, gho.to(dt), mask=d_mask)
 
         # ---- grad_hres + grad_hpost reductions (needs x, h_out) ----
-        x0 = tl.load(x_ptr + x_base + 0 * D + d_off, mask=d_mask, other=0.0).to(tl.float32)
-        x1 = tl.load(x_ptr + x_base + 1 * D + d_off, mask=d_mask, other=0.0).to(tl.float32)
-        x2 = tl.load(x_ptr + x_base + 2 * D + d_off, mask=d_mask, other=0.0).to(tl.float32)
-        x3 = tl.load(x_ptr + x_base + 3 * D + d_off, mask=d_mask, other=0.0).to(tl.float32)
-        ho = tl.load(h_out_ptr + hout_base + d_off, mask=d_mask, other=0.0).to(tl.float32)
+        x0 = tl.load(x_ptr + x_base + 0 * D + d_off, mask=d_mask, other=0.0).to(
+            tl.float32
+        )
+        x1 = tl.load(x_ptr + x_base + 1 * D + d_off, mask=d_mask, other=0.0).to(
+            tl.float32
+        )
+        x2 = tl.load(x_ptr + x_base + 2 * D + d_off, mask=d_mask, other=0.0).to(
+            tl.float32
+        )
+        x3 = tl.load(x_ptr + x_base + 3 * D + d_off, mask=d_mask, other=0.0).to(
+            tl.float32
+        )
+        ho = tl.load(h_out_ptr + hout_base + d_off, mask=d_mask, other=0.0).to(
+            tl.float32
+        )
 
         p0 += tl.sum(ho * gy0, axis=0)
         p1 += tl.sum(ho * gy1, axis=0)
         p2 += tl.sum(ho * gy2, axis=0)
         p3 += tl.sum(ho * gy3, axis=0)
 
-        g00 += tl.sum(x0 * gy0, axis=0); g01 += tl.sum(x0 * gy1, axis=0)
-        g02 += tl.sum(x0 * gy2, axis=0); g03 += tl.sum(x0 * gy3, axis=0)
-        g10 += tl.sum(x1 * gy0, axis=0); g11 += tl.sum(x1 * gy1, axis=0)
-        g12 += tl.sum(x1 * gy2, axis=0); g13 += tl.sum(x1 * gy3, axis=0)
-        g20 += tl.sum(x2 * gy0, axis=0); g21 += tl.sum(x2 * gy1, axis=0)
-        g22 += tl.sum(x2 * gy2, axis=0); g23 += tl.sum(x2 * gy3, axis=0)
-        g30 += tl.sum(x3 * gy0, axis=0); g31 += tl.sum(x3 * gy1, axis=0)
-        g32 += tl.sum(x3 * gy2, axis=0); g33 += tl.sum(x3 * gy3, axis=0)
+        g00 += tl.sum(x0 * gy0, axis=0)
+        g01 += tl.sum(x0 * gy1, axis=0)
+        g02 += tl.sum(x0 * gy2, axis=0)
+        g03 += tl.sum(x0 * gy3, axis=0)
+        g10 += tl.sum(x1 * gy0, axis=0)
+        g11 += tl.sum(x1 * gy1, axis=0)
+        g12 += tl.sum(x1 * gy2, axis=0)
+        g13 += tl.sum(x1 * gy3, axis=0)
+        g20 += tl.sum(x2 * gy0, axis=0)
+        g21 += tl.sum(x2 * gy1, axis=0)
+        g22 += tl.sum(x2 * gy2, axis=0)
+        g23 += tl.sum(x2 * gy3, axis=0)
+        g30 += tl.sum(x3 * gy0, axis=0)
+        g31 += tl.sum(x3 * gy1, axis=0)
+        g32 += tl.sum(x3 * gy2, axis=0)
+        g33 += tl.sum(x3 * gy3, axis=0)
 
     tl.store(grad_hpost_ptr + hpost_base + 0, p0)
     tl.store(grad_hpost_ptr + hpost_base + 1, p1)
@@ -442,8 +542,15 @@ def _mhc_post_bwd_fused_hc4(
 )
 @triton.jit
 def _mhc_post_bwd_fused_dot_hc4(
-    grad_y_ptr, x_ptr, h_res_ptr, h_out_ptr, h_post_ptr,
-    grad_x_ptr, grad_hout_ptr, grad_hres_ptr, grad_hpost_ptr,
+    grad_y_ptr,
+    x_ptr,
+    h_res_ptr,
+    h_out_ptr,
+    h_post_ptr,
+    grad_x_ptr,
+    grad_hout_ptr,
+    grad_hres_ptr,
+    grad_hpost_ptr,
     D: tl.constexpr,
     BLOCK_D: tl.constexpr,
 ):
@@ -489,24 +596,40 @@ def _mhc_post_bwd_fused_dot_hc4(
 
     # x tile viewed as (4, D) row-major -> (4, BLOCK_D) natural block.
     x_bp = tl.make_block_ptr(
-        base=x_ptr + x_base, shape=(4, D), strides=(D, 1),
-        offsets=(0, 0), block_shape=(4, BLOCK_D), order=(1, 0),
+        base=x_ptr + x_base,
+        shape=(4, D),
+        strides=(D, 1),
+        offsets=(0, 0),
+        block_shape=(4, BLOCK_D),
+        order=(1, 0),
     )
     # gy tile viewed transposed as (D, 4): element [d, i] = gy[i, d] at i*D+d,
     # so strides over (d, i) are (1, D). Gives the (BLOCK_D, 4) rhs for tl.dot.
     gyt_bp = tl.make_block_ptr(
-        base=grad_y_ptr + gy_base, shape=(D, 4), strides=(1, D),
-        offsets=(0, 0), block_shape=(BLOCK_D, 4), order=(0, 1),
+        base=grad_y_ptr + gy_base,
+        shape=(D, 4),
+        strides=(1, D),
+        offsets=(0, 0),
+        block_shape=(BLOCK_D, 4),
+        order=(0, 1),
     )
 
     for d_start in range(0, D, BLOCK_D):
         d_off = d_start + tl.arange(0, BLOCK_D)
         d_mask = d_off < D
 
-        gy0 = tl.load(grad_y_ptr + gy_base + 0 * D + d_off, mask=d_mask, other=0.0).to(tl.float32)
-        gy1 = tl.load(grad_y_ptr + gy_base + 1 * D + d_off, mask=d_mask, other=0.0).to(tl.float32)
-        gy2 = tl.load(grad_y_ptr + gy_base + 2 * D + d_off, mask=d_mask, other=0.0).to(tl.float32)
-        gy3 = tl.load(grad_y_ptr + gy_base + 3 * D + d_off, mask=d_mask, other=0.0).to(tl.float32)
+        gy0 = tl.load(grad_y_ptr + gy_base + 0 * D + d_off, mask=d_mask, other=0.0).to(
+            tl.float32
+        )
+        gy1 = tl.load(grad_y_ptr + gy_base + 1 * D + d_off, mask=d_mask, other=0.0).to(
+            tl.float32
+        )
+        gy2 = tl.load(grad_y_ptr + gy_base + 2 * D + d_off, mask=d_mask, other=0.0).to(
+            tl.float32
+        )
+        gy3 = tl.load(grad_y_ptr + gy_base + 3 * D + d_off, mask=d_mask, other=0.0).to(
+            tl.float32
+        )
 
         gx0 = r00 * gy0 + r01 * gy1 + r02 * gy2 + r03 * gy3
         gx1 = r10 * gy0 + r11 * gy1 + r12 * gy2 + r13 * gy3
@@ -520,15 +643,21 @@ def _mhc_post_bwd_fused_dot_hc4(
         tl.store(grad_x_ptr + gx_base + 3 * D + d_off, gx3.to(dt), mask=d_mask)
         tl.store(grad_hout_ptr + gho_base + d_off, gho.to(dt), mask=d_mask)
 
-        ho = tl.load(h_out_ptr + hout_base + d_off, mask=d_mask, other=0.0).to(tl.float32)
+        ho = tl.load(h_out_ptr + hout_base + d_off, mask=d_mask, other=0.0).to(
+            tl.float32
+        )
         p0 += tl.sum(ho * gy0, axis=0)
         p1 += tl.sum(ho * gy1, axis=0)
         p2 += tl.sum(ho * gy2, axis=0)
         p3 += tl.sum(ho * gy3, axis=0)
 
         # grad_hres 4x4 via one matmul: X(4,BLOCK_D) @ GY^T(BLOCK_D,4).
-        x_tile = tl.load(x_bp, boundary_check=(1,), padding_option="zero").to(tl.float32)
-        gyt_tile = tl.load(gyt_bp, boundary_check=(0,), padding_option="zero").to(tl.float32)
+        x_tile = tl.load(x_bp, boundary_check=(1,), padding_option="zero").to(
+            tl.float32
+        )
+        gyt_tile = tl.load(gyt_bp, boundary_check=(0,), padding_option="zero").to(
+            tl.float32
+        )
         acc += tl.dot(x_tile, gyt_tile)
 
         x_bp = tl.advance(x_bp, (0, BLOCK_D))
@@ -607,8 +736,16 @@ def mhc_post_backward(grad_y, x, h_res, h_out, h_post):
         # (A tl.dot variant for grad_hres was ~20x SLOWER: a 4x4 output with
         # K=3584 wastes the cube unit; see _mhc_post_bwd_fused_dot_hc4 note.)
         _mhc_post_bwd_fused_hc4[(T,)](
-            gy, xf, hres, hout, hpost,
-            grad_x, grad_hout, grad_hres, grad_hpost, D=D,
+            gy,
+            xf,
+            hres,
+            hout,
+            hpost,
+            grad_x,
+            grad_hout,
+            grad_hres,
+            grad_hpost,
+            D=D,
         )
     else:
         raise NotImplementedError("Only N=4 supported")
@@ -641,4 +778,3 @@ def mhc_post_backward_ref(grad_y, x, h_res, h_out, h_post):
         grad_hout.reshape(shape_out),
         grad_hpost.reshape(h_post.shape),
     )
-
