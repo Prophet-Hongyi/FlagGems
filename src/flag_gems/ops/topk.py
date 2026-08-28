@@ -27,7 +27,7 @@ try:
 except ImportError:
     pass
 
-from flag_gems.runtime import torch_device_fn
+from flag_gems.runtime import device, torch_device_fn
 from flag_gems.utils import libentry
 from flag_gems.utils import triton_lang_extension as tle
 from flag_gems.utils.limits import get_dtype_max, get_dtype_min
@@ -556,6 +556,11 @@ def _get_topk_radix_tle_config(x_dtype, topk_elem_cnt, k, k_pad):
     return block_n_radix, radix_bits, num_warps
 
 
+def _is_active_accelerator_tensor(x):
+    """Return whether ``x`` belongs to the active non-CPU FlagGems backend."""
+    return device.name != "cpu" and x.device.type == device.name
+
+
 def topk(x, k, dim=-1, largest=True, sorted=True):
     logger.debug("GEMS TOPK")
     # If dim equals to last dim, we set it to -1.
@@ -586,7 +591,7 @@ def topk(x, k, dim=-1, largest=True, sorted=True):
         HAS_TLE
         and sorted
         and descending
-        and x.is_cuda
+        and _is_active_accelerator_tensor(x)
         and x.dtype in (torch.float16, torch.float32, torch.bfloat16)
         and k >= 8
         and topk_elem_cnt > 128

@@ -128,6 +128,19 @@ def test_topk_radix_tle_config_uses_large_fp32_shape_heuristic():
 
 
 @pytest.mark.topk
+def test_topk_radix_tle_accepts_active_accelerator_tensor():
+    topk_op = import_module("flag_gems.ops.topk")
+    if not topk_op.HAS_TLE:
+        pytest.skip("TLE topk path is unavailable")
+    if flag_gems.device == "cpu":
+        pytest.skip("accelerator device required")
+
+    x = torch.empty(1, device=flag_gems.device)
+
+    assert topk_op._is_active_accelerator_tensor(x)
+
+
+@pytest.mark.topk
 @pytest.mark.skipif(not torch.cuda.is_available(), reason="CUDA device required")
 def test_topk_radix_tle_large_fp32_k256_correctness():
     topk_op = import_module("flag_gems.ops.topk")
