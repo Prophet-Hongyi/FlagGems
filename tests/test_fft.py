@@ -54,3 +54,12 @@ def test_fft(shape):
         res_out = torch.fft.fft(ref_x)
 
     utils.gems_assert_close(res_out, ref_out, torch.complex64, reduce_dim=n)
+
+
+@pytest.mark.fft
+def test_fft_rejects_tensor_outside_active_accelerator():
+    if flag_gems.device == "cpu":
+        pytest.skip("FFT Triton kernel requires an accelerator backend")
+    x = torch.randn((1, 64), device="cpu", dtype=torch.float32)
+    with pytest.raises(ValueError, match="input must be on the active"):
+        flag_gems.fft(x)
