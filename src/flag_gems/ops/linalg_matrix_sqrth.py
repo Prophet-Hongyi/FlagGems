@@ -35,7 +35,11 @@ _SUPPORTED_DTYPES = (
 )
 _CPU_KEYSET = torch._C.DispatchKeySet(torch._C.DispatchKey.CPU)
 _DEVICE_KEYSET = torch._C.DispatchKeySet(
-    getattr(torch._C.DispatchKey, runtime.device.dispatch_key)
+    # Vendor builds can expose a device alias such as ``MUSA`` through the
+    # dispatcher parser without adding the alias as a Python enum attribute.
+    # Parsing therefore preserves the runtime key (PrivateUse1 on legacy MUSA)
+    # while keeping native CUDA/other backend names unchanged.
+    torch._C._dispatch_key_parse(runtime.device.dispatch_key)
 )
 
 # Save the vendor kernels before ``use_gems`` installs its temporary ATen
