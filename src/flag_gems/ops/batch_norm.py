@@ -77,6 +77,8 @@ def batch_norm_forward_kernel(
     output_spatial_stride,
     momentum,
     eps,
+    has_running_mean: tl.constexpr,
+    has_running_var: tl.constexpr,
     is_train: tl.constexpr,
     BLOCK_M: tl.constexpr,
     BLOCK_N: tl.constexpr,
@@ -129,18 +131,21 @@ def batch_norm_forward_kernel(
         tl.store(feat_pid + mean_pointer, mean)
         tl.store(feat_pid + inv_std_pointer, inv_std)
 
-        running_mean_pointer += feat_pid
-        running_var_pointer += feat_pid
-
-        running_mean = tl.load(running_mean_pointer)
-        running_var = tl.load(running_var_pointer)
-
         n = batch_dim * spatial_dim
-        tl.store(running_mean_pointer, (1 - momentum) * running_mean + momentum * mean)
-        tl.store(
-            running_var_pointer,
-            (1 - momentum) * running_var + momentum * var * n / (n - 1),
-        )
+        if has_running_mean:
+            running_mean_pointer += feat_pid
+            running_mean = tl.load(running_mean_pointer)
+            tl.store(
+                running_mean_pointer,
+                (1 - momentum) * running_mean + momentum * mean,
+            )
+        if has_running_var:
+            running_var_pointer += feat_pid
+            running_var = tl.load(running_var_pointer)
+            tl.store(
+                running_var_pointer,
+                (1 - momentum) * running_var + momentum * var * n / (n - 1),
+            )
 
     else:
         mean = tl.load(feat_pid + running_mean_pointer)
@@ -346,8 +351,12 @@ def batch_norm(
     mean = torch.empty(feat_dim, device=input.device, dtype=input.dtype)
     inv_std = torch.empty(feat_dim, device=input.device, dtype=input.dtype)
 
-    running_mean = input if running_mean is None else running_mean
-    running_var = input if running_var is None else running_var
+    has_running_mean = running_mean is not None
+    has_running_var = running_var is not None
+    if not has_running_mean or not has_running_var:
+        placeholder = torch.empty(1, device=input.device, dtype=input.dtype)
+        running_mean = running_mean if has_running_mean else placeholder
+        running_var = running_var if has_running_var else placeholder
 
     # Launches 1D grid where each program operates over one feature.
     with torch_device_fn.device(input.device):
@@ -366,6 +375,8 @@ def batch_norm(
             *output.stride(),
             momentum,
             eps,
+            has_running_mean=has_running_mean,
+            has_running_var=has_running_var,
             is_train=training,
         )
 
