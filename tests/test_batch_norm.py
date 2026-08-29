@@ -38,6 +38,44 @@ SHAPES = [
 ]
 
 
+@pytest.mark.native_batch_norm
+def test_native_batch_norm_training_without_running_stats_preserves_input():
+    shape = (4, 3, 8, 8)
+    dtype = torch.float32
+    inp = torch.randn(shape, dtype=dtype, device=flag_gems.device)
+    inp_before = inp.clone()
+    weight = torch.randn(shape[1], dtype=dtype, device=flag_gems.device)
+    bias = torch.randn_like(weight)
+
+    ref_result = torch.ops.aten.native_batch_norm.default(
+        utils.to_reference(inp, True),
+        utils.to_reference(weight, True),
+        utils.to_reference(bias, True),
+        None,
+        None,
+        True,
+        0.1,
+        1e-5,
+    )
+
+    with flag_gems.use_gems():
+        result = torch.ops.aten.native_batch_norm.default(
+            inp,
+            weight,
+            bias,
+            None,
+            None,
+            True,
+            0.1,
+            1e-5,
+        )
+
+    utils.gems_assert_equal(inp, inp_before)
+    reduce_dim = math.prod(shape) // shape[1]
+    for actual, expected in zip(result, ref_result):
+        utils.gems_assert_close(actual, expected, dtype, reduce_dim=reduce_dim)
+
+
 @pytest.mark.batch_norm
 @pytest.mark.parametrize("shape", SHAPES)
 @pytest.mark.parametrize("dtype", FLOAT_DTYPES)
