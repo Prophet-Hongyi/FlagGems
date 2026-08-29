@@ -207,7 +207,7 @@ if get_device_capability(current_device())[0] >= 3:
     from .baddbmm import baddbmm, baddbmm_out  # noqa: F401
     from .bmm import bmm  # noqa: F401
     from .gelu import gelu  # noqa: F401
-    from .mm import mm  # noqa: F401
+    from .mm import mm, router_gemm  # noqa: F401
     from .tanh import tanh  # noqa: F401
 
     __all__.extend(
@@ -221,6 +221,7 @@ if get_device_capability(current_device())[0] >= 3:
             "bmm",
             "gelu",
             "mm",
+            "router_gemm",
             "tanh",
         ]
     )
