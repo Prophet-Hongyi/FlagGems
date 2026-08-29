@@ -18,6 +18,7 @@ import torch
 import triton
 import triton.language as tl
 
+from flag_gems import runtime
 from flag_gems.runtime import device, torch_device_fn
 from flag_gems.utils.random_utils import (
     philox_backend_seed_offset,
@@ -72,13 +73,14 @@ device_ = device
 logger = logging.getLogger(__name__)
 
 
+@triton.heuristics(runtime.get_heuristic_config("randn"))
 @triton.jit(do_not_specialize=["philox_seed", "philox_offset"])
 def randn_kernel(
     out_ptr,
     N,
     philox_seed,
     philox_offset,
-    BLOCK: tl.constexpr = 512,
+    BLOCK: tl.constexpr,
 ):
     philox_seed = philox_seed.to(tl.int64)
     philox_offset = philox_offset.to(tl.int64)
