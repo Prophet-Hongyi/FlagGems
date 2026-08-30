@@ -88,7 +88,10 @@ def mm_kernel_router_splitk(
     offs_cn = offset_bn + tl.arange(0, BLOCK_N)
     c_ptrs = C + offs_cm[:, None] * stride_cm + offs_cn[None, :] * stride_cn
     mask = (offs_cm < M)[:, None] & (offs_cn < N)[None, :]
-    tl.atomic_add(c_ptrs, acc, mask=mask)
+    # C is zeroed before launch and is not read again inside this kernel.  The
+    # split-K updates only require atomicity; ordering against other memory
+    # operations is provided by the kernel boundary.
+    tl.atomic_add(c_ptrs, acc, mask=mask, sem="relaxed")
 
 
 def router_splitk_scenario(x, weight, M, N, K):
